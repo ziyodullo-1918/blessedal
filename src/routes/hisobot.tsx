@@ -502,7 +502,8 @@ function Page() {
                           <table className="w-full text-sm">
                             <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
                               <tr className="border-b">
-                                <th className="px-3 py-2">Sana</th>
+                                <th className="px-3 py-2">Berilgan</th>
+                                <th className="px-3 py-2">Bajarilgan</th>
                                 <th className="px-3 py-2">Mahsulot</th>
                                 <th className="px-3 py-2 text-right">Miqdor</th>
                                 <th className="px-3 py-2 text-right">Narx</th>
@@ -513,7 +514,10 @@ function Page() {
                               {w.items.map((it) => (
                                 <tr key={it.id} className="border-b last:border-0">
                                   <td className="px-3 py-2 font-mono text-xs">
-                                    {fmtDate(it.completed_at)}
+                                    {fmtDateTime(it.started_at)}
+                                  </td>
+                                  <td className="px-3 py-2 font-mono text-xs">
+                                    {fmtDateTime(it.completed_at)}
                                   </td>
                                   <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
                                   <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
