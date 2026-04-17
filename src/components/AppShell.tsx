@@ -101,3 +101,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+function PinLockBtn() {
+  const { enabled, lock } = usePin();
+  if (!enabled) return null;
+  return (
+    <Button variant="outline" size="sm" onClick={lock} title="Qulflash">
+      <LockIcon className="size-4" />
+    </Button>
+  );
+}
