@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X } from "lucide-react";
+import { usePin } from "@/lib/pin";
+import { Lock as LockIcon } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +14,7 @@ const nav = [
   { to: "/kategoriyalar", label: "Kategoriyalar", icon: Tags },
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
+  { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -43,8 +46,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
           </div>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2">
             <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
+            <PinLockBtn />
             <Button
               variant="outline"
               size="sm"
@@ -95,5 +99,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="min-h-[calc(100vh-4rem)] flex-1 px-4 py-6 lg:px-8">{children}</main>
       </div>
     </div>
+  );
+}
+
+function PinLockBtn() {
+  const { enabled, lock } = usePin();
+  if (!enabled) return null;
+  return (
+    <Button variant="outline" size="sm" onClick={lock} title="Qulflash">
+      <LockIcon className="size-4" />
+    </Button>
   );
 }

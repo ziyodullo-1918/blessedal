@@ -2,6 +2,7 @@ import { useAuth } from "@/lib/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { AppShell } from "./AppShell";
+import { PinProvider, PinGate } from "@/lib/pin";
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -18,5 +19,11 @@ export function RequireAuth({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  return <AppShell>{children}</AppShell>;
+  return (
+    <PinProvider>
+      <PinGate>
+        <AppShell>{children}</AppShell>
+      </PinGate>
+    </PinProvider>
+  );
 }

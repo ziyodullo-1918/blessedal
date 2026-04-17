@@ -1,0 +1,15 @@
+{
+  "name": "Tikuv Cex — Boshqaruv",
+  "short_name": "Tikuv Cex",
+  "description": "Tikuv fabrikasi boshqaruv tizimi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f9d55",
+  "orientation": "portrait",
+  "lang": "uz",
+  "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
+import { Route as SozlamalarRouteImport } from './routes/sozlamalar'
 import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KategoriyalarRouteImport } from './routes/kategoriyalar'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
   id: '/topshiriqlar',
   path: '/topshiriqlar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SozlamalarRoute = SozlamalarRouteImport.update({
+  id: '/sozlamalar',
+  path: '/sozlamalar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MahsulotlarRoute = MahsulotlarRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
+  '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
+  '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
+  '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
+    | '/sozlamalar'
     | '/topshiriqlar'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
+    | '/sozlamalar'
     | '/topshiriqlar'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
+    | '/sozlamalar'
     | '/topshiriqlar'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   KategoriyalarRoute: typeof KategoriyalarRoute
   LoginRoute: typeof LoginRoute
   MahsulotlarRoute: typeof MahsulotlarRoute
+  SozlamalarRoute: typeof SozlamalarRoute
   TopshiriqlarRoute: typeof TopshiriqlarRoute
 }
 
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/topshiriqlar'
       fullPath: '/topshiriqlar'
       preLoaderRoute: typeof TopshiriqlarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sozlamalar': {
+      id: '/sozlamalar'
+      path: '/sozlamalar'
+      fullPath: '/sozlamalar'
+      preLoaderRoute: typeof SozlamalarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mahsulotlar': {
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   KategoriyalarRoute: KategoriyalarRoute,
   LoginRoute: LoginRoute,
   MahsulotlarRoute: MahsulotlarRoute,
+  SozlamalarRoute: SozlamalarRoute,
   TopshiriqlarRoute: TopshiriqlarRoute,
 }
 export const routeTree = rootRouteImport
