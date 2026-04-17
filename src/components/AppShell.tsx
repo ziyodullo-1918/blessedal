@@ -1,6 +1,8 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { usePin } from "@/lib/pin";
+import { Lock as LockIcon } from "lucide-react";
 import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
