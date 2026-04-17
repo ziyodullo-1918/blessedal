@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,7 @@ const nav = [
   { to: "/kategoriyalar", label: "Kategoriyalar", icon: Tags },
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
+  { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
