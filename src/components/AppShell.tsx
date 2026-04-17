@@ -46,8 +46,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
           </div>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="ml-auto flex items-center gap-2">
             <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
+            <PinLockBtn />
             <Button
               variant="outline"
               size="sm"
