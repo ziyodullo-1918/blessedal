@@ -137,16 +137,77 @@ export async function deleteAssignment(id: string) {
 }
 
 // Reports
+export type ReportRow = Assignment & {
+  worker: { id: string; full_name: string };
+  product: { id: string; name: string } | null;
+};
+
+export async function reportByRange(startISO: string, endISO: string): Promise<ReportRow[]> {
+  const { data, error } = await supabase
+    .from("assignments")
+    .select("*, worker:workers(id, full_name), product:products(id, name)")
+    .eq("status", "completed")
+    .gte("completed_at", startISO)
+    .lt("completed_at", endISO)
+    .order("completed_at", { ascending: true });
+  if (error) throw error;
+  return data as unknown as ReportRow[];
+}
+
 export async function monthlyReport(yearMonth: string) {
   const [y, m] = yearMonth.split("-").map(Number);
   const start = new Date(Date.UTC(y, m - 1, 1)).toISOString();
   const end = new Date(Date.UTC(y, m, 1)).toISOString();
+  return reportByRange(start, end);
+}
+
+// Payroll periods
+export type PayrollPeriod = {
+  id: string;
+  label: string;
+  start_date: string;
+  end_date: string;
+  closed_at: string | null;
+  created_at: string;
+};
+
+export async function listPayrollPeriods(): Promise<PayrollPeriod[]> {
   const { data, error } = await supabase
-    .from("assignments")
-    .select("*, worker:workers(id, full_name), product:products(name)")
-    .eq("status", "completed")
-    .gte("completed_at", start)
-    .lt("completed_at", end);
+    .from("payroll_periods")
+    .select("*")
+    .order("start_date", { ascending: false });
   if (error) throw error;
-  return data as unknown as (Assignment & { worker: { id: string; full_name: string } })[];
+  return data as PayrollPeriod[];
+}
+
+export async function createPayrollPeriod(p: { label: string; start_date: string; end_date: string }) {
+  const user_id = await uid();
+  const { data, error } = await supabase
+    .from("payroll_periods")
+    .insert({ ...p, user_id })
+    .select()
+    .single();
+  if (error) throw error;
+  return data as PayrollPeriod;
+}
+
+export async function closePayrollPeriod(id: string) {
+  const { error } = await supabase
+    .from("payroll_periods")
+    .update({ closed_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function reopenPayrollPeriod(id: string) {
+  const { error } = await supabase
+    .from("payroll_periods")
+    .update({ closed_at: null })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deletePayrollPeriod(id: string) {
+  const { error } = await supabase.from("payroll_periods").delete().eq("id", id);
+  if (error) throw error;
 }
