@@ -421,8 +421,19 @@ function Page() {
             Umumiy to'lov ({range.sLabel} — {range.eLabel})
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="font-display text-4xl">{fmtMoney(grand)}</div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={exportPDF} disabled={rows.length === 0}>
+              <FileText className="size-4" /> PDF / Chop etish
+            </Button>
+            <Button variant="outline" onClick={exportCSV} disabled={rows.length === 0}>
+              <Download className="size-4" /> CSV (Excel)
+            </Button>
+            <Button variant="outline" onClick={sharePDF} disabled={rows.length === 0}>
+              <Share2 className="size-4" /> Ulashish
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
