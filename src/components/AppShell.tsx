@@ -1,0 +1,99 @@
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+const nav = [
+  { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/ishchilar", label: "Ishchilar", icon: Users },
+  { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
+  { to: "/kategoriyalar", label: "Kategoriyalar", icon: Tags },
+  { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
+  { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
+] as const;
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const loc = useLocation();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Top bar */}
+      <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4">
+          <button
+            className="lg:hidden -ml-1 p-2"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menyu"
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-display text-xl">
+              T
+            </div>
+            <div>
+              <div className="font-display text-xl leading-none">TIKUV CEX</div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                Boshqaruv paneli
+              </div>
+            </div>
+          </div>
+          <div className="ml-auto flex items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await signOut();
+                navigate({ to: "/login" });
+              }}
+            >
+              <LogOut className="size-4" />
+              <span className="hidden sm:inline">Chiqish</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto flex max-w-7xl">
+        {/* Sidebar */}
+        <aside
+          className={cn(
+            "fixed inset-y-16 left-0 z-20 w-64 shrink-0 border-r bg-card px-3 py-4 transition-transform lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:translate-x-0",
+            open ? "translate-x-0" : "-translate-x-full",
+          )}
+        >
+          <nav className="flex flex-col gap-1">
+            {nav.map((n) => {
+              const Icon = n.icon;
+              const active = loc.pathname === n.to;
+              return (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-foreground hover:bg-accent",
+                  )}
+                >
+                  <Icon className="size-4" />
+                  {n.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </aside>
+
+        <main className="min-h-[calc(100vh-4rem)] flex-1 px-4 py-6 lg:px-8">{children}</main>
+      </div>
+    </div>
+  );
+}
