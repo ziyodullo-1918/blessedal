@@ -9,12 +9,42 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
+import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KategoriyalarRouteImport } from './routes/kategoriyalar'
+import { Route as IshchilarRouteImport } from './routes/ishchilar'
+import { Route as HisobotRouteImport } from './routes/hisobot'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
+  id: '/topshiriqlar',
+  path: '/topshiriqlar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MahsulotlarRoute = MahsulotlarRouteImport.update({
+  id: '/mahsulotlar',
+  path: '/mahsulotlar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KategoriyalarRoute = KategoriyalarRouteImport.update({
+  id: '/kategoriyalar',
+  path: '/kategoriyalar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IshchilarRoute = IshchilarRouteImport.update({
+  id: '/ishchilar',
+  path: '/ishchilar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HisobotRoute = HisobotRouteImport.update({
+  id: '/hisobot',
+  path: '/hisobot',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +55,114 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/hisobot': typeof HisobotRoute
+  '/ishchilar': typeof IshchilarRoute
+  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
+  '/mahsulotlar': typeof MahsulotlarRoute
+  '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/hisobot': typeof HisobotRoute
+  '/ishchilar': typeof IshchilarRoute
+  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
+  '/mahsulotlar': typeof MahsulotlarRoute
+  '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/hisobot': typeof HisobotRoute
+  '/ishchilar': typeof IshchilarRoute
+  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
+  '/mahsulotlar': typeof MahsulotlarRoute
+  '/topshiriqlar': typeof TopshiriqlarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/hisobot'
+    | '/ishchilar'
+    | '/kategoriyalar'
+    | '/login'
+    | '/mahsulotlar'
+    | '/topshiriqlar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/'
+    | '/hisobot'
+    | '/ishchilar'
+    | '/kategoriyalar'
+    | '/login'
+    | '/mahsulotlar'
+    | '/topshiriqlar'
+  id:
+    | '__root__'
+    | '/'
+    | '/hisobot'
+    | '/ishchilar'
+    | '/kategoriyalar'
+    | '/login'
+    | '/mahsulotlar'
+    | '/topshiriqlar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HisobotRoute: typeof HisobotRoute
+  IshchilarRoute: typeof IshchilarRoute
+  KategoriyalarRoute: typeof KategoriyalarRoute
   LoginRoute: typeof LoginRoute
+  MahsulotlarRoute: typeof MahsulotlarRoute
+  TopshiriqlarRoute: typeof TopshiriqlarRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/topshiriqlar': {
+      id: '/topshiriqlar'
+      path: '/topshiriqlar'
+      fullPath: '/topshiriqlar'
+      preLoaderRoute: typeof TopshiriqlarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mahsulotlar': {
+      id: '/mahsulotlar'
+      path: '/mahsulotlar'
+      fullPath: '/mahsulotlar'
+      preLoaderRoute: typeof MahsulotlarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kategoriyalar': {
+      id: '/kategoriyalar'
+      path: '/kategoriyalar'
+      fullPath: '/kategoriyalar'
+      preLoaderRoute: typeof KategoriyalarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ishchilar': {
+      id: '/ishchilar'
+      path: '/ishchilar'
+      fullPath: '/ishchilar'
+      preLoaderRoute: typeof IshchilarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hisobot': {
+      id: '/hisobot'
+      path: '/hisobot'
+      fullPath: '/hisobot'
+      preLoaderRoute: typeof HisobotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,8 +177,22 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HisobotRoute: HisobotRoute,
+  IshchilarRoute: IshchilarRoute,
+  KategoriyalarRoute: KategoriyalarRoute,
   LoginRoute: LoginRoute,
+  MahsulotlarRoute: MahsulotlarRoute,
+  TopshiriqlarRoute: TopshiriqlarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
