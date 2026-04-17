@@ -191,6 +191,119 @@ function Page() {
     loadPeriods();
   };
 
+  const periodTitle = selectedPeriod
+    ? selectedPeriod.label
+    : `${range.sLabel} — ${range.eLabel}`;
+  const fileBase = `hisobot_${(periodTitle || "davr").replace(/[^a-z0-9_-]+/gi, "_")}`;
+
+  const exportCSV = () => {
+    const header = ["Ishchi", "Sana (berilgan)", "Sana (bajarilgan)", "Mahsulot", "Miqdor", "Narx", "Summa"];
+    const lines = [header.join(",")];
+    for (const w of workers) {
+      for (const it of w.items) {
+        const sum = it.quantity * Number(it.unit_price);
+        const row = [
+          w.workerName,
+          fmtDateTime(it.started_at),
+          fmtDateTime(it.completed_at),
+          it.product?.name ?? "",
+          it.quantity,
+          Number(it.unit_price),
+          sum,
+        ].map((v) => `"${String(v).replace(/"/g, '""')}"`);
+        lines.push(row.join(","));
+      }
+    }
+    lines.push("");
+    lines.push(`"JAMI","","","","","","${grand}"`);
+    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileBase}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV yuklab olindi");
+  };
+
+  const buildHTML = () => {
+    const rowsHtml = workers
+      .map(
+        (w) => `
+        <h3 style="margin:18px 0 6px;color:#166534">${escapeHtml(w.workerName)} — ${fmtMoney(w.totalSalary)}</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:#dcfce7">
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Berilgan</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Bajarilgan</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Mahsulot</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Miqdor</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Narx</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Summa</th>
+          </tr></thead>
+          <tbody>
+          ${w.items
+            .map(
+              (it) => `<tr>
+              <td style="border:1px solid #e5e7eb;padding:6px">${fmtDateTime(it.started_at)}</td>
+              <td style="border:1px solid #e5e7eb;padding:6px">${fmtDateTime(it.completed_at)}</td>
+              <td style="border:1px solid #e5e7eb;padding:6px">${escapeHtml(it.product?.name ?? "—")}</td>
+              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right">${it.quantity}</td>
+              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
+              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
+            </tr>`,
+            )
+            .join("")}
+          </tbody>
+        </table>`,
+      )
+      .join("");
+
+    return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
+      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}
+      h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
+      .total{font-size:28px;color:#15803d;font-weight:700;margin:12px 0}</style></head>
+      <body>
+        <h1>Tikuv Cex — Oylik hisobot</h1>
+        <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
+        <div class="total">Umumiy: ${fmtMoney(grand)}</div>
+        ${rowsHtml || '<p class="muted">Ma\'lumot yo\'q</p>'}
+        <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
+      </body></html>`;
+  };
+
+  const exportPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return toast.error("Pop-up bloklangan");
+    w.document.write(buildHTML());
+    w.document.close();
+  };
+
+  const sharePDF = async () => {
+    const html = buildHTML().replace("setTimeout(()=>window.print(),300)", "");
+    const blob = new Blob([html], { type: "text/html" });
+    const file = new File([blob], `${fileBase}.html`, { type: "text/html" });
+    const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void>; canShare?: (d: ShareData) => boolean };
+    if (nav.share && nav.canShare?.({ files: [file] })) {
+      try {
+        await nav.share({ title: periodTitle, text: `Hisobot: ${periodTitle} — ${fmtMoney(grand)}`, files: [file] });
+        return;
+      } catch { /* cancelled */ }
+    }
+    if (nav.share) {
+      try {
+        await nav.share({ title: periodTitle, text: `Hisobot: ${periodTitle} — Umumiy: ${fmtMoney(grand)}` });
+        return;
+      } catch { /* cancelled */ }
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${fileBase}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Fayl yuklab olindi");
+  };
+
   return (
     <div className="space-y-6">
       <div>
