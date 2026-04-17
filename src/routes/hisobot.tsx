@@ -57,6 +57,10 @@ function defaultPeriodLabel(start: string, end: string) {
   return `${start} — ${end}`;
 }
 
+function escapeHtml(s: string) {
+  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+}
+
 function Page() {
   const [periods, setPeriods] = useState<PayrollPeriod[]>([]);
   const [selectedId, setSelectedId] = useState<string>("custom");
