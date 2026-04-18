@@ -52,6 +52,7 @@ export const founderLogin = createServerFn({ method: "POST" })
     return {
       email: adminUser.user.email,
       token_hash: link.properties.hashed_token,
+      verification_type: link.properties.verification_type ?? "magiclink",
       founder_name: founder.full_name,
       login_id: founder.login_id,
     };
