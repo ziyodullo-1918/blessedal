@@ -13,7 +13,6 @@ import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
 import { Route as SozlamalarRouteImport } from './routes/sozlamalar'
 import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as KategoriyalarRouteImport } from './routes/kategoriyalar'
 import { Route as IshchilarRouteImport } from './routes/ishchilar'
 import { Route as HisobotRouteImport } from './routes/hisobot'
 import { Route as IndexRouteImport } from './routes/index'
@@ -38,11 +37,6 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const KategoriyalarRoute = KategoriyalarRouteImport.update({
-  id: '/kategoriyalar',
-  path: '/kategoriyalar',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IshchilarRoute = IshchilarRouteImport.update({
   id: '/ishchilar',
   path: '/ishchilar',
@@ -63,7 +57,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
-  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -73,7 +66,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
-  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -84,7 +76,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
-  '/kategoriyalar': typeof KategoriyalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -96,7 +87,6 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
-    | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -106,7 +96,6 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
-    | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -116,7 +105,6 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
-    | '/kategoriyalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -127,7 +115,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HisobotRoute: typeof HisobotRoute
   IshchilarRoute: typeof IshchilarRoute
-  KategoriyalarRoute: typeof KategoriyalarRoute
   LoginRoute: typeof LoginRoute
   MahsulotlarRoute: typeof MahsulotlarRoute
   SozlamalarRoute: typeof SozlamalarRoute
@@ -164,13 +151,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/kategoriyalar': {
-      id: '/kategoriyalar'
-      path: '/kategoriyalar'
-      fullPath: '/kategoriyalar'
-      preLoaderRoute: typeof KategoriyalarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/ishchilar': {
       id: '/ishchilar'
       path: '/ishchilar'
@@ -199,7 +179,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HisobotRoute: HisobotRoute,
   IshchilarRoute: IshchilarRoute,
-  KategoriyalarRoute: KategoriyalarRoute,
   LoginRoute: LoginRoute,
   MahsulotlarRoute: MahsulotlarRoute,
   SozlamalarRoute: SozlamalarRoute,
