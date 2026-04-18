@@ -20,6 +20,7 @@ export type Assignment = {
   started_at: string;
   completed_at: string | null;
   created_at: string;
+  period_id: string | null;
   worker?: { full_name: string } | null;
   product?: { name: string } | null;
 };
@@ -106,19 +107,27 @@ export async function createAssignment(a: {
   quantity: number;
 }) {
   const user_id = await uid();
-  // Look up unit_price from product
   const { data: prod, error: pe } = await supabase
     .from("products")
     .select("price_per_unit")
     .eq("id", a.product_id)
     .single();
   if (pe) throw pe;
+  // Find currently open period (no closed_at, latest start_date)
+  const { data: openPeriod } = await supabase
+    .from("payroll_periods")
+    .select("id")
+    .is("closed_at", null)
+    .order("start_date", { ascending: false })
+    .limit(1)
+    .maybeSingle();
   const { error } = await supabase.from("assignments").insert({
     ...a,
     unit_price: prod.price_per_unit,
     user_id,
     status: "in_progress",
     started_at: new Date().toISOString(),
+    period_id: openPeriod?.id ?? null,
   });
   if (error) throw error;
 }
@@ -209,5 +218,73 @@ export async function reopenPayrollPeriod(id: string) {
 
 export async function deletePayrollPeriod(id: string) {
   const { error } = await supabase.from("payroll_periods").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// Close current period and create the next one starting the day after.
+// Any in-progress assignments are moved to the new period.
+export async function closeAndStartNextPeriod(periodId: string, newLabel: string) {
+  const { data, error } = await supabase.rpc("close_period_and_rollover", {
+    _period_id: periodId,
+    _new_label: newLabel,
+  });
+  if (error) throw error;
+  return data as string; // new period id
+}
+
+// Report by saved period (uses period_id, not date range — handles rollovers)
+export async function reportByPeriod(periodId: string): Promise<ReportRow[]> {
+  const { data, error } = await supabase
+    .from("assignments")
+    .select("*, worker:workers(id, full_name), product:products(id, name)")
+    .eq("status", "completed")
+    .eq("period_id", periodId)
+    .order("completed_at", { ascending: true });
+  if (error) throw error;
+  return data as unknown as ReportRow[];
+}
+
+// Founders (sub-users created by admin)
+export type Founder = {
+  id: string;
+  login_id: string;
+  full_name: string;
+  created_at: string;
+};
+
+async function sha256Hex(s: string) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function listFounders(): Promise<Founder[]> {
+  const { data, error } = await supabase
+    .from("founders")
+    .select("id, login_id, full_name, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as Founder[];
+}
+
+export async function createFounder(f: { login_id: string; full_name: string; pin: string }) {
+  const admin_user_id = await uid();
+  const pin_hash = await sha256Hex(f.pin);
+  const { error } = await supabase.from("founders").insert({
+    admin_user_id,
+    login_id: f.login_id.trim(),
+    full_name: f.full_name.trim(),
+    pin_hash,
+  });
+  if (error) throw error;
+}
+
+export async function deleteFounder(id: string) {
+  const { error } = await supabase.from("founders").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function updateFounderPin(id: string, pin: string) {
+  const pin_hash = await sha256Hex(pin);
+  const { error } = await supabase.from("founders").update({ pin_hash }).eq("id", id);
   if (error) throw error;
 }

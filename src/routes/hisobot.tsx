@@ -4,9 +4,10 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
   reportByRange,
+  reportByPeriod,
   listPayrollPeriods,
   createPayrollPeriod,
-  closePayrollPeriod,
+  closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
   type ReportRow,
@@ -106,11 +107,14 @@ function Page() {
 
   useEffect(() => {
     setLoading(true);
-    reportByRange(range.start, range.end)
+    const promise = selectedPeriod
+      ? reportByPeriod(selectedPeriod.id)
+      : reportByRange(range.start, range.end);
+    promise
       .then(setRows)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [range.start, range.end]);
+  }, [selectedPeriod, range.start, range.end]);
 
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
@@ -172,11 +176,20 @@ function Page() {
     }
   };
 
-  const handleClose = async () => {
+  const handleCloseAndStart = async () => {
     if (!selectedPeriod) return;
-    await closePayrollPeriod(selectedPeriod.id);
-    toast.success("Davr yopildi");
-    loadPeriods();
+    if (!confirm(`"${selectedPeriod.label}" davrini tugatasizmi? Yangi davr avtomatik boshlanadi va jarayondagi topshiriqlar yangi davrga ko'chiriladi.`)) return;
+    try {
+      const oldEnd = new Date(selectedPeriod.end_date + "T00:00:00Z");
+      oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
+      const nextLabel = `${oldEnd.toISOString().slice(0, 10)} dan boshlangan davr`;
+      const newId = await closeAndStartNextPeriod(selectedPeriod.id, nextLabel);
+      toast.success("Davr tugatildi, yangi davr ochildi");
+      loadPeriods();
+      setSelectedId(newId);
+    } catch (e: any) {
+      toast.error(e.message ?? "Xatolik");
+    }
   };
 
   const handleReopen = async () => {
@@ -282,6 +295,48 @@ function Page() {
     w.document.close();
   };
 
+  const buildProductsHTML = () => {
+    const totalQty = products.reduce((s, p) => s + p.totalQty, 0);
+    const rowsHtml = products
+      .map(
+        (p) => `<tr>
+          <td style="border:1px solid #e5e7eb;padding:8px">${escapeHtml(p.productName)}</td>
+          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right">${p.totalQty}</td>
+          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right"><b>${fmtMoney(p.totalSalary)}</b></td>
+        </tr>`,
+      )
+      .join("");
+    return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>Mahsulotlar — ${escapeHtml(periodTitle)}</title>
+      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}
+      h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
+      .total{font-size:24px;color:#15803d;font-weight:700;margin:12px 0}
+      table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+      th{background:#dcfce7;border:1px solid #bbf7d0;padding:8px;text-align:left}
+      th.right{text-align:right}</style></head>
+      <body>
+        <h1>Tikuv Cex — Mahsulotlar hisoboti</h1>
+        <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
+        <div class="total">Jami mahsulot: ${totalQty} dona · Umumiy: ${fmtMoney(grand)}</div>
+        <table>
+          <thead><tr>
+            <th>Mahsulot</th>
+            <th class="right">Tayyorlangan miqdor</th>
+            <th class="right">Jami summa</th>
+          </tr></thead>
+          <tbody>${rowsHtml || '<tr><td colspan="3" style="padding:12px;color:#64748b">Ma\'lumot yo\'q</td></tr>'}</tbody>
+        </table>
+        <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
+      </body></html>`;
+  };
+
+  const exportProductsPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return toast.error("Pop-up bloklangan");
+    w.document.write(buildProductsHTML());
+    w.document.close();
+  };
+
+
   const sharePDF = async () => {
     const html = buildHTML().replace("setTimeout(()=>window.print(),300)", "");
     const blob = new Blob([html], { type: "text/html" });
@@ -341,14 +396,14 @@ function Page() {
               </Select>
             </div>
             {selectedPeriod && (
-              <div className="flex items-end gap-2">
+              <div className="flex flex-wrap items-end gap-2">
                 {selectedPeriod.closed_at ? (
                   <Button variant="outline" onClick={handleReopen}>
                     <Unlock className="size-4" /> Qayta ochish
                   </Button>
                 ) : (
-                  <Button onClick={handleClose}>
-                    <Lock className="size-4" /> Davrni yopish
+                  <Button onClick={handleCloseAndStart}>
+                    <Lock className="size-4" /> Davrni tugatish
                   </Button>
                 )}
                 <Button variant="outline" size="icon" onClick={handleDelete}>
@@ -425,7 +480,10 @@ function Page() {
           <div className="font-display text-4xl">{fmtMoney(grand)}</div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={exportPDF} disabled={rows.length === 0}>
-              <FileText className="size-4" /> PDF / Chop etish
+              <FileText className="size-4" /> Ish haqi PDF
+            </Button>
+            <Button variant="outline" onClick={exportProductsPDF} disabled={products.length === 0}>
+              <FileText className="size-4" /> Mahsulotlar PDF
             </Button>
             <Button variant="outline" onClick={exportCSV} disabled={rows.length === 0}>
               <Download className="size-4" /> CSV (Excel)

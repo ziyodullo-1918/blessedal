@@ -19,6 +19,7 @@ export type Database = {
           completed_at: string | null
           created_at: string
           id: string
+          period_id: string | null
           product_id: string
           quantity: number
           started_at: string
@@ -31,6 +32,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          period_id?: string | null
           product_id: string
           quantity: number
           started_at?: string
@@ -43,6 +45,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           id?: string
+          period_id?: string | null
           product_id?: string
           quantity?: number
           started_at?: string
@@ -52,6 +55,13 @@ export type Database = {
           worker_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "assignments_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "payroll_periods"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "assignments_product_id_fkey"
             columns: ["product_id"]
@@ -86,6 +96,33 @@ export type Database = {
           id?: string
           name?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      founders: {
+        Row: {
+          admin_user_id: string
+          created_at: string
+          full_name: string
+          id: string
+          login_id: string
+          pin_hash: string
+        }
+        Insert: {
+          admin_user_id: string
+          created_at?: string
+          full_name: string
+          id?: string
+          login_id: string
+          pin_hash: string
+        }
+        Update: {
+          admin_user_id?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          login_id?: string
+          pin_hash?: string
         }
         Relationships: []
       }
@@ -183,7 +220,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      close_period_and_rollover: {
+        Args: { _new_label: string; _period_id: string }
+        Returns: string
+      }
     }
     Enums: {
       assignment_status: "in_progress" | "completed"

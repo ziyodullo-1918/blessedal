@@ -3,22 +3,26 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
-import { LogOut, LayoutDashboard, Users, Package, Tags, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-const nav = [
+const adminNav = [
   { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
   { to: "/ishchilar", label: "Ishchilar", icon: Users },
   { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
-  { to: "/kategoriyalar", label: "Kategoriyalar", icon: Tags },
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
   { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
 ] as const;
 
+const founderNav = [
+  { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
+] as const;
+
 export function AppShell({ children }: { children: ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, role, founder } = useAuth();
+  const nav = role === "founder" ? founderNav : adminNav;
   const navigate = useNavigate();
   const loc = useLocation();
   const [open, setOpen] = useState(false);
@@ -47,7 +51,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <span className="hidden text-sm text-muted-foreground sm:inline">{user?.email}</span>
+            <span className="hidden text-sm text-muted-foreground sm:inline">
+              {role === "founder" ? `Ta'sischi: ${founder?.name ?? ""}` : user?.email}
+            </span>
             <PinLockBtn />
             <Button
               variant="outline"
