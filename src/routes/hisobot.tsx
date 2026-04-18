@@ -480,7 +480,10 @@ function Page() {
           <div className="font-display text-4xl">{fmtMoney(grand)}</div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={exportPDF} disabled={rows.length === 0}>
-              <FileText className="size-4" /> PDF / Chop etish
+              <FileText className="size-4" /> Ish haqi PDF
+            </Button>
+            <Button variant="outline" onClick={exportProductsPDF} disabled={products.length === 0}>
+              <FileText className="size-4" /> Mahsulotlar PDF
             </Button>
             <Button variant="outline" onClick={exportCSV} disabled={rows.length === 0}>
               <Download className="size-4" /> CSV (Excel)
