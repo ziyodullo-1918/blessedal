@@ -71,11 +71,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const { founderLogin } = await import("@/server/founder");
         const res = await founderLogin({ data: { login_id, pin } });
-        // Verify the magic-link token to get a real session
+        // Verify the email OTP token to establish a session as the admin user
         const { error } = await supabase.auth.verifyOtp({
-          email: res.email,
           token_hash: res.token_hash,
-          type: "magiclink",
+          type: "email",
         });
         if (error) return { error: error.message };
         const info: FounderInfo = { name: res.founder_name, login_id: res.login_id };

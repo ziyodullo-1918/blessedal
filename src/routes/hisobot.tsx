@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fmtMoney, fmtDate } from "@/lib/format";
-import { ChevronDown, ChevronRight, Lock, Unlock, Trash2, Plus, Download, Share2, FileText } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock, Unlock, Trash2, Download, Share2, FileText, Play } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDateTime } from "@/lib/format";
 
@@ -76,10 +76,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
 
-  // New period form
-  const [newLabel, setNewLabel] = useState("");
-  const [newStart, setNewStart] = useState("");
-  const [newEnd, setNewEnd] = useState("");
+  const hasOpenPeriod = useMemo(() => periods.some((p) => !p.closed_at), [periods]);
 
   const selectedPeriod = useMemo(
     () => periods.find((p) => p.id === selectedId) ?? null,
@@ -155,19 +152,18 @@ function Page() {
 
   const grand = useMemo(() => rows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0), [rows]);
 
-  const handleCreatePeriod = async () => {
-    if (!newStart || !newEnd) return toast.error("Sana kiriting");
-    if (newStart > newEnd) return toast.error("Boshlanish sanasi tugashdan keyin");
+  const handleStartPeriod = async () => {
+    const today = todayISO();
+    const end = new Date();
+    end.setDate(end.getDate() + 29);
+    const endISO = end.toISOString().slice(0, 10);
     try {
       const p = await createPayrollPeriod({
-        label: newLabel.trim() || defaultPeriodLabel(newStart, newEnd),
-        start_date: newStart,
-        end_date: newEnd,
+        label: `${today} dan boshlangan davr`,
+        start_date: today,
+        end_date: endISO,
       });
-      toast.success("Davr yaratildi");
-      setNewLabel("");
-      setNewStart("");
-      setNewEnd("");
+      toast.success("Yangi davr boshlandi");
       loadPeriods();
       setSelectedId(p.id);
     } catch (e) {
@@ -245,17 +241,49 @@ function Page() {
 
   const buildHTML = () => {
     const rowsHtml = workers
-      .map(
-        (w) => `
+      .map((w) => {
+        // Aggregate by product for this worker
+        const byProduct = new Map<string, { name: string; qty: number; sum: number }>();
+        for (const it of w.items) {
+          const pid = it.product?.id ?? "—";
+          const pname = it.product?.name ?? "—";
+          const sum = it.quantity * Number(it.unit_price);
+          const cur = byProduct.get(pid) ?? { name: pname, qty: 0, sum: 0 };
+          cur.qty += it.quantity;
+          cur.sum += sum;
+          byProduct.set(pid, cur);
+        }
+        const summaryRows = [...byProduct.values()]
+          .sort((a, b) => b.qty - a.qty)
+          .map(
+            (p) => `<tr>
+              <td style="border:1px solid #bbf7d0;padding:6px">${escapeHtml(p.name)}</td>
+              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right">${p.qty}</td>
+              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right"><b>${fmtMoney(p.sum)}</b></td>
+            </tr>`,
+          )
+          .join("");
+
+        return `
         <h3 style="margin:18px 0 6px;color:#166534">${escapeHtml(w.workerName)} — ${fmtMoney(w.totalSalary)}</h3>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px">Mahsulotlar bo'yicha jamlanma:</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px">
           <thead><tr style="background:#dcfce7">
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Berilgan</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Bajarilgan</th>
             <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Mahsulot</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Miqdor</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Narx</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Summa</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Umumiy miqdor</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Jami summa</th>
+          </tr></thead>
+          <tbody>${summaryRows}</tbody>
+        </table>
+        <div style="font-size:11px;color:#64748b;margin:8px 0 4px">Topshiriqlar tafsiloti:</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:#f1f5f9">
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Berilgan</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Bajarilgan</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Mahsulot</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Miqdor</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Narx</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Summa</th>
           </tr></thead>
           <tbody>
           ${w.items
@@ -271,8 +299,8 @@ function Page() {
             )
             .join("")}
           </tbody>
-        </table>`,
-      )
+        </table>`;
+      })
       .join("");
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
@@ -439,34 +467,17 @@ function Page() {
             </div>
           )}
 
-          <div className="rounded-md border bg-muted/30 p-4">
-            <div className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Yangi davr yaratish (15 kunlik)
+          {!hasOpenPeriod && (
+            <div className="rounded-md border bg-muted/30 p-4 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-medium">Hozirda ochiq davr yo'q</div>
+                <div className="text-xs text-muted-foreground">Yangi davrni boshlang — bugundan boshlanadi</div>
+              </div>
+              <Button onClick={handleStartPeriod}>
+                <Play className="size-4" /> Davrni boshlash
+              </Button>
             </div>
-            <div className="grid gap-3 md:grid-cols-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Nom</Label>
-                <Input
-                  placeholder="Aprel 1-yarmi"
-                  value={newLabel}
-                  onChange={(e) => setNewLabel(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Boshlanish</Label>
-                <Input type="date" value={newStart} onChange={(e) => setNewStart(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Tugash</Label>
-                <Input type="date" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} />
-              </div>
-              <div className="flex items-end">
-                <Button onClick={handleCreatePeriod} className="w-full">
-                  <Plus className="size-4" /> Qo'shish
-                </Button>
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
