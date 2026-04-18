@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { fmtMoney, fmtDate } from "@/lib/format";
-import { ChevronDown, ChevronRight, Lock, Unlock, Trash2, Plus, Download, Share2, FileText } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock, Unlock, Trash2, Download, Share2, FileText, Play } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDateTime } from "@/lib/format";
 
@@ -76,10 +76,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
 
-  // New period form
-  const [newLabel, setNewLabel] = useState("");
-  const [newStart, setNewStart] = useState("");
-  const [newEnd, setNewEnd] = useState("");
+  const hasOpenPeriod = useMemo(() => periods.some((p) => !p.closed_at), [periods]);
 
   const selectedPeriod = useMemo(
     () => periods.find((p) => p.id === selectedId) ?? null,
@@ -155,19 +152,18 @@ function Page() {
 
   const grand = useMemo(() => rows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0), [rows]);
 
-  const handleCreatePeriod = async () => {
-    if (!newStart || !newEnd) return toast.error("Sana kiriting");
-    if (newStart > newEnd) return toast.error("Boshlanish sanasi tugashdan keyin");
+  const handleStartPeriod = async () => {
+    const today = todayISO();
+    const end = new Date();
+    end.setDate(end.getDate() + 29);
+    const endISO = end.toISOString().slice(0, 10);
     try {
       const p = await createPayrollPeriod({
-        label: newLabel.trim() || defaultPeriodLabel(newStart, newEnd),
-        start_date: newStart,
-        end_date: newEnd,
+        label: `${today} dan boshlangan davr`,
+        start_date: today,
+        end_date: endISO,
       });
-      toast.success("Davr yaratildi");
-      setNewLabel("");
-      setNewStart("");
-      setNewEnd("");
+      toast.success("Yangi davr boshlandi");
       loadPeriods();
       setSelectedId(p.id);
     } catch (e) {
