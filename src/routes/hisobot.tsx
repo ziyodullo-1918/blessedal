@@ -295,6 +295,48 @@ function Page() {
     w.document.close();
   };
 
+  const buildProductsHTML = () => {
+    const totalQty = products.reduce((s, p) => s + p.totalQty, 0);
+    const rowsHtml = products
+      .map(
+        (p) => `<tr>
+          <td style="border:1px solid #e5e7eb;padding:8px">${escapeHtml(p.productName)}</td>
+          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right">${p.totalQty}</td>
+          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right"><b>${fmtMoney(p.totalSalary)}</b></td>
+        </tr>`,
+      )
+      .join("");
+    return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>Mahsulotlar — ${escapeHtml(periodTitle)}</title>
+      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}
+      h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
+      .total{font-size:24px;color:#15803d;font-weight:700;margin:12px 0}
+      table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+      th{background:#dcfce7;border:1px solid #bbf7d0;padding:8px;text-align:left}
+      th.right{text-align:right}</style></head>
+      <body>
+        <h1>Tikuv Cex — Mahsulotlar hisoboti</h1>
+        <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
+        <div class="total">Jami mahsulot: ${totalQty} dona · Umumiy: ${fmtMoney(grand)}</div>
+        <table>
+          <thead><tr>
+            <th>Mahsulot</th>
+            <th class="right">Tayyorlangan miqdor</th>
+            <th class="right">Jami summa</th>
+          </tr></thead>
+          <tbody>${rowsHtml || '<tr><td colspan="3" style="padding:12px;color:#64748b">Ma\'lumot yo\'q</td></tr>'}</tbody>
+        </table>
+        <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
+      </body></html>`;
+  };
+
+  const exportProductsPDF = () => {
+    const w = window.open("", "_blank");
+    if (!w) return toast.error("Pop-up bloklangan");
+    w.document.write(buildProductsHTML());
+    w.document.close();
+  };
+
+
   const sharePDF = async () => {
     const html = buildHTML().replace("setTimeout(()=>window.print(),300)", "");
     const blob = new Blob([html], { type: "text/html" });
