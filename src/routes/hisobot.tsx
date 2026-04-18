@@ -241,17 +241,49 @@ function Page() {
 
   const buildHTML = () => {
     const rowsHtml = workers
-      .map(
-        (w) => `
+      .map((w) => {
+        // Aggregate by product for this worker
+        const byProduct = new Map<string, { name: string; qty: number; sum: number }>();
+        for (const it of w.items) {
+          const pid = it.product?.id ?? "—";
+          const pname = it.product?.name ?? "—";
+          const sum = it.quantity * Number(it.unit_price);
+          const cur = byProduct.get(pid) ?? { name: pname, qty: 0, sum: 0 };
+          cur.qty += it.quantity;
+          cur.sum += sum;
+          byProduct.set(pid, cur);
+        }
+        const summaryRows = [...byProduct.values()]
+          .sort((a, b) => b.qty - a.qty)
+          .map(
+            (p) => `<tr>
+              <td style="border:1px solid #bbf7d0;padding:6px">${escapeHtml(p.name)}</td>
+              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right">${p.qty}</td>
+              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right"><b>${fmtMoney(p.sum)}</b></td>
+            </tr>`,
+          )
+          .join("");
+
+        return `
         <h3 style="margin:18px 0 6px;color:#166534">${escapeHtml(w.workerName)} — ${fmtMoney(w.totalSalary)}</h3>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px">Mahsulotlar bo'yicha jamlanma:</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px">
           <thead><tr style="background:#dcfce7">
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Berilgan</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Bajarilgan</th>
             <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Mahsulot</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Miqdor</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Narx</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Summa</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Umumiy miqdor</th>
+            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Jami summa</th>
+          </tr></thead>
+          <tbody>${summaryRows}</tbody>
+        </table>
+        <div style="font-size:11px;color:#64748b;margin:8px 0 4px">Topshiriqlar tafsiloti:</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:#f1f5f9">
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Berilgan</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Bajarilgan</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Mahsulot</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Miqdor</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Narx</th>
+            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Summa</th>
           </tr></thead>
           <tbody>
           ${w.items
@@ -267,8 +299,8 @@ function Page() {
             )
             .join("")}
           </tbody>
-        </table>`,
-      )
+        </table>`;
+      })
       .join("");
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
