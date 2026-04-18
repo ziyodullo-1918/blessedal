@@ -4,9 +4,10 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
   reportByRange,
+  reportByPeriod,
   listPayrollPeriods,
   createPayrollPeriod,
-  closePayrollPeriod,
+  closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
   type ReportRow,
@@ -106,11 +107,14 @@ function Page() {
 
   useEffect(() => {
     setLoading(true);
-    reportByRange(range.start, range.end)
+    const promise = selectedPeriod
+      ? reportByPeriod(selectedPeriod.id)
+      : reportByRange(range.start, range.end);
+    promise
       .then(setRows)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [range.start, range.end]);
+  }, [selectedPeriod, range.start, range.end]);
 
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
@@ -172,11 +176,20 @@ function Page() {
     }
   };
 
-  const handleClose = async () => {
+  const handleCloseAndStart = async () => {
     if (!selectedPeriod) return;
-    await closePayrollPeriod(selectedPeriod.id);
-    toast.success("Davr yopildi");
-    loadPeriods();
+    if (!confirm(`"${selectedPeriod.label}" davrini tugatasizmi? Yangi davr avtomatik boshlanadi va jarayondagi topshiriqlar yangi davrga ko'chiriladi.`)) return;
+    try {
+      const oldEnd = new Date(selectedPeriod.end_date + "T00:00:00Z");
+      oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
+      const nextLabel = `${oldEnd.toISOString().slice(0, 10)} dan boshlangan davr`;
+      const newId = await closeAndStartNextPeriod(selectedPeriod.id, nextLabel);
+      toast.success("Davr tugatildi, yangi davr ochildi");
+      loadPeriods();
+      setSelectedId(newId);
+    } catch (e: any) {
+      toast.error(e.message ?? "Xatolik");
+    }
   };
 
   const handleReopen = async () => {
@@ -341,14 +354,14 @@ function Page() {
               </Select>
             </div>
             {selectedPeriod && (
-              <div className="flex items-end gap-2">
+              <div className="flex flex-wrap items-end gap-2">
                 {selectedPeriod.closed_at ? (
                   <Button variant="outline" onClick={handleReopen}>
                     <Unlock className="size-4" /> Qayta ochish
                   </Button>
                 ) : (
-                  <Button onClick={handleClose}>
-                    <Lock className="size-4" /> Davrni yopish
+                  <Button onClick={handleCloseAndStart}>
+                    <Lock className="size-4" /> Davrni tugatish
                   </Button>
                 )}
                 <Button variant="outline" size="icon" onClick={handleDelete}>
