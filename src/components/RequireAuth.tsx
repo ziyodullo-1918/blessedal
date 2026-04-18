@@ -1,16 +1,25 @@
 import { useAuth } from "@/lib/auth";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { AppShell } from "./AppShell";
 import { PinProvider, PinGate } from "@/lib/pin";
 
+const FOUNDER_ALLOWED = new Set<string>(["/topshiriqlar"]);
+
 export function RequireAuth({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, role } = useAuth();
   const navigate = useNavigate();
+  const loc = useLocation();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (!loading && user && role === "founder" && !FOUNDER_ALLOWED.has(loc.pathname)) {
+      navigate({ to: "/topshiriqlar" });
+    }
+  }, [loading, user, role, loc.pathname, navigate]);
 
   if (loading || !user) {
     return (
