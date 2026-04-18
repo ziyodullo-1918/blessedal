@@ -435,34 +435,17 @@ function Page() {
             </div>
           )}
 
-          <div className="rounded-md border bg-muted/30 p-4">
-            <div className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Yangi davr yaratish (15 kunlik)
+          {!hasOpenPeriod && (
+            <div className="rounded-md border bg-muted/30 p-4 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-medium">Hozirda ochiq davr yo'q</div>
+                <div className="text-xs text-muted-foreground">Yangi davrni boshlang — bugundan boshlanadi</div>
+              </div>
+              <Button onClick={handleStartPeriod}>
+                <Play className="size-4" /> Davrni boshlash
+              </Button>
             </div>
-            <div className="grid gap-3 md:grid-cols-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Nom</Label>
-                <Input
-                  placeholder="Aprel 1-yarmi"
-                  value={newLabel}
-                  onChange={(e) => setNewLabel(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Boshlanish</Label>
-                <Input type="date" value={newStart} onChange={(e) => setNewStart(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Tugash</Label>
-                <Input type="date" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} />
-              </div>
-              <div className="flex items-end">
-                <Button onClick={handleCreatePeriod} className="w-full">
-                  <Plus className="size-4" /> Qo'shish
-                </Button>
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
