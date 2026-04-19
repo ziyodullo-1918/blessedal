@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -36,7 +36,14 @@ export const Route = createFileRoute("/topshiriqlar")({
   ),
 });
 
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function Page() {
+  const { role } = useAuth();
+  const isAdmin = role === "admin";
+
   const [items, setItems] = useState<Assignment[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -45,11 +52,15 @@ function Page() {
   const [workerId, setWorkerId] = useState("");
   const [productId, setProductId] = useState("");
   const [qty, setQty] = useState("");
+  const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
 
   async function load() {
     const [a, w, p] = await Promise.all([
-      listAssignments(tab === "all" ? undefined : { status: tab }),
+      listAssignments({
+        status: tab === "all" ? undefined : tab,
+        activePeriodOnly: true,
+      }),
       listWorkers(),
       listProducts(),
     ]);
@@ -77,10 +88,22 @@ function Page() {
     }
     setBusy(true);
     try {
-      await createAssignment({ worker_id: workerId, product_id: productId, quantity: q });
+      // For admin, allow custom date. For founder, always now (current period).
+      let startedAt: string | undefined;
+      if (isAdmin && startDate) {
+        // Use noon UTC to avoid TZ issues shifting the date
+        startedAt = new Date(startDate + "T12:00:00Z").toISOString();
+      }
+      await createAssignment({
+        worker_id: workerId,
+        product_id: productId,
+        quantity: q,
+        started_at: startedAt,
+      });
       setWorkerId("");
       setProductId("");
       setQty("");
+      setStartDate(todayStr());
       await load();
       toast.success("Topshiriq berildi");
     } catch (err: any) {
@@ -116,7 +139,7 @@ function Page() {
       <div>
         <h1 className="font-display text-4xl">Topshiriqlar</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ishchiga yarim tayyor mahsulot berish va bajarilishini kuzatish
+          Hozirgi davr — yarim tayyor mahsulot berish va bajarilishini kuzatish
         </p>
       </div>
 
@@ -125,7 +148,7 @@ function Page() {
           <CardTitle>Yangi topshiriq</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={add} className="grid gap-3 lg:grid-cols-5">
+          <form onSubmit={add} className="grid gap-3 lg:grid-cols-6">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
               <Select value={workerId} onValueChange={setWorkerId}>
@@ -165,6 +188,16 @@ function Page() {
               />
             </div>
             <div className="space-y-1.5">
+              <Label>Sana {!isAdmin && <span className="text-xs text-muted-foreground">(bugun)</span>}</Label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                disabled={!isAdmin}
+                title={!isAdmin ? "Faqat administrator sanani o'zgartira oladi" : undefined}
+              />
+            </div>
+            <div className="space-y-1.5">
               <Label>Hisoblangan maosh</Label>
               <div className="flex h-10 items-center rounded-md border bg-muted px-3 font-mono text-sm">
                 {fmtMoney(previewSalary)}
@@ -190,7 +223,7 @@ function Page() {
       <Card>
         <CardContent className="p-0">
           {items.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">Topshiriqlar yo'q.</p>
+            <p className="p-6 text-sm text-muted-foreground">Hozirgi davrda topshiriqlar yo'q.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
