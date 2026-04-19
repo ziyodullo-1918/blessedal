@@ -103,15 +103,17 @@ function Page() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     const promise = selectedPeriod
       ? reportByPeriod(selectedPeriod.id)
       : reportByRange(range.start, range.end);
     promise
-      .then(setRows)
+      .then((r) => { if (!cancelled) setRows(r); })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [selectedPeriod, range.start, range.end]);
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedPeriod?.id, range.start, range.end]);
 
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
