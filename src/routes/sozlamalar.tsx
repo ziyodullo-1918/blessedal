@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { Lock, ShieldCheck, Smartphone, UserPlus, Trash2, KeyRound, Users } from "lucide-react";
 import { listFounders, createFounder, deleteFounder, updateFounderPin, type Founder } from "@/lib/data";
 

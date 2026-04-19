@@ -33,6 +33,7 @@ export const Route = createFileRoute("/mahsulotlar")({
 });
 
 function Page() {
+  const confirm = useConfirm();
   const [items, setItems] = useState<Product[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
   const [name, setName] = useState("");

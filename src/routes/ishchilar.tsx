@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/ishchilar")({
   component: () => (
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/ishchilar")({
 });
 
 function Page() {
+  const confirm = useConfirm();
   const [items, setItems] = useState<Worker[]>([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -51,7 +53,13 @@ function Page() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Ishchini o'chirishni tasdiqlaysizmi? Uning topshiriqlari ham o'chiriladi.")) return;
+    const ok = await confirm({
+      title: "Ishchini o'chirasizmi?",
+      description: "Uning topshiriqlari ham o'chiriladi. Bu amalni qaytarib bo'lmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteWorker(id);
       await load();
