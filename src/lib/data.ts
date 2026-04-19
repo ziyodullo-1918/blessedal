@@ -89,13 +89,30 @@ export async function deleteWorker(id: string) {
 export async function listAssignments(filters?: {
   status?: "in_progress" | "completed";
   workerId?: string;
+  /** When true, only return assignments belonging to the currently open period (or no period). */
+  activePeriodOnly?: boolean;
 }): Promise<Assignment[]> {
+  let activePeriodId: string | null = null;
+  if (filters?.activePeriodOnly) {
+    const { data: openPeriod } = await supabase
+      .from("payroll_periods")
+      .select("id")
+      .is("closed_at", null)
+      .order("start_date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    activePeriodId = openPeriod?.id ?? null;
+  }
   let q = supabase
     .from("assignments")
     .select("*, worker:workers(full_name), product:products(name)")
     .order("created_at", { ascending: false });
   if (filters?.status) q = q.eq("status", filters.status);
   if (filters?.workerId) q = q.eq("worker_id", filters.workerId);
+  if (filters?.activePeriodOnly) {
+    if (activePeriodId) q = q.eq("period_id", activePeriodId);
+    else q = q.is("period_id", null);
+  }
   const { data, error } = await q;
   if (error) throw error;
   return data as unknown as Assignment[];
@@ -105,6 +122,8 @@ export async function createAssignment(a: {
   worker_id: string;
   product_id: string;
   quantity: number;
+  /** Optional custom start date (admin only). Defaults to now. */
+  started_at?: string;
 }) {
   const user_id = await uid();
   const { data: prod, error: pe } = await supabase
@@ -122,11 +141,13 @@ export async function createAssignment(a: {
     .limit(1)
     .maybeSingle();
   const { error } = await supabase.from("assignments").insert({
-    ...a,
+    worker_id: a.worker_id,
+    product_id: a.product_id,
+    quantity: a.quantity,
     unit_price: prod.price_per_unit,
     user_id,
     status: "in_progress",
-    started_at: new Date().toISOString(),
+    started_at: a.started_at ?? new Date().toISOString(),
     period_id: openPeriod?.id ?? null,
   });
   if (error) throw error;
