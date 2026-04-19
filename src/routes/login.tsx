@@ -11,7 +11,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Kirish — Tikuv Cex" },
+      { title: "Kirish — Blessed Al" },
       { name: "description", content: "Boshqaruv panelga kirish." },
     ],
   }),
@@ -72,20 +72,20 @@ function LoginPage() {
       <div className="relative hidden lg:flex flex-col justify-between bg-foreground p-10 text-background">
         <div className="flex items-center gap-2">
           <div className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground font-display text-2xl">
-            T
+            B
           </div>
-          <span className="font-display text-2xl tracking-wide">TIKUV CEX</span>
+          <span className="font-display text-2xl tracking-wide">BLESSED AL</span>
         </div>
         <div>
           <h1 className="font-display text-5xl leading-tight">
-            Cex boshqaruvi.<br />Soddalashtirilgan.
+            Ishlab chiqarish.<br />Soddalashtirilgan.
           </h1>
           <p className="mt-4 max-w-md text-sm opacity-70">
             Ishchilar, mahsulotlar va topshiriqlarni bir joyda boshqaring.
             Maoshlar avtomatik hisoblanadi.
           </p>
         </div>
-        <div className="text-xs opacity-50">© Tikuv Cex Boshqaruv Tizimi</div>
+        <div className="text-xs opacity-50">© Blessed Al Boshqaruv Tizimi</div>
       </div>
 
       <div className="flex items-center justify-center px-6 py-12">
