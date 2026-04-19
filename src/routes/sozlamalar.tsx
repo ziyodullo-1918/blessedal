@@ -25,6 +25,7 @@ export const Route = createFileRoute("/sozlamalar")({
 });
 
 function Page() {
+  const confirmDialog = useConfirm();
   const { enabled, setPin, disablePin } = usePin();
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
@@ -163,7 +164,13 @@ function FoundersCard() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Ta'sischini o'chirasizmi?")) return;
+    const ok = await confirmDialog({
+      title: "Ta'sischini o'chirasizmi?",
+      description: "U boshqa tizimga kira olmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     await deleteFounder(id);
     toast.success("O'chirildi");
     load();
