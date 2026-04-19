@@ -50,6 +50,7 @@ import {
   Package,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/hisobot")({
   component: () => (
@@ -90,6 +91,7 @@ function escapeHtml(s: string) {
 }
 
 function Page() {
+  const confirm = useConfirm();
   const [periods, setPeriods] = useState<PayrollPeriod[]>([]);
   const [selectedId, setSelectedId] = useState<string>("current");
   const [customStart, setCustomStart] = useState(todayISO());
@@ -116,10 +118,18 @@ function Page() {
   const range = useMemo(() => {
     const s = selectedPeriod?.start_date ?? customStart;
     const e = selectedPeriod?.end_date ?? customEnd;
-    const start = new Date(s + "T00:00:00Z").toISOString();
-    const endDate = new Date(e + "T00:00:00Z");
-    endDate.setUTCDate(endDate.getUTCDate() + 1);
-    return { start, end: endDate.toISOString(), sLabel: s, eLabel: e };
+    // Use LOCAL midnight (not UTC) so completed_at timestamps in the user's
+    // timezone fall within the expected day range.
+    const [sy, sm, sd] = s.split("-").map(Number);
+    const [ey, em, ed] = e.split("-").map(Number);
+    const startLocal = new Date(sy, sm - 1, sd, 0, 0, 0, 0);
+    const endLocal = new Date(ey, em - 1, ed + 1, 0, 0, 0, 0); // exclusive next day
+    return {
+      start: startLocal.toISOString(),
+      end: endLocal.toISOString(),
+      sLabel: s,
+      eLabel: e,
+    };
   }, [selectedPeriod, customStart, customEnd]);
 
   const loadPeriods = () => {
@@ -234,12 +244,13 @@ function Page() {
       toast.error("Ochiq davr yo'q");
       return;
     }
-    if (
-      !confirm(
-        "Joriy davrni tugatasizmi? Yangi davr avtomatik boshlanadi va jarayondagi topshiriqlar yangi davrga ko'chiriladi.",
-      )
-    )
-      return;
+    const ok = await confirm({
+      title: "Davrni tugatasizmi?",
+      description:
+        "Yangi davr avtomatik boshlanadi. Jarayondagi (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.",
+      confirmText: "Tugatish",
+    });
+    if (!ok) return;
     try {
       const oldEnd = new Date(openPeriod.end_date + "T00:00:00Z");
       oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
@@ -260,7 +271,13 @@ function Page() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Bu davrni o'chirmoqchimisiz?")) return;
+    const ok = await confirm({
+      title: "Davrni o'chirasizmi?",
+      description: "Bu amalni qaytarib bo'lmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     await deletePayrollPeriod(id);
     toast.success("O'chirildi");
     if (selectedId === id) setSelectedId("current");

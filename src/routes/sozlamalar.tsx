@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmDialog";
 import { Lock, ShieldCheck, Smartphone, UserPlus, Trash2, KeyRound, Users } from "lucide-react";
 import { listFounders, createFounder, deleteFounder, updateFounderPin, type Founder } from "@/lib/data";
 
@@ -135,6 +136,7 @@ function Page() {
 }
 
 function FoundersCard() {
+  const confirmDialog = useConfirm();
   const [items, setItems] = useState<Founder[]>([]);
   const [loginId, setLoginId] = useState("");
   const [fullName, setFullName] = useState("");
@@ -162,7 +164,13 @@ function FoundersCard() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Ta'sischini o'chirasizmi?")) return;
+    const ok = await confirmDialog({
+      title: "Ta'sischini o'chirasizmi?",
+      description: "U boshqa tizimga kira olmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     await deleteFounder(id);
     toast.success("O'chirildi");
     load();

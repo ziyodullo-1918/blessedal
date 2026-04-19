@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate, fmtMoney } from "@/lib/format";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/topshiriqlar")({
   component: () => (
@@ -43,6 +44,7 @@ function todayStr() {
 function Page() {
   const { role } = useAuth();
   const isAdmin = role === "admin";
+  const confirm = useConfirm();
 
   const [items, setItems] = useState<Assignment[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
@@ -124,7 +126,13 @@ function Page() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Topshiriqni o'chirishni tasdiqlaysizmi?")) return;
+    const ok = await confirm({
+      title: "Topshiriqni o'chirasizmi?",
+      description: "Bu amalni qaytarib bo'lmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteAssignment(id);
       await load();
