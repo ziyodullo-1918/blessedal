@@ -1,6 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
-import { ConfirmProvider } from "@/components/ConfirmDialog";
 
 import appCss from "../styles.css?url";
 
@@ -37,8 +36,8 @@ export const Route = createRootRoute({
       { name: "twitter:title", content: "Blessed Al — Boshqaruv" },
       { property: "og:description", content: "Blessed Al ishlab chiqarish: ishchilar, mahsulotlar va oylik hisobotlarni boshqarish tizimi." },
       { name: "twitter:description", content: "Blessed Al ishlab chiqarish: ishchilar, mahsulotlar va oylik hisobotlarni boshqarish tizimi." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f0a822c3-3328-48f8-9729-18cca8f46996/id-preview-4fb37a93--8cbb6df7-1142-4581-9862-ec1aff19cb36.lovable.app-1776461346805.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f0a822c3-3328-48f8-9729-18cca8f46996/id-preview-4fb37a93--8cbb6df7-1142-4581-9862-ec1aff19cb36.lovable.app-1776461346805.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/4db14336-743b-41e5-92ac-67d530fd3ca1" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/4db14336-743b-41e5-92ac-67d530fd3ca1" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -70,9 +69,5 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return (
-    <ConfirmProvider>
-      <Outlet />
-    </ConfirmProvider>
-  );
+  return <Outlet />;
 }
