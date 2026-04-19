@@ -137,6 +137,7 @@ function Page() {
 }
 
 function FoundersCard() {
+  const confirmDialog = useConfirm();
   const [items, setItems] = useState<Founder[]>([]);
   const [loginId, setLoginId] = useState("");
   const [fullName, setFullName] = useState("");
