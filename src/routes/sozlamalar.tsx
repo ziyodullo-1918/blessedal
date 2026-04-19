@@ -25,7 +25,6 @@ export const Route = createFileRoute("/sozlamalar")({
 });
 
 function Page() {
-  const confirmDialog = useConfirm();
   const { enabled, setPin, disablePin } = usePin();
   const [newPin, setNewPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
