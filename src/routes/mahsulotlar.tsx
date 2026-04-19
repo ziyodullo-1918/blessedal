@@ -20,6 +20,7 @@ import {
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtMoney } from "@/lib/format";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/mahsulotlar")({
   component: () => (
@@ -75,7 +76,13 @@ function Page() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Mahsulotni o'chirishni tasdiqlaysizmi?")) return;
+    const ok = await confirm({
+      title: "Mahsulotni o'chirasizmi?",
+      description: "Bu amalni qaytarib bo'lmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await deleteProduct(id);
       await load();
