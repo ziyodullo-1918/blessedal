@@ -10,19 +10,48 @@ import {
   closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
+  listAssignments,
   type ReportRow,
   type PayrollPeriod,
+  type Assignment,
 } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fmtMoney, fmtDate } from "@/lib/format";
-import { ChevronDown, ChevronRight, Lock, Unlock, Trash2, Download, Share2, FileText, Play } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { fmtMoney, fmtDate, fmtDateTime } from "@/lib/format";
+import {
+  ChevronDown,
+  ChevronRight,
+  Lock,
+  Unlock,
+  Trash2,
+  Download,
+  Share2,
+  FileText,
+  Play,
+  History,
+  Filter,
+  CalendarDays,
+  Users,
+  Package,
+} from "lucide-react";
 import { toast } from "sonner";
-import { fmtDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/hisobot")({
   component: () => (
@@ -54,44 +83,45 @@ function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function defaultPeriodLabel(start: string, end: string) {
-  return `${start} — ${end}`;
-}
-
 function escapeHtml(s: string) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  return s.replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+  );
 }
 
 function Page() {
   const [periods, setPeriods] = useState<PayrollPeriod[]>([]);
-  const [selectedId, setSelectedId] = useState<string>("custom");
-  const [customStart, setCustomStart] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 14);
-    return d.toISOString().slice(0, 10);
-  });
+  const [selectedId, setSelectedId] = useState<string>("current");
+  const [customStart, setCustomStart] = useState(todayISO());
   const [customEnd, setCustomEnd] = useState(todayISO());
+  const [workerFilter, setWorkerFilter] = useState<string>("all");
+  const [search, setSearch] = useState("");
 
   const [rows, setRows] = useState<ReportRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
-  const hasOpenPeriod = useMemo(() => periods.some((p) => !p.closed_at), [periods]);
+  const openPeriod = useMemo(() => periods.find((p) => !p.closed_at) ?? null, [periods]);
+  const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
 
-  const selectedPeriod = useMemo(
-    () => periods.find((p) => p.id === selectedId) ?? null,
-    [periods, selectedId],
-  );
+  const selectedPeriod = useMemo(() => {
+    if (selectedId === "current") return openPeriod;
+    if (selectedId === "custom") return null;
+    return periods.find((p) => p.id === selectedId) ?? null;
+  }, [periods, selectedId, openPeriod]);
+
+  const isCustom = selectedId === "custom";
 
   const range = useMemo(() => {
     const s = selectedPeriod?.start_date ?? customStart;
     const e = selectedPeriod?.end_date ?? customEnd;
-    // end exclusive: add 1 day
     const start = new Date(s + "T00:00:00Z").toISOString();
     const endDate = new Date(e + "T00:00:00Z");
     endDate.setUTCDate(endDate.getUTCDate() + 1);
-    const end = endDate.toISOString();
-    return { start, end, sLabel: s, eLabel: e };
+    return { start, end: endDate.toISOString(), sLabel: s, eLabel: e };
   }, [selectedPeriod, customStart, customEnd]);
 
   const loadPeriods = () => {
@@ -109,21 +139,38 @@ function Page() {
       ? reportByPeriod(selectedPeriod.id)
       : reportByRange(range.start, range.end);
     promise
-      .then((r) => { if (!cancelled) setRows(r); })
+      .then((r) => {
+        if (!cancelled) setRows(r);
+      })
       .catch(console.error)
-      .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [selectedPeriod?.id, range.start, range.end]);
+
+  const filteredRows = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (workerFilter !== "all" && r.worker.id !== workerFilter) return false;
+      if (q) {
+        const hay = `${r.worker.full_name} ${r.product?.name ?? ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [rows, workerFilter, search]);
 
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
-    for (const a of rows) {
+    for (const a of filteredRows) {
       const id = a.worker.id;
-      const name = a.worker.full_name;
       const salary = a.quantity * Number(a.unit_price);
       const r = map.get(id) ?? {
         workerId: id,
-        workerName: name,
+        workerName: a.worker.full_name,
         totalQty: 0,
         totalSalary: 0,
         jobs: 0,
@@ -136,11 +183,11 @@ function Page() {
       map.set(id, r);
     }
     return [...map.values()].sort((a, b) => b.totalSalary - a.totalSalary);
-  }, [rows]);
+  }, [filteredRows]);
 
   const products = useMemo<ProductAgg[]>(() => {
     const map = new Map<string, ProductAgg>();
-    for (const a of rows) {
+    for (const a of filteredRows) {
       const id = a.product?.id ?? "—";
       const name = a.product?.name ?? "—";
       const salary = a.quantity * Number(a.unit_price);
@@ -150,24 +197,34 @@ function Page() {
       map.set(id, r);
     }
     return [...map.values()].sort((a, b) => b.totalQty - a.totalQty);
+  }, [filteredRows]);
+
+  const allWorkersForFilter = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const r of rows) m.set(r.worker.id, r.worker.full_name);
+    return [...m.entries()].map(([id, name]) => ({ id, name }));
   }, [rows]);
 
-  const grand = useMemo(() => rows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0), [rows]);
+  const grand = useMemo(
+    () => filteredRows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0),
+    [filteredRows],
+  );
+  const totalQty = useMemo(() => filteredRows.reduce((s, r) => s + r.quantity, 0), [filteredRows]);
 
   const handleStartPeriod = async () => {
     const today = todayISO();
     const end = new Date();
     end.setDate(end.getDate() + 29);
-    const endISO = end.toISOString().slice(0, 10);
     try {
       const p = await createPayrollPeriod({
         label: `${today} dan boshlangan davr`,
         start_date: today,
-        end_date: endISO,
+        end_date: end.toISOString().slice(0, 10),
       });
       toast.success("Yangi davr boshlandi");
       loadPeriods();
-      setSelectedId(p.id);
+      setSelectedId("current");
+      void p;
     } catch (e) {
       console.error(e);
       toast.error("Xatolik yuz berdi");
@@ -175,34 +232,40 @@ function Page() {
   };
 
   const handleCloseAndStart = async () => {
-    if (!selectedPeriod) return;
-    if (!confirm(`"${selectedPeriod.label}" davrini tugatasizmi? Yangi davr avtomatik boshlanadi va jarayondagi topshiriqlar yangi davrga ko'chiriladi.`)) return;
+    if (!openPeriod) {
+      toast.error("Ochiq davr yo'q");
+      return;
+    }
+    if (
+      !confirm(
+        "Joriy davrni tugatasizmi? Yangi davr avtomatik boshlanadi va jarayondagi topshiriqlar yangi davrga ko'chiriladi.",
+      )
+    )
+      return;
     try {
-      const oldEnd = new Date(selectedPeriod.end_date + "T00:00:00Z");
+      const oldEnd = new Date(openPeriod.end_date + "T00:00:00Z");
       oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
       const nextLabel = `${oldEnd.toISOString().slice(0, 10)} dan boshlangan davr`;
-      const newId = await closeAndStartNextPeriod(selectedPeriod.id, nextLabel);
+      await closeAndStartNextPeriod(openPeriod.id, nextLabel);
       toast.success("Davr tugatildi, yangi davr ochildi");
       loadPeriods();
-      setSelectedId(newId);
+      setSelectedId("current");
     } catch (e: any) {
       toast.error(e.message ?? "Xatolik");
     }
   };
 
-  const handleReopen = async () => {
-    if (!selectedPeriod) return;
-    await reopenPayrollPeriod(selectedPeriod.id);
+  const handleReopen = async (id: string) => {
+    await reopenPayrollPeriod(id);
     toast.success("Davr qayta ochildi");
     loadPeriods();
   };
 
-  const handleDelete = async () => {
-    if (!selectedPeriod) return;
+  const handleDelete = async (id: string) => {
     if (!confirm("Bu davrni o'chirmoqchimisiz?")) return;
-    await deletePayrollPeriod(selectedPeriod.id);
+    await deletePayrollPeriod(id);
     toast.success("O'chirildi");
-    setSelectedId("custom");
+    if (selectedId === id) setSelectedId("current");
     loadPeriods();
   };
 
@@ -212,7 +275,15 @@ function Page() {
   const fileBase = `hisobot_${(periodTitle || "davr").replace(/[^a-z0-9_-]+/gi, "_")}`;
 
   const exportCSV = () => {
-    const header = ["Ishchi", "Sana (berilgan)", "Sana (bajarilgan)", "Mahsulot", "Miqdor", "Narx", "Summa"];
+    const header = [
+      "Ishchi",
+      "Sana (berilgan)",
+      "Sana (bajarilgan)",
+      "Mahsulot",
+      "Miqdor",
+      "Narx",
+      "Summa",
+    ];
     const lines = [header.join(",")];
     for (const w of workers) {
       for (const it of w.items) {
@@ -231,7 +302,9 @@ function Page() {
     }
     lines.push("");
     lines.push(`"JAMI","","","","","","${grand}"`);
-    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob(["\uFEFF" + lines.join("\n")], {
+      type: "text/csv;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -244,7 +317,6 @@ function Page() {
   const buildHTML = () => {
     const rowsHtml = workers
       .map((w) => {
-        // Aggregate by product for this worker
         const byProduct = new Map<string, { name: string; qty: number; sum: number }>();
         for (const it of w.items) {
           const pid = it.product?.id ?? "—";
@@ -279,24 +351,24 @@ function Page() {
         </table>
         <div style="font-size:11px;color:#64748b;margin:8px 0 4px">Topshiriqlar tafsiloti:</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead><tr style="background:#f1f5f9">
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Berilgan</th>
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Bajarilgan</th>
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:left">Mahsulot</th>
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Miqdor</th>
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Narx</th>
-            <th style="border:1px solid #e5e7eb;padding:6px;text-align:right">Summa</th>
+          <thead><tr style="background:#f0fdf4">
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Berilgan</th>
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Bajarilgan</th>
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Mahsulot</th>
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Miqdor</th>
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Narx</th>
+            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Summa</th>
           </tr></thead>
           <tbody>
           ${w.items
             .map(
               (it) => `<tr>
-              <td style="border:1px solid #e5e7eb;padding:6px">${fmtDateTime(it.started_at)}</td>
-              <td style="border:1px solid #e5e7eb;padding:6px">${fmtDateTime(it.completed_at)}</td>
-              <td style="border:1px solid #e5e7eb;padding:6px">${escapeHtml(it.product?.name ?? "—")}</td>
-              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right">${it.quantity}</td>
-              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
-              <td style="border:1px solid #e5e7eb;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
+              <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.started_at)}</td>
+              <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.completed_at)}</td>
+              <td style="border:1px solid #dcfce7;padding:6px">${escapeHtml(it.product?.name ?? "—")}</td>
+              <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${it.quantity}</td>
+              <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
+              <td style="border:1px solid #dcfce7;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
             </tr>`,
             )
             .join("")}
@@ -306,7 +378,7 @@ function Page() {
       .join("");
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
-      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}
+      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto;background:#f0fdf4}
       h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
       .total{font-size:28px;color:#15803d;font-weight:700;margin:12px 0}</style></head>
       <body>
@@ -326,18 +398,18 @@ function Page() {
   };
 
   const buildProductsHTML = () => {
-    const totalQty = products.reduce((s, p) => s + p.totalQty, 0);
+    const tQty = products.reduce((s, p) => s + p.totalQty, 0);
     const rowsHtml = products
       .map(
         (p) => `<tr>
-          <td style="border:1px solid #e5e7eb;padding:8px">${escapeHtml(p.productName)}</td>
-          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right">${p.totalQty}</td>
-          <td style="border:1px solid #e5e7eb;padding:8px;text-align:right"><b>${fmtMoney(p.totalSalary)}</b></td>
+          <td style="border:1px solid #dcfce7;padding:8px">${escapeHtml(p.productName)}</td>
+          <td style="border:1px solid #dcfce7;padding:8px;text-align:right">${p.totalQty}</td>
+          <td style="border:1px solid #dcfce7;padding:8px;text-align:right"><b>${fmtMoney(p.totalSalary)}</b></td>
         </tr>`,
       )
       .join("");
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>Mahsulotlar — ${escapeHtml(periodTitle)}</title>
-      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto}
+      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto;background:#f0fdf4}
       h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
       .total{font-size:24px;color:#15803d;font-weight:700;margin:12px 0}
       table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
@@ -346,7 +418,7 @@ function Page() {
       <body>
         <h1>Blessed Al — Mahsulotlar hisoboti</h1>
         <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
-        <div class="total">Jami mahsulot: ${totalQty} dona · Umumiy: ${fmtMoney(grand)}</div>
+        <div class="total">Jami mahsulot: ${tQty} dona · Umumiy: ${fmtMoney(grand)}</div>
         <table>
           <thead><tr>
             <th>Mahsulot</th>
@@ -366,23 +438,36 @@ function Page() {
     w.document.close();
   };
 
-
   const sharePDF = async () => {
     const html = buildHTML().replace("setTimeout(()=>window.print(),300)", "");
     const blob = new Blob([html], { type: "text/html" });
     const file = new File([blob], `${fileBase}.html`, { type: "text/html" });
-    const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void>; canShare?: (d: ShareData) => boolean };
+    const nav = navigator as Navigator & {
+      share?: (d: ShareData) => Promise<void>;
+      canShare?: (d: ShareData) => boolean;
+    };
     if (nav.share && nav.canShare?.({ files: [file] })) {
       try {
-        await nav.share({ title: periodTitle, text: `Hisobot: ${periodTitle} — ${fmtMoney(grand)}`, files: [file] });
+        await nav.share({
+          title: periodTitle,
+          text: `Hisobot: ${periodTitle} — ${fmtMoney(grand)}`,
+          files: [file],
+        });
         return;
-      } catch { /* cancelled */ }
+      } catch {
+        /* cancelled */
+      }
     }
     if (nav.share) {
       try {
-        await nav.share({ title: periodTitle, text: `Hisobot: ${periodTitle} — Umumiy: ${fmtMoney(grand)}` });
+        await nav.share({
+          title: periodTitle,
+          text: `Hisobot: ${periodTitle} — Umumiy: ${fmtMoney(grand)}`,
+        });
         return;
-      } catch { /* cancelled */ }
+      } catch {
+        /* cancelled */
+      }
     }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -394,167 +479,187 @@ function Page() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-4xl">Oylik hisobot</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          15 kunlik davrlarni boshqaring va to'liq tarixni ko'ring
-        </p>
-      </div>
-
-      {/* Period selector */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm">Hisobot davri</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-            <div className="space-y-1.5">
-              <Label>Saqlangan davr</Label>
-              <Select value={selectedId} onValueChange={setSelectedId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="custom">— Maxsus oraliq —</SelectItem>
-                  {periods.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.label} {p.closed_at ? "🔒" : ""}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {selectedPeriod && (
-              <div className="flex flex-wrap items-end gap-2">
-                {selectedPeriod.closed_at ? (
-                  <Button variant="outline" onClick={handleReopen}>
-                    <Unlock className="size-4" /> Qayta ochish
-                  </Button>
-                ) : (
-                  <Button onClick={handleCloseAndStart}>
-                    <Lock className="size-4" /> Davrni tugatish
-                  </Button>
-                )}
-                <Button variant="outline" size="icon" onClick={handleDelete}>
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {!selectedPeriod && (
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label>Boshlanish</Label>
-                <Input type="date" value={customStart} onChange={(e) => setCustomStart(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Tugash</Label>
-                <Input type="date" value={customEnd} onChange={(e) => setCustomEnd(e.target.value)} />
-              </div>
-            </div>
-          )}
-
-          {selectedPeriod && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>
-                {selectedPeriod.start_date} — {selectedPeriod.end_date}
+    <div className="space-y-5">
+      {/* Header bar */}
+      <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-background p-4 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-display text-3xl text-primary sm:text-4xl">Hisobotlar</h1>
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-mono text-muted-foreground">
+                {range.sLabel} → {range.eLabel}
               </span>
-              {selectedPeriod.closed_at ? (
-                <Badge variant="secondary">Yopilgan: {fmtDate(selectedPeriod.closed_at)}</Badge>
-              ) : (
-                <Badge>Ochiq</Badge>
+              {openPeriod && (
+                <Badge className="bg-primary/15 text-primary hover:bg-primary/20">
+                  <CalendarDays className="mr-1 size-3" />
+                  Joriy davr: {openPeriod.start_date}
+                </Badge>
               )}
             </div>
-          )}
+          </div>
 
-          {!hasOpenPeriod && (
-            <div className="rounded-md border bg-muted/30 p-4 flex items-center justify-between gap-3">
-              <div>
-                <div className="text-sm font-medium">Hozirda ochiq davr yo'q</div>
-                <div className="text-xs text-muted-foreground">Yangi davrni boshlang — bugundan boshlanadi</div>
-              </div>
+          <div className="flex flex-wrap gap-2">
+            <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
+                  <History className="size-4" /> Davrlar tarixi
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Davrlar tarixi</DialogTitle>
+                </DialogHeader>
+                <PeriodHistory
+                  periods={periods}
+                  closedPeriods={closedPeriods}
+                  openPeriod={openPeriod}
+                  onView={(id) => {
+                    setSelectedId(id);
+                    setHistoryOpen(false);
+                  }}
+                  onReopen={handleReopen}
+                  onDelete={handleDelete}
+                />
+              </DialogContent>
+            </Dialog>
+
+            {openPeriod ? (
+              <Button
+                onClick={handleCloseAndStart}
+                variant="outline"
+                className="border-primary/30 text-primary hover:bg-primary/10"
+              >
+                <Lock className="size-4" /> Davrni tugatish
+              </Button>
+            ) : (
               <Button onClick={handleStartPeriod}>
                 <Play className="size-4" /> Davrni boshlash
               </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
 
-      <Card className="border-l-4 border-l-primary">
-        <CardHeader>
-          <CardTitle className="text-xs uppercase tracking-wider text-muted-foreground">
-            Umumiy to'lov ({range.sLabel} — {range.eLabel})
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="font-display text-4xl">{fmtMoney(grand)}</div>
-          <div className="flex flex-wrap gap-2">
             <Button onClick={exportPDF} disabled={rows.length === 0}>
-              <FileText className="size-4" /> Ish haqi PDF
+              <Download className="size-4" /> Maoshlar
             </Button>
-            <Button variant="outline" onClick={exportProductsPDF} disabled={products.length === 0}>
-              <FileText className="size-4" /> Mahsulotlar PDF
+
+            <Button
+              variant="outline"
+              onClick={exportProductsPDF}
+              disabled={products.length === 0}
+              className="border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <FileText className="size-4" /> Mahsulotlar hisoboti
             </Button>
-            <Button variant="outline" onClick={exportCSV} disabled={rows.length === 0}>
-              <Download className="size-4" /> CSV (Excel)
-            </Button>
-            <Button variant="outline" onClick={sharePDF} disabled={rows.length === 0}>
-              <Share2 className="size-4" /> Ulashish
-            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="grid gap-3 p-4 md:grid-cols-5">
+          <div className="space-y-1">
+            <Label className="text-xs">Davr tanlash</Label>
+            <Select value={selectedId} onValueChange={setSelectedId}>
+              <SelectTrigger className="bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="current">Joriy davr</SelectItem>
+                <SelectItem value="custom">Maxsus oraliq</SelectItem>
+                {closedPeriods.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    🔒 {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Boshlanish</Label>
+            <Input
+              type="date"
+              disabled={!isCustom}
+              value={isCustom ? customStart : (selectedPeriod?.start_date ?? customStart)}
+              onChange={(e) => setCustomStart(e.target.value)}
+              className="bg-background"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Tugash</Label>
+            <Input
+              type="date"
+              disabled={!isCustom}
+              value={isCustom ? customEnd : (selectedPeriod?.end_date ?? customEnd)}
+              onChange={(e) => setCustomEnd(e.target.value)}
+              className="bg-background"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Ishchi</Label>
+            <Select value={workerFilter} onValueChange={setWorkerFilter}>
+              <SelectTrigger className="bg-background">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Hammasi</SelectItem>
+                {allWorkersForFilter.map((w) => (
+                  <SelectItem key={w.id} value={w.id}>
+                    {w.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Qidirish</Label>
+            <div className="relative">
+              <Filter className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-background pl-8"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Products summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Mahsulotlar bo'yicha</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <p className="p-6 text-sm text-muted-foreground">Yuklanmoqda…</p>
-          ) : products.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">Ma'lumot yo'q.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  <tr className="border-b">
-                    <th className="px-4 py-3">Mahsulot</th>
-                    <th className="px-4 py-3 text-right">Tayyorlangan miqdor</th>
-                    <th className="px-4 py-3 text-right">Jami summa</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((p) => (
-                    <tr key={p.productId} className="border-b last:border-0">
-                      <td className="px-4 py-3 font-medium">{p.productName}</td>
-                      <td className="px-4 py-3 text-right font-mono">{p.totalQty}</td>
-                      <td className="px-4 py-3 text-right font-mono font-semibold text-primary">
-                        {fmtMoney(p.totalSalary)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Stat cards */}
+      <div className="grid gap-3 sm:grid-cols-3">
+        <StatCard
+          label="Umumiy summa"
+          value={fmtMoney(grand)}
+          tone="primary"
+        />
+        <StatCard
+          label="Umumiy ishlab chiqarish"
+          value={`${totalQty} dona`}
+          tone="primary"
+          icon={<Package className="size-5 text-primary/70" />}
+        />
+        <StatCard
+          label="Ishchilar"
+          value={`${workers.length}`}
+          tone="warning"
+          icon={<Users className="size-5 text-warning/80" />}
+        />
+      </div>
 
-      {/* Workers with expandable history */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ishchilar bo'yicha (tarix bilan)</CardTitle>
+      {/* Workers report */}
+      <Card className="border-primary/20">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Ishchilar oylik hisoboti</CardTitle>
+          <span className="font-mono text-xs text-muted-foreground">
+            {range.sLabel} → {range.eLabel}
+          </span>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
             <p className="p-6 text-sm text-muted-foreground">Yuklanmoqda…</p>
           ) : workers.length === 0 ? (
-            <p className="p-6 text-sm text-muted-foreground">Bu davrda topshiriqlar yo'q.</p>
+            <div className="m-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-10 text-center text-sm text-muted-foreground">
+              Ma'lumot yo'q
+            </div>
           ) : (
             <div className="divide-y">
               {workers.map((w) => {
@@ -563,15 +668,15 @@ function Page() {
                   <div key={w.workerId}>
                     <button
                       onClick={() => setOpenWorker(expanded ? null : w.workerId)}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-primary/5"
                     >
                       {expanded ? (
-                        <ChevronDown className="size-4 text-muted-foreground" />
+                        <ChevronDown className="size-4 text-primary" />
                       ) : (
-                        <ChevronRight className="size-4 text-muted-foreground" />
+                        <ChevronRight className="size-4 text-primary" />
                       )}
                       <div className="flex-1 font-medium">{w.workerName}</div>
-                      <div className="hidden text-right font-mono text-sm text-muted-foreground sm:block">
+                      <div className="hidden text-right font-mono text-xs text-muted-foreground sm:block">
                         {w.jobs} ta · {w.totalQty} dona
                       </div>
                       <div className="w-32 text-right font-mono font-semibold text-primary">
@@ -579,11 +684,11 @@ function Page() {
                       </div>
                     </button>
                     {expanded && (
-                      <div className="bg-muted/30 px-4 pb-4">
-                        <div className="overflow-x-auto rounded-md border bg-background">
+                      <div className="bg-primary/5 px-4 pb-4">
+                        <div className="overflow-x-auto rounded-md border border-primary/20 bg-background">
                           <table className="w-full text-sm">
-                            <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                              <tr className="border-b">
+                            <thead className="bg-primary/10 text-left text-xs uppercase tracking-wider text-primary">
+                              <tr>
                                 <th className="px-3 py-2">Berilgan</th>
                                 <th className="px-3 py-2">Bajarilgan</th>
                                 <th className="px-3 py-2">Mahsulot</th>
@@ -602,7 +707,9 @@ function Page() {
                                     {fmtDateTime(it.completed_at)}
                                   </td>
                                   <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
-                                  <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
+                                  <td className="px-3 py-2 text-right font-mono">
+                                    {it.quantity}
+                                  </td>
                                   <td className="px-3 py-2 text-right font-mono">
                                     {fmtMoney(it.unit_price)}
                                   </td>
@@ -623,6 +730,168 @@ function Page() {
           )}
         </CardContent>
       </Card>
+
+      {/* Products report */}
+      <Card className="border-primary/20">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Mahsulot bo'yicha ishlab chiqarish</CardTitle>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={exportProductsPDF}
+            disabled={products.length === 0}
+            className="border-primary/30 text-primary hover:bg-primary/10"
+          >
+            <FileText className="size-4" /> PDF
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? (
+            <p className="p-6 text-sm text-muted-foreground">Yuklanmoqda…</p>
+          ) : products.length === 0 ? (
+            <div className="m-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-10 text-center text-sm text-muted-foreground">
+              Ma'lumot yo'q
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-primary/10 text-left text-xs uppercase tracking-wider text-primary">
+                  <tr>
+                    <th className="px-4 py-3">Mahsulot</th>
+                    <th className="px-4 py-3 text-right">Miqdor</th>
+                    <th className="px-4 py-3 text-right">Jami summa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {products.map((p) => (
+                    <tr key={p.productId} className="border-b last:border-0">
+                      <td className="px-4 py-3 font-medium">{p.productName}</td>
+                      <td className="px-4 py-3 text-right font-mono">{p.totalQty}</td>
+                      <td className="px-4 py-3 text-right font-mono font-semibold text-primary">
+                        {fmtMoney(p.totalSalary)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" onClick={exportCSV} disabled={rows.length === 0}>
+          <Download className="size-4" /> CSV (Excel)
+        </Button>
+        <Button variant="outline" onClick={sharePDF} disabled={rows.length === 0}>
+          <Share2 className="size-4" /> Ulashish
+        </Button>
+      </div>
     </div>
   );
 }
+
+function StatCard({
+  label,
+  value,
+  tone,
+  icon,
+}: {
+  label: string;
+  value: string;
+  tone: "primary" | "warning";
+  icon?: React.ReactNode;
+}) {
+  const toneClass =
+    tone === "primary"
+      ? "border-primary/25 bg-gradient-to-br from-primary/10 to-primary/5"
+      : "border-warning/40 bg-gradient-to-br from-warning/15 to-warning/5";
+  const valueClass = tone === "primary" ? "text-primary" : "text-warning";
+  return (
+    <div className={`rounded-2xl border p-4 ${toneClass}`}>
+      <div className="flex items-center justify-between">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">
+          {label}
+        </div>
+        {icon}
+      </div>
+      <div className={`mt-1 font-display text-3xl ${valueClass}`}>{value}</div>
+    </div>
+  );
+}
+
+function PeriodHistory({
+  periods,
+  closedPeriods,
+  openPeriod,
+  onView,
+  onReopen,
+  onDelete,
+}: {
+  periods: PayrollPeriod[];
+  closedPeriods: PayrollPeriod[];
+  openPeriod: PayrollPeriod | null;
+  onView: (id: string) => void;
+  onReopen: (id: string) => void;
+  onDelete: (id: string) => void;
+}) {
+  void periods;
+  return (
+    <div className="max-h-[60vh] space-y-2 overflow-y-auto">
+      {openPeriod && (
+        <div className="rounded-lg border-2 border-primary/40 bg-primary/10 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <div className="font-medium text-primary">{openPeriod.label}</div>
+              <div className="text-xs text-muted-foreground">
+                {openPeriod.start_date} — {openPeriod.end_date}
+              </div>
+            </div>
+            <Badge className="bg-primary text-primary-foreground">Ochiq</Badge>
+          </div>
+        </div>
+      )}
+      {closedPeriods.length === 0 && !openPeriod && (
+        <div className="py-8 text-center text-sm text-muted-foreground">
+          Hali davrlar yo'q
+        </div>
+      )}
+      {closedPeriods.map((p) => (
+        <div
+          key={p.id}
+          className="rounded-lg border border-primary/15 bg-background p-3 transition hover:border-primary/30 hover:bg-primary/5"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="font-medium">{p.label}</div>
+              <div className="text-xs text-muted-foreground">
+                {p.start_date} — {p.end_date} · Yopilgan: {fmtDate(p.closed_at)}
+              </div>
+            </div>
+            <div className="flex gap-1">
+              <Button size="sm" variant="outline" onClick={() => onView(p.id)}>
+                Ko'rish
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => onReopen(p.id)}>
+                <Unlock className="size-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onDelete(p.id)}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// keep import to avoid tree-shake warning
+void listAssignments as unknown as Assignment[];
+
+export default Page;
