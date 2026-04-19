@@ -103,15 +103,17 @@ function Page() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     const promise = selectedPeriod
       ? reportByPeriod(selectedPeriod.id)
       : reportByRange(range.start, range.end);
     promise
-      .then(setRows)
+      .then((r) => { if (!cancelled) setRows(r); })
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [selectedPeriod, range.start, range.end]);
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedPeriod?.id, range.start, range.end]);
 
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
@@ -308,7 +310,7 @@ function Page() {
       h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
       .total{font-size:28px;color:#15803d;font-weight:700;margin:12px 0}</style></head>
       <body>
-        <h1>Tikuv Cex — Oylik hisobot</h1>
+        <h1>Blessed Al — Oylik hisobot</h1>
         <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
         <div class="total">Umumiy: ${fmtMoney(grand)}</div>
         ${rowsHtml || '<p class="muted">Ma\'lumot yo\'q</p>'}
@@ -342,7 +344,7 @@ function Page() {
       th{background:#dcfce7;border:1px solid #bbf7d0;padding:8px;text-align:left}
       th.right{text-align:right}</style></head>
       <body>
-        <h1>Tikuv Cex — Mahsulotlar hisoboti</h1>
+        <h1>Blessed Al — Mahsulotlar hisoboti</h1>
         <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
         <div class="total">Jami mahsulot: ${totalQty} dona · Umumiy: ${fmtMoney(grand)}</div>
         <table>

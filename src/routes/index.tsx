@@ -89,10 +89,10 @@ function DashboardPage() {
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>1. <strong>Mahsulotlar</strong> bo'limida har bir mahsulot va uning birlik narxini qo'shing.</p>
           <p>2. <strong>Ishchilar</strong> bo'limida xodimlarni ro'yxatga oling.</p>
-          <p>3. <strong>Hisobot</strong> da yangi davr yarating (15 kunlik).</p>
+          <p>3. <strong>Hisobot</strong> da yangi davrni boshlang.</p>
           <p>4. <strong>Topshiriqlar</strong> bo'limida ishchiga yarim tayyor mahsulot bering.</p>
           <p>5. Ish tugagach, holatni "Bajarildi" ga o'zgartiring — maosh avtomatik hisoblanadi.</p>
-          <p>6. Davr tugaganda Hisobotdan <strong>Davrni tugatish</strong> tugmasini bosing — yangi davr avtomatik ochiladi.</p>
+          <p>6. Davr tugaganda Hisobotdan <strong>Davrni tugatish</strong> tugmasini bosing — yangi davr avtomatik ochiladi va jarayondagi topshiriqlar yangi davrga ko'chadi.</p>
         </CardContent>
       </Card>
     </div>

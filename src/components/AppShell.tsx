@@ -41,10 +41,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
           <div className="flex items-center gap-2">
             <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-display text-xl">
-              T
+              B
             </div>
             <div>
-              <div className="font-display text-xl leading-none">TIKUV CEX</div>
+              <div className="font-display text-xl leading-none">BLESSED AL</div>
               <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
                 Boshqaruv paneli
               </div>
