@@ -889,7 +889,3 @@ function PeriodHistory({
   );
 }
 
-// keep import to avoid tree-shake warning
-void listAssignments as unknown as Assignment[];
-
-export default Page;
