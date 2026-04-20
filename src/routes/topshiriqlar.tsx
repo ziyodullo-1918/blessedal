@@ -155,13 +155,114 @@ function Page() {
     }
   }
 
+  const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
+
+  async function loadHistoryItems(periodId: string) {
+    setSelectedHistoryId(periodId);
+    if (!periodId) {
+      setHistoryItems([]);
+      return;
+    }
+    setHistoryLoading(true);
+    try {
+      const data = await listAssignmentsByPeriod(periodId);
+      setHistoryItems(data);
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setHistoryLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-4xl">Topshiriqlar</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Hozirgi davr — yarim tayyor mahsulot berish va bajarilishini kuzatish
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-4xl">Topshiriqlar</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Hozirgi davr — yarim tayyor mahsulot berish va bajarilishini kuzatish
+          </p>
+        </div>
+        <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
+              <History className="size-4" /> Davrlar tarixi
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>Davrlar tarixi</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <Label>Davrni tanlang</Label>
+                <Select value={selectedHistoryId} onValueChange={loadHistoryItems}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Yopilgan davrlardan birini tanlang" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {closedPeriods.length === 0 && (
+                      <div className="px-3 py-2 text-sm text-muted-foreground">
+                        Hali yopilgan davr yo'q
+                      </div>
+                    )}
+                    {closedPeriods.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        🔒 {p.label} · {p.start_date} → {p.end_date}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="max-h-[55vh] overflow-y-auto rounded-md border">
+                {historyLoading ? (
+                  <p className="p-6 text-sm text-muted-foreground">Yuklanmoqda…</p>
+                ) : !selectedHistoryId ? (
+                  <p className="p-6 text-sm text-muted-foreground">Davr tanlang.</p>
+                ) : historyItems.length === 0 ? (
+                  <p className="p-6 text-sm text-muted-foreground">
+                    Bu davrda topshiriqlar yo'q.
+                  </p>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0 bg-muted text-left text-xs uppercase tracking-wider text-muted-foreground">
+                      <tr>
+                        <th className="px-3 py-2">Ishchi</th>
+                        <th className="px-3 py-2">Mahsulot</th>
+                        <th className="px-3 py-2 text-right">Miqdor</th>
+                        <th className="px-3 py-2 text-right">Maosh</th>
+                        <th className="px-3 py-2">Holat</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {historyItems.map((it) => (
+                        <tr key={it.id} className="border-b last:border-0">
+                          <td className="px-3 py-2 font-medium">{it.worker?.full_name ?? "—"}</td>
+                          <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
+                          <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
+                          <td className="px-3 py-2 text-right font-mono">
+                            {fmtMoney(it.quantity * Number(it.unit_price))}
+                          </td>
+                          <td className="px-3 py-2">
+                            {it.status === "completed" ? (
+                              <Badge className="bg-success text-success-foreground hover:bg-success">
+                                Bajarildi
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-warning text-warning">
+                                Jarayonda
+                              </Badge>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <Card>
