@@ -56,6 +56,11 @@ function Page() {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [tab, setTab] = useState<"all" | "in_progress" | "completed">("in_progress");
+  const [periods, setPeriods] = useState<PayrollPeriod[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string>("");
+  const [historyItems, setHistoryItems] = useState<Assignment[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const [workerId, setWorkerId] = useState("");
   const [productId, setProductId] = useState("");
@@ -64,17 +69,19 @@ function Page() {
   const [busy, setBusy] = useState(false);
 
   async function load() {
-    const [a, w, p] = await Promise.all([
+    const [a, w, p, prs] = await Promise.all([
       listAssignments({
         status: tab === "all" ? undefined : tab,
         activePeriodOnly: true,
       }),
       listWorkers(),
       listProducts(),
+      listPayrollPeriods(),
     ]);
     setItems(a);
     setWorkers(w);
     setProducts(p);
+    setPeriods(prs);
   }
   useEffect(() => {
     load().catch(console.error);
