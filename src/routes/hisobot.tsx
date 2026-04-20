@@ -564,14 +564,14 @@ function Page() {
 
             {openPeriod ? (
               <Button
-                onClick={handleCloseAndStart}
+                onClick={openCloseDialog}
                 variant="outline"
                 className="border-primary/30 text-primary hover:bg-primary/10"
               >
                 <Lock className="size-4" /> Davrni tugatish
               </Button>
             ) : (
-              <Button onClick={handleStartPeriod}>
+              <Button onClick={openStartDialog}>
                 <Play className="size-4" /> Davrni boshlash
               </Button>
             )}
