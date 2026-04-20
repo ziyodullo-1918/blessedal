@@ -7,9 +7,12 @@ import {
   createAssignment,
   deleteAssignment,
   listAssignments,
+  listAssignmentsByPeriod,
+  listPayrollPeriods,
   listProducts,
   listWorkers,
   type Assignment,
+  type PayrollPeriod,
   type Product,
   type Worker,
 } from "@/lib/data";
@@ -22,7 +25,10 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Plus, Trash2 } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
+import { CheckCircle2, History, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate, fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
