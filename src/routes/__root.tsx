@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
+import { ConfirmProvider } from "@/components/ConfirmDialog";
 
 import appCss from "../styles.css?url";
 
@@ -60,8 +61,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-        {children}
-        <Toaster richColors position="top-right" />
+        <ConfirmProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+        </ConfirmProvider>
         <Scripts />
       </body>
     </html>
