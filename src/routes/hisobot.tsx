@@ -229,46 +229,60 @@ function Page() {
   );
   const totalQty = useMemo(() => filteredRows.reduce((s, r) => s + r.quantity, 0), [filteredRows]);
 
+  const openStartDialog = () => {
+    const t = todayISO();
+    setStartDate(t);
+    setStartLabel(autoPeriodLabel(t));
+    setStartOpen(true);
+  };
+
   const handleStartPeriod = async () => {
-    const today = todayISO();
-    const end = new Date();
+    const end = new Date(startDate);
     end.setDate(end.getDate() + 29);
     try {
-      const p = await createPayrollPeriod({
-        label: `${today} dan boshlangan davr`,
-        start_date: today,
+      await createPayrollPeriod({
+        label: startLabel.trim() || autoPeriodLabel(startDate),
+        start_date: startDate,
         end_date: end.toISOString().slice(0, 10),
       });
       toast.success("Yangi davr boshlandi");
       loadPeriods();
       setSelectedId("current");
-      void p;
-    } catch (e) {
+      setStartOpen(false);
+    } catch (e: any) {
       console.error(e);
-      toast.error("Xatolik yuz berdi");
+      toast.error(e?.message ?? "Xatolik yuz berdi");
     }
   };
 
-  const handleCloseAndStart = async () => {
+  const openCloseDialog = () => {
     if (!openPeriod) {
       toast.error("Ochiq davr yo'q");
       return;
     }
-    const ok = await confirm({
-      title: "Davrni tugatasizmi?",
-      description:
-        "Yangi davr avtomatik boshlanadi. Jarayondagi (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.",
-      confirmText: "Tugatish",
-    });
-    if (!ok) return;
+    const t = todayISO();
+    setCloseDate(t);
+    // Next period starts day after close
+    const next = new Date(t);
+    next.setDate(next.getDate() + 1);
+    const nISO = next.toISOString().slice(0, 10);
+    setNextStart(nISO);
+    setNextLabel(autoPeriodLabel(nISO));
+    setCloseOpen(true);
+  };
+
+  const handleCloseAndStart = async () => {
+    if (!openPeriod) return;
     try {
-      const oldEnd = new Date(openPeriod.end_date + "T00:00:00Z");
-      oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
-      const nextLabel = `${oldEnd.toISOString().slice(0, 10)} dan boshlangan davr`;
-      await closeAndStartNextPeriod(openPeriod.id, nextLabel);
+      await closeAndStartNextPeriod(
+        openPeriod.id,
+        nextLabel.trim() || autoPeriodLabel(nextStart),
+        { closeDate, newStartDate: nextStart },
+      );
       toast.success("Davr tugatildi, yangi davr ochildi");
       loadPeriods();
       setSelectedId("current");
+      setCloseOpen(false);
     } catch (e: any) {
       toast.error(e.message ?? "Xatolik");
     }
