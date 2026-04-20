@@ -10,6 +10,7 @@ import {
   closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
+  autoPeriodLabel,
   type ReportRow,
   type PayrollPeriod,
 } from "@/lib/data";
