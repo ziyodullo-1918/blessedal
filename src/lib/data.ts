@@ -242,15 +242,46 @@ export async function deletePayrollPeriod(id: string) {
   if (error) throw error;
 }
 
-// Close current period and create the next one starting the day after.
+// Close current period and create the next one.
 // Any in-progress assignments are moved to the new period.
-export async function closeAndStartNextPeriod(periodId: string, newLabel: string) {
+export async function closeAndStartNextPeriod(
+  periodId: string,
+  newLabel: string,
+  options?: { closeDate?: string; newStartDate?: string },
+) {
   const { data, error } = await supabase.rpc("close_period_and_rollover", {
     _period_id: periodId,
     _new_label: newLabel,
-  });
+    _close_date: options?.closeDate ?? null,
+    _new_start: options?.newStartDate ?? null,
+  } as never);
   if (error) throw error;
   return data as string; // new period id
+}
+
+// Auto-name a period like "Aprel boshi", "Aprel o'rtasi", "Aprel ohiri"
+const MONTHS_UZ = [
+  "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+  "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr",
+];
+export function autoPeriodLabel(dateISO: string): string {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  const month = MONTHS_UZ[(m - 1) % 12];
+  let part = "boshi";
+  if (d >= 21) part = "ohiri";
+  else if (d >= 11) part = "o'rtasi";
+  return `${month} ${part} (${y})`;
+}
+
+// Assignments grouped/filtered by period
+export async function listAssignmentsByPeriod(periodId: string): Promise<Assignment[]> {
+  const { data, error } = await supabase
+    .from("assignments")
+    .select("*, worker:workers(full_name), product:products(name)")
+    .eq("period_id", periodId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as unknown as Assignment[];
 }
 
 // Report by saved period (uses period_id, not date range — handles rollovers)
