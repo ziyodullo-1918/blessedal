@@ -592,7 +592,109 @@ function Page() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Start period dialog */}
+      <Dialog open={startOpen} onOpenChange={setStartOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Yangi davrni boshlash</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Boshlanish sanasi</Label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setStartLabel(autoPeriodLabel(e.target.value));
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Davr nomi (avtomatik)</Label>
+              <Input
+                value={startLabel}
+                onChange={(e) => setStartLabel(e.target.value)}
+                placeholder="Aprel boshi"
+              />
+              <p className="text-xs text-muted-foreground">
+                Tahrirlashingiz mumkin yoki avtomatik nom bilan davom eting.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStartOpen(false)}>
+                Bekor qilish
+              </Button>
+              <Button onClick={handleStartPeriod}>
+                <Play className="size-4" /> Boshlash
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Close period dialog */}
+      <Dialog open={closeOpen} onOpenChange={setCloseOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Davrni tugatish</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Joriy davr yopiladi va yangi davr avtomatik ochiladi. Jarayondagi
+              (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Yopilish sanasi</Label>
+                <Input
+                  type="date"
+                  value={closeDate}
+                  onChange={(e) => {
+                    setCloseDate(e.target.value);
+                    const next = new Date(e.target.value);
+                    next.setDate(next.getDate() + 1);
+                    const nISO = next.toISOString().slice(0, 10);
+                    setNextStart(nISO);
+                    setNextLabel(autoPeriodLabel(nISO));
+                  }}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Yangi davr boshlanish</Label>
+                <Input
+                  type="date"
+                  value={nextStart}
+                  onChange={(e) => {
+                    setNextStart(e.target.value);
+                    setNextLabel(autoPeriodLabel(e.target.value));
+                  }}
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Yangi davr nomi (avtomatik)</Label>
+              <Input
+                value={nextLabel}
+                onChange={(e) => setNextLabel(e.target.value)}
+                placeholder="Aprel ohiri"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setCloseOpen(false)}>
+                Bekor qilish
+              </Button>
+              <Button
+                onClick={handleCloseAndStart}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Lock className="size-4" /> Tugatish va yangisini boshlash
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="grid gap-3 p-4 md:grid-cols-5">
           <div className="space-y-1">
