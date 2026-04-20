@@ -12,11 +12,12 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   const loc = useLocation();
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
-
-  useEffect(() => {
-    if (!loading && user && role === "founder" && !FOUNDER_ALLOWED.has(loc.pathname)) {
+    if (loading) return;
+    if (!user) {
+      if (loc.pathname !== "/login") navigate({ to: "/login" });
+      return;
+    }
+    if (role === "founder" && !FOUNDER_ALLOWED.has(loc.pathname)) {
       navigate({ to: "/topshiriqlar" });
     }
   }, [loading, user, role, loc.pathname, navigate]);

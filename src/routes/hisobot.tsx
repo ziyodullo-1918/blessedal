@@ -10,6 +10,7 @@ import {
   closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
+  autoPeriodLabel,
   type ReportRow,
   type PayrollPeriod,
 } from "@/lib/data";
@@ -103,6 +104,15 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+
+  // Period start/close dialogs
+  const [startOpen, setStartOpen] = useState(false);
+  const [startDate, setStartDate] = useState(todayISO());
+  const [startLabel, setStartLabel] = useState(autoPeriodLabel(todayISO()));
+  const [closeOpen, setCloseOpen] = useState(false);
+  const [closeDate, setCloseDate] = useState(todayISO());
+  const [nextStart, setNextStart] = useState(todayISO());
+  const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
 
   const openPeriod = useMemo(() => periods.find((p) => !p.closed_at) ?? null, [periods]);
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
@@ -219,46 +229,60 @@ function Page() {
   );
   const totalQty = useMemo(() => filteredRows.reduce((s, r) => s + r.quantity, 0), [filteredRows]);
 
+  const openStartDialog = () => {
+    const t = todayISO();
+    setStartDate(t);
+    setStartLabel(autoPeriodLabel(t));
+    setStartOpen(true);
+  };
+
   const handleStartPeriod = async () => {
-    const today = todayISO();
-    const end = new Date();
+    const end = new Date(startDate);
     end.setDate(end.getDate() + 29);
     try {
-      const p = await createPayrollPeriod({
-        label: `${today} dan boshlangan davr`,
-        start_date: today,
+      await createPayrollPeriod({
+        label: startLabel.trim() || autoPeriodLabel(startDate),
+        start_date: startDate,
         end_date: end.toISOString().slice(0, 10),
       });
       toast.success("Yangi davr boshlandi");
       loadPeriods();
       setSelectedId("current");
-      void p;
-    } catch (e) {
+      setStartOpen(false);
+    } catch (e: any) {
       console.error(e);
-      toast.error("Xatolik yuz berdi");
+      toast.error(e?.message ?? "Xatolik yuz berdi");
     }
   };
 
-  const handleCloseAndStart = async () => {
+  const openCloseDialog = () => {
     if (!openPeriod) {
       toast.error("Ochiq davr yo'q");
       return;
     }
-    const ok = await confirm({
-      title: "Davrni tugatasizmi?",
-      description:
-        "Yangi davr avtomatik boshlanadi. Jarayondagi (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.",
-      confirmText: "Tugatish",
-    });
-    if (!ok) return;
+    const t = todayISO();
+    setCloseDate(t);
+    // Next period starts day after close
+    const next = new Date(t);
+    next.setDate(next.getDate() + 1);
+    const nISO = next.toISOString().slice(0, 10);
+    setNextStart(nISO);
+    setNextLabel(autoPeriodLabel(nISO));
+    setCloseOpen(true);
+  };
+
+  const handleCloseAndStart = async () => {
+    if (!openPeriod) return;
     try {
-      const oldEnd = new Date(openPeriod.end_date + "T00:00:00Z");
-      oldEnd.setUTCDate(oldEnd.getUTCDate() + 1);
-      const nextLabel = `${oldEnd.toISOString().slice(0, 10)} dan boshlangan davr`;
-      await closeAndStartNextPeriod(openPeriod.id, nextLabel);
+      await closeAndStartNextPeriod(
+        openPeriod.id,
+        nextLabel.trim() || autoPeriodLabel(nextStart),
+        { closeDate, newStartDate: nextStart },
+      );
       toast.success("Davr tugatildi, yangi davr ochildi");
       loadPeriods();
       setSelectedId("current");
+      setCloseOpen(false);
     } catch (e: any) {
       toast.error(e.message ?? "Xatolik");
     }
@@ -540,14 +564,14 @@ function Page() {
 
             {openPeriod ? (
               <Button
-                onClick={handleCloseAndStart}
+                onClick={openCloseDialog}
                 variant="outline"
                 className="border-primary/30 text-primary hover:bg-primary/10"
               >
                 <Lock className="size-4" /> Davrni tugatish
               </Button>
             ) : (
-              <Button onClick={handleStartPeriod}>
+              <Button onClick={openStartDialog}>
                 <Play className="size-4" /> Davrni boshlash
               </Button>
             )}
@@ -568,7 +592,109 @@ function Page() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Start period dialog */}
+      <Dialog open={startOpen} onOpenChange={setStartOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Yangi davrni boshlash</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Boshlanish sanasi</Label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setStartLabel(autoPeriodLabel(e.target.value));
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Davr nomi (avtomatik)</Label>
+              <Input
+                value={startLabel}
+                onChange={(e) => setStartLabel(e.target.value)}
+                placeholder="Aprel boshi"
+              />
+              <p className="text-xs text-muted-foreground">
+                Tahrirlashingiz mumkin yoki avtomatik nom bilan davom eting.
+              </p>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStartOpen(false)}>
+                Bekor qilish
+              </Button>
+              <Button onClick={handleStartPeriod}>
+                <Play className="size-4" /> Boshlash
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Close period dialog */}
+      <Dialog open={closeOpen} onOpenChange={setCloseOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Davrni tugatish</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Joriy davr yopiladi va yangi davr avtomatik ochiladi. Jarayondagi
+              (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Yopilish sanasi</Label>
+                <Input
+                  type="date"
+                  value={closeDate}
+                  onChange={(e) => {
+                    setCloseDate(e.target.value);
+                    const next = new Date(e.target.value);
+                    next.setDate(next.getDate() + 1);
+                    const nISO = next.toISOString().slice(0, 10);
+                    setNextStart(nISO);
+                    setNextLabel(autoPeriodLabel(nISO));
+                  }}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Yangi davr boshlanish</Label>
+                <Input
+                  type="date"
+                  value={nextStart}
+                  onChange={(e) => {
+                    setNextStart(e.target.value);
+                    setNextLabel(autoPeriodLabel(e.target.value));
+                  }}
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Yangi davr nomi (avtomatik)</Label>
+              <Input
+                value={nextLabel}
+                onChange={(e) => setNextLabel(e.target.value)}
+                placeholder="Aprel ohiri"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setCloseOpen(false)}>
+                Bekor qilish
+              </Button>
+              <Button
+                onClick={handleCloseAndStart}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <Lock className="size-4" /> Tugatish va yangisini boshlash
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="grid gap-3 p-4 md:grid-cols-5">
           <div className="space-y-1">

@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "lookup by login_id" ON public.founders;

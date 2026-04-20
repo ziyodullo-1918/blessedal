@@ -220,10 +220,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      close_period_and_rollover: {
-        Args: { _new_label: string; _period_id: string }
-        Returns: string
-      }
+      close_period_and_rollover:
+        | { Args: { _new_label: string; _period_id: string }; Returns: string }
+        | {
+            Args: {
+              _close_date?: string
+              _new_label: string
+              _new_start?: string
+              _period_id: string
+            }
+            Returns: string
+          }
     }
     Enums: {
       assignment_status: "in_progress" | "completed"
