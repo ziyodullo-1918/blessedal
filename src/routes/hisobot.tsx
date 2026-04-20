@@ -105,6 +105,15 @@ function Page() {
   const [openWorker, setOpenWorker] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
 
+  // Period start/close dialogs
+  const [startOpen, setStartOpen] = useState(false);
+  const [startDate, setStartDate] = useState(todayISO());
+  const [startLabel, setStartLabel] = useState(autoPeriodLabel(todayISO()));
+  const [closeOpen, setCloseOpen] = useState(false);
+  const [closeDate, setCloseDate] = useState(todayISO());
+  const [nextStart, setNextStart] = useState(todayISO());
+  const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
+
   const openPeriod = useMemo(() => periods.find((p) => !p.closed_at) ?? null, [periods]);
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
 
