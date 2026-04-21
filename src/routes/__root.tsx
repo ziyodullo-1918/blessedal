@@ -66,7 +66,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
       </head>
       <body style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
         {children}
-        <Toaster richColors position="top-right" />
         <Scripts />
       </body>
     </html>
