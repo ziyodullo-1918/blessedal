@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { listAssignments, listProducts, listWorkers, monthlyReport } from "@/lib/data";
@@ -9,11 +8,9 @@ import { Users, Package, ClipboardList, Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <DashboardPage />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <DashboardPage />
+    </RequireAuth>
   ),
 });
 

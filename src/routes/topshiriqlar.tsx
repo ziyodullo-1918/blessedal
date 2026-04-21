@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -35,11 +35,9 @@ import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/topshiriqlar")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <Page />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <Page />
+    </RequireAuth>
   ),
 });
 
@@ -196,16 +194,11 @@ function Page() {
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Davrni tanlang</Label>
-                <Select value={selectedHistoryId} onValueChange={loadHistoryItems}>
+                <Select value={selectedHistoryId || undefined} onValueChange={loadHistoryItems}>
                   <SelectTrigger>
                     <SelectValue placeholder="Yopilgan davrlardan birini tanlang" />
                   </SelectTrigger>
                   <SelectContent>
-                    {closedPeriods.length === 0 && (
-                      <div className="px-3 py-2 text-sm text-muted-foreground">
-                        Hali yopilgan davr yo'q
-                      </div>
-                    )}
                     {closedPeriods.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
                         🔒 {p.label} · {p.start_date} → {p.end_date}
@@ -273,7 +266,7 @@ function Page() {
           <form onSubmit={add} className="grid gap-3 lg:grid-cols-6">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
-              <Select value={workerId} onValueChange={setWorkerId}>
+              <Select value={workerId || undefined} onValueChange={setWorkerId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tanlang" />
                 </SelectTrigger>
@@ -286,7 +279,7 @@ function Page() {
             </div>
             <div className="space-y-1.5">
               <Label>Mahsulot</Label>
-              <Select value={productId} onValueChange={setProductId}>
+              <Select value={productId || undefined} onValueChange={setProductId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tanlang" />
                 </SelectTrigger>

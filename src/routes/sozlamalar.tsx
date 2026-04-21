@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { usePin } from "@/lib/pin";
@@ -16,11 +15,9 @@ import { listFounders, createFounder, deleteFounder, updateFounderPin, type Foun
 
 export const Route = createFileRoute("/sozlamalar")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <Page />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <Page />
+    </RequireAuth>
   ),
 });
 
