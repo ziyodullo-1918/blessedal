@@ -80,6 +80,10 @@ export async function createWorker(w: { full_name: string; phone: string | null 
   const { error } = await supabase.from("workers").insert({ ...w, user_id });
   if (error) throw error;
 }
+export async function updateWorker(id: string, w: { full_name: string; phone: string | null }) {
+  const { error } = await supabase.from("workers").update(w).eq("id", id);
+  if (error) throw error;
+}
 export async function deleteWorker(id: string) {
   const { error } = await supabase.from("workers").delete().eq("id", id);
   if (error) throw error;
