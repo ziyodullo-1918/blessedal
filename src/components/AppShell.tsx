@@ -3,6 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {role === "founder" ? `Ta'sischi: ${founder?.name ?? ""}` : user?.email}
             </span>
             <PinLockBtn />
+            <ThemeToggle />
             <Button
               variant="outline"
               size="sm"
