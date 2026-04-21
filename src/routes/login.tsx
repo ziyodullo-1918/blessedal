@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,11 +15,7 @@ export const Route = createFileRoute("/login")({
       { name: "description", content: "Boshqaruv panelga kirish." },
     ],
   }),
-  component: () => (
-    <AuthProvider>
-      <LoginPage />
-    </AuthProvider>
-  ),
+  component: LoginPage,
 });
 
 function LoginPage() {
