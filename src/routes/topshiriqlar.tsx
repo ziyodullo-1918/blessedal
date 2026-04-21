@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider, useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -35,11 +35,9 @@ import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/topshiriqlar")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <Page />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <Page />
+    </RequireAuth>
   ),
 });
 

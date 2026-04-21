@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { createWorker, deleteWorker, listWorkers, type Worker } from "@/lib/data";
@@ -13,11 +12,9 @@ import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/ishchilar")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <Page />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <Page />
+    </RequireAuth>
   ),
 });
 

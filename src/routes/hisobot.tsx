@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -55,11 +54,9 @@ import { useConfirm } from "@/components/ConfirmDialog";
 
 export const Route = createFileRoute("/hisobot")({
   component: () => (
-    <AuthProvider>
-      <RequireAuth>
-        <Page />
-      </RequireAuth>
-    </AuthProvider>
+    <RequireAuth>
+      <Page />
+    </RequireAuth>
   ),
 });
 
