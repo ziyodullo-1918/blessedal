@@ -162,7 +162,7 @@ export type Database = {
       products: {
         Row: {
           category_id: string | null
-          color: string | null
+          colors: string[]
           created_at: string
           id: string
           is_active: boolean
@@ -172,7 +172,7 @@ export type Database = {
         }
         Insert: {
           category_id?: string | null
-          color?: string | null
+          colors?: string[]
           created_at?: string
           id?: string
           is_active?: boolean
@@ -182,7 +182,7 @@ export type Database = {
         }
         Update: {
           category_id?: string | null
-          color?: string | null
+          colors?: string[]
           created_at?: string
           id?: string
           is_active?: boolean
