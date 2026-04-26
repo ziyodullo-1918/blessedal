@@ -73,7 +73,7 @@ function Page() {
         activePeriodOnly: true,
       }),
       listWorkers(),
-      listProducts(),
+      listProducts({ activeOnly: true }),
       listPayrollPeriods(),
     ]);
     setItems(a);
