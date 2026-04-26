@@ -196,6 +196,10 @@ function Page() {
                   <Plus className="size-4" /> Qo'shish
                 </Button>
               </div>
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-4">
+                <Label>Ranglar (variantlar)</Label>
+                <ColorVariantsEditor value={colors} onChange={setColors} />
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -215,6 +219,7 @@ function Page() {
                   <tr className="border-b">
                     <th className="py-3 pr-4">Mahsulot</th>
                     <th className="py-3 pr-4">Kategoriya</th>
+                    <th className="py-3 pr-4">Ranglar</th>
                     <th className="py-3 pr-4 text-right">Narxi</th>
                     <th className="py-3 pr-4">Faol</th>
                     {isAdmin && <th className="py-3 w-24"></th>}
@@ -241,6 +246,9 @@ function Page() {
                               ))}
                             </SelectContent>
                           </Select>
+                        </td>
+                        <td className="py-2 pr-4 min-w-[220px]">
+                          <ColorVariantsEditor value={eColors} onChange={setEColors} />
                         </td>
                         <td className="py-2 pr-4">
                           <Input
@@ -278,6 +286,22 @@ function Page() {
                         </td>
                         <td className="py-3 pr-4 text-muted-foreground">
                           {p.category?.name ?? "—"}
+                        </td>
+                        <td className="py-3 pr-4">
+                          {p.colors && p.colors.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {p.colors.map((c) => (
+                                <span
+                                  key={c}
+                                  className="inline-block size-4 rounded-full border border-border"
+                                  style={{ backgroundColor: c }}
+                                  title={c}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
                         </td>
                         <td className="py-3 pr-4 text-right font-mono">
                           {fmtMoney(p.price_per_unit)}
