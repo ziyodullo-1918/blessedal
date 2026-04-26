@@ -266,7 +266,7 @@ function Page() {
           <CardTitle>Yangi topshiriq</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={add} className="grid gap-3 lg:grid-cols-6">
+          <form onSubmit={add} className="grid gap-3 lg:grid-cols-7">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
               <Select value={workerId || undefined} onValueChange={setWorkerId}>
@@ -289,22 +289,27 @@ function Page() {
                 <SelectContent>
                   {products.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
-                      <span className="inline-flex items-center gap-2">
-                        {p.color ? (
-                          <span
-                            className="inline-block size-3 rounded-full border border-border"
-                            style={{ backgroundColor: p.color }}
-                          />
-                        ) : null}
-                        <span>
-                          {p.name}
-                          {p.color ? ` (${p.color})` : ""} — {fmtMoney(p.price_per_unit)}
-                        </span>
-                      </span>
+                      {p.name} — {fmtMoney(p.price_per_unit)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Rang</Label>
+              <div className="flex gap-1">
+                <Input
+                  type="color"
+                  value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : "#000000"}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-12 p-1 h-10 cursor-pointer shrink-0"
+                />
+                <Input
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  placeholder="#FF0000"
+                />
+              </div>
             </div>
             <div className="space-y-1.5">
               <Label>Miqdor (dona)</Label>
