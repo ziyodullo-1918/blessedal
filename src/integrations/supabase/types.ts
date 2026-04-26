@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       assignments: {
         Row: {
+          color: string | null
           completed_at: string | null
           created_at: string
           id: string
@@ -29,6 +30,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
+          color?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string
@@ -42,6 +44,7 @@ export type Database = {
           worker_id: string
         }
         Update: {
+          color?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string
