@@ -70,10 +70,12 @@ function Page() {
         name: name.trim(),
         price_per_unit: priceNum,
         category_id: catId === "none" ? null : catId,
+        colors,
       });
       setName("");
       setPrice("");
       setCatId("none");
+      setColors([]);
       await load();
       toast.success("Mahsulot qo'shildi");
     } catch (err: any) {
@@ -105,6 +107,7 @@ function Page() {
     setEName(p.name);
     setEPrice(String(p.price_per_unit));
     setECatId(p.category_id ?? "none");
+    setEColors(p.colors ?? []);
   }
 
   function cancelEdit() {
@@ -122,6 +125,7 @@ function Page() {
         name: eName.trim(),
         price_per_unit: priceNum,
         category_id: eCatId === "none" ? null : eCatId,
+        colors: eColors,
       });
       setEditingId(null);
       await load();
