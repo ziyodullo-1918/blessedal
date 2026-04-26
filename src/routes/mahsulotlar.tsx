@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { useAuth } from "@/lib/auth";
+import { ColorVariantsEditor } from "@/components/ColorVariantsEditor";
 
 export const Route = createFileRoute("/mahsulotlar")({
   component: Page,
@@ -37,6 +38,7 @@ function Page() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [catId, setCatId] = useState<string>("none");
+  const [colors, setColors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   // Edit state
@@ -44,6 +46,7 @@ function Page() {
   const [eName, setEName] = useState("");
   const [ePrice, setEPrice] = useState("");
   const [eCatId, setECatId] = useState<string>("none");
+  const [eColors, setEColors] = useState<string[]>([]);
 
   async function load() {
     const [p, c] = await Promise.all([listProducts(), listCategories()]);
@@ -67,10 +70,12 @@ function Page() {
         name: name.trim(),
         price_per_unit: priceNum,
         category_id: catId === "none" ? null : catId,
+        colors,
       });
       setName("");
       setPrice("");
       setCatId("none");
+      setColors([]);
       await load();
       toast.success("Mahsulot qo'shildi");
     } catch (err: any) {
@@ -102,6 +107,7 @@ function Page() {
     setEName(p.name);
     setEPrice(String(p.price_per_unit));
     setECatId(p.category_id ?? "none");
+    setEColors(p.colors ?? []);
   }
 
   function cancelEdit() {
@@ -119,6 +125,7 @@ function Page() {
         name: eName.trim(),
         price_per_unit: priceNum,
         category_id: eCatId === "none" ? null : eCatId,
+        colors: eColors,
       });
       setEditingId(null);
       await load();
@@ -189,6 +196,10 @@ function Page() {
                   <Plus className="size-4" /> Qo'shish
                 </Button>
               </div>
+              <div className="space-y-1.5 sm:col-span-2 lg:col-span-4">
+                <Label>Ranglar (variantlar)</Label>
+                <ColorVariantsEditor value={colors} onChange={setColors} />
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -208,6 +219,7 @@ function Page() {
                   <tr className="border-b">
                     <th className="py-3 pr-4">Mahsulot</th>
                     <th className="py-3 pr-4">Kategoriya</th>
+                    <th className="py-3 pr-4">Ranglar</th>
                     <th className="py-3 pr-4 text-right">Narxi</th>
                     <th className="py-3 pr-4">Faol</th>
                     {isAdmin && <th className="py-3 w-24"></th>}
@@ -234,6 +246,9 @@ function Page() {
                               ))}
                             </SelectContent>
                           </Select>
+                        </td>
+                        <td className="py-2 pr-4 min-w-[220px]">
+                          <ColorVariantsEditor value={eColors} onChange={setEColors} />
                         </td>
                         <td className="py-2 pr-4">
                           <Input
@@ -271,6 +286,22 @@ function Page() {
                         </td>
                         <td className="py-3 pr-4 text-muted-foreground">
                           {p.category?.name ?? "—"}
+                        </td>
+                        <td className="py-3 pr-4">
+                          {p.colors && p.colors.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {p.colors.map((c) => (
+                                <span
+                                  key={c}
+                                  className="inline-block size-4 rounded-full border border-border"
+                                  style={{ backgroundColor: c }}
+                                  title={c}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">—</span>
+                          )}
                         </td>
                         <td className="py-3 pr-4 text-right font-mono">
                           {fmtMoney(p.price_per_unit)}
