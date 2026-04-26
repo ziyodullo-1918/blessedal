@@ -73,7 +73,7 @@ function Page() {
         activePeriodOnly: true,
       }),
       listWorkers(),
-      listProducts(),
+      listProducts({ activeOnly: true }),
       listPayrollPeriods(),
     ]);
     setItems(a);
@@ -286,7 +286,18 @@ function Page() {
                 <SelectContent>
                   {products.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
-                      {p.name} — {fmtMoney(p.price_per_unit)}
+                      <span className="inline-flex items-center gap-2">
+                        {p.color ? (
+                          <span
+                            className="inline-block size-3 rounded-full border border-border"
+                            style={{ backgroundColor: p.color }}
+                          />
+                        ) : null}
+                        <span>
+                          {p.name}
+                          {p.color ? ` (${p.color})` : ""} — {fmtMoney(p.price_per_unit)}
+                        </span>
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>

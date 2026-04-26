@@ -159,24 +159,30 @@ export type Database = {
       products: {
         Row: {
           category_id: string | null
+          color: string | null
           created_at: string
           id: string
+          is_active: boolean
           name: string
           price_per_unit: number
           user_id: string
         }
         Insert: {
           category_id?: string | null
+          color?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
           name: string
           price_per_unit?: number
           user_id: string
         }
         Update: {
           category_id?: string | null
+          color?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
           name?: string
           price_per_unit?: number
           user_id?: string

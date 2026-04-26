@@ -27,7 +27,7 @@ function DashboardPage() {
     (async () => {
       const [workers, products, assignments, report] = await Promise.all([
         listWorkers(),
-        listProducts(),
+        listProducts({ activeOnly: true }),
         listAssignments({ status: "in_progress" }),
         monthlyReport(currentYearMonth()),
       ]);
