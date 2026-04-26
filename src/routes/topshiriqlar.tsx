@@ -63,6 +63,7 @@ function Page() {
   const [workerId, setWorkerId] = useState("");
   const [productId, setProductId] = useState("");
   const [qty, setQty] = useState("");
+  const [color, setColor] = useState("#000000");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
 
@@ -112,10 +113,12 @@ function Page() {
         product_id: productId,
         quantity: q,
         started_at: startedAt,
+        color: color || null,
       });
       setWorkerId("");
       setProductId("");
       setQty("");
+      setColor("#000000");
       setStartDate(todayStr());
       await load();
       toast.success("Topshiriq berildi");
