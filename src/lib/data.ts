@@ -53,17 +53,38 @@ export async function deleteCategory(id: string) {
 }
 
 // Products
-export async function listProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
+export async function listProducts(opts?: { activeOnly?: boolean }): Promise<Product[]> {
+  let q = supabase
     .from("products")
     .select("*, category:categories(name)")
     .order("name");
+  if (opts?.activeOnly) q = q.eq("is_active", true);
+  const { data, error } = await q;
   if (error) throw error;
   return data as unknown as Product[];
 }
-export async function createProduct(p: { name: string; price_per_unit: number; category_id: string | null }) {
+export async function createProduct(p: {
+  name: string;
+  price_per_unit: number;
+  category_id: string | null;
+  color?: string | null;
+  is_active?: boolean;
+}) {
   const user_id = await uid();
   const { error } = await supabase.from("products").insert({ ...p, user_id });
+  if (error) throw error;
+}
+export async function updateProduct(
+  id: string,
+  p: Partial<{
+    name: string;
+    price_per_unit: number;
+    category_id: string | null;
+    color: string | null;
+    is_active: boolean;
+  }>,
+) {
+  const { error } = await supabase.from("products").update(p).eq("id", id);
   if (error) throw error;
 }
 export async function deleteProduct(id: string) {
