@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { useAuth } from "@/lib/auth";
+import { ColorVariantsEditor } from "@/components/ColorVariantsEditor";
 
 export const Route = createFileRoute("/mahsulotlar")({
   component: Page,
@@ -37,6 +38,7 @@ function Page() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [catId, setCatId] = useState<string>("none");
+  const [colors, setColors] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   // Edit state
@@ -44,6 +46,7 @@ function Page() {
   const [eName, setEName] = useState("");
   const [ePrice, setEPrice] = useState("");
   const [eCatId, setECatId] = useState<string>("none");
+  const [eColors, setEColors] = useState<string[]>([]);
 
   async function load() {
     const [p, c] = await Promise.all([listProducts(), listCategories()]);
