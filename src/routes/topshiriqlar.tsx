@@ -379,7 +379,18 @@ function Page() {
                     return (
                       <tr key={a.id} className="border-b last:border-0">
                         <td className="px-4 py-3 font-medium">{a.worker?.full_name ?? "—"}</td>
-                        <td className="px-4 py-3">{a.product?.name ?? "—"}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {a.color && (
+                              <span
+                                className="inline-block size-3 rounded-full border border-border shrink-0"
+                                style={{ backgroundColor: a.color }}
+                                title={a.color}
+                              />
+                            )}
+                            <span>{a.product?.name ?? "—"}</span>
+                          </div>
+                        </td>
                         <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>
                         <td className="px-4 py-3 text-right font-mono">{fmtMoney(salary)}</td>
                         <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.started_at)}</td>
