@@ -36,7 +36,6 @@ function Page() {
   const [cats, setCats] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
-  const [color, setColor] = useState("");
   const [catId, setCatId] = useState<string>("none");
   const [busy, setBusy] = useState(false);
 
@@ -44,7 +43,6 @@ function Page() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [eName, setEName] = useState("");
   const [ePrice, setEPrice] = useState("");
-  const [eColor, setEColor] = useState("");
   const [eCatId, setECatId] = useState<string>("none");
 
   async function load() {
@@ -69,11 +67,9 @@ function Page() {
         name: name.trim(),
         price_per_unit: priceNum,
         category_id: catId === "none" ? null : catId,
-        color: color.trim() || null,
       });
       setName("");
       setPrice("");
-      setColor("");
       setCatId("none");
       await load();
       toast.success("Mahsulot qo'shildi");
@@ -105,7 +101,6 @@ function Page() {
     setEditingId(p.id);
     setEName(p.name);
     setEPrice(String(p.price_per_unit));
-    setEColor(p.color ?? "");
     setECatId(p.category_id ?? "none");
   }
 
@@ -123,7 +118,6 @@ function Page() {
       await updateProduct(id, {
         name: eName.trim(),
         price_per_unit: priceNum,
-        color: eColor.trim() || null,
         category_id: eCatId === "none" ? null : eCatId,
       });
       setEditingId(null);
@@ -158,7 +152,7 @@ function Page() {
             <CardTitle>Yangi mahsulot</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-1.5">
                 <Label>Nomi</Label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan: Ko'ylak A1" />
@@ -173,22 +167,6 @@ function Page() {
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="15000"
                 />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Rang</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : "#000000"}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="w-12 p-1 h-10 cursor-pointer"
-                  />
-                  <Input
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    placeholder="#FF0000 yoki Qizil"
-                  />
-                </div>
               </div>
               <div className="space-y-1.5">
                 <Label>Kategoriya</Label>
@@ -229,7 +207,6 @@ function Page() {
                 <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
                   <tr className="border-b">
                     <th className="py-3 pr-4">Mahsulot</th>
-                    <th className="py-3 pr-4">Rang</th>
                     <th className="py-3 pr-4">Kategoriya</th>
                     <th className="py-3 pr-4 text-right">Narxi</th>
                     <th className="py-3 pr-4">Faol</th>
@@ -242,17 +219,6 @@ function Page() {
                       <tr key={p.id} className="border-b last:border-0 bg-muted/30">
                         <td className="py-2 pr-4">
                           <Input value={eName} onChange={(e) => setEName(e.target.value)} />
-                        </td>
-                        <td className="py-2 pr-4">
-                          <div className="flex gap-1">
-                            <Input
-                              type="color"
-                              value={/^#[0-9a-fA-F]{6}$/.test(eColor) ? eColor : "#000000"}
-                              onChange={(e) => setEColor(e.target.value)}
-                              className="w-10 p-1 h-9 cursor-pointer"
-                            />
-                            <Input value={eColor} onChange={(e) => setEColor(e.target.value)} placeholder="Rang" />
-                          </div>
                         </td>
                         <td className="py-2 pr-4">
                           <Select value={eCatId} onValueChange={setECatId}>
@@ -302,19 +268,6 @@ function Page() {
                             {p.name}
                             {!p.is_active && <Badge variant="outline" className="text-xs">Nofaol</Badge>}
                           </div>
-                        </td>
-                        <td className="py-3 pr-4">
-                          {p.color ? (
-                            <div className="flex items-center gap-2">
-                              <span
-                                className="inline-block size-4 rounded-full border border-border"
-                                style={{ backgroundColor: p.color }}
-                              />
-                              <span className="text-muted-foreground text-xs">{p.color}</span>
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
                         </td>
                         <td className="py-3 pr-4 text-muted-foreground">
                           {p.category?.name ?? "—"}
