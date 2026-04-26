@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import {
   createProduct,
   deleteProduct,
   listCategories,
   listProducts,
+  updateProduct,
   type Category,
   type Product,
 } from "@/lib/data";
@@ -16,27 +16,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/mahsulotlar")({
-  component: () => (
-    <RequireAuth>
-      <Page />
-    </RequireAuth>
-  ),
+  component: Page,
 });
 
 function Page() {
   const confirm = useConfirm();
+  const { role } = useAuth();
+  const isAdmin = role === "admin";
   const [items, setItems] = useState<Product[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [color, setColor] = useState("");
   const [catId, setCatId] = useState<string>("none");
   const [busy, setBusy] = useState(false);
+
+  // Edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [eName, setEName] = useState("");
+  const [ePrice, setEPrice] = useState("");
+  const [eColor, setEColor] = useState("");
+  const [eCatId, setECatId] = useState<string>("none");
 
   async function load() {
     const [p, c] = await Promise.all([listProducts(), listCategories()]);
@@ -60,9 +69,11 @@ function Page() {
         name: name.trim(),
         price_per_unit: priceNum,
         category_id: catId === "none" ? null : catId,
+        color: color.trim() || null,
       });
       setName("");
       setPrice("");
+      setColor("");
       setCatId("none");
       await load();
       toast.success("Mahsulot qo'shildi");
@@ -90,6 +101,48 @@ function Page() {
     }
   }
 
+  function startEdit(p: Product) {
+    setEditingId(p.id);
+    setEName(p.name);
+    setEPrice(String(p.price_per_unit));
+    setEColor(p.color ?? "");
+    setECatId(p.category_id ?? "none");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+  }
+
+  async function saveEdit(id: string) {
+    const priceNum = parseFloat(ePrice);
+    if (!eName.trim() || isNaN(priceNum) || priceNum < 0) {
+      toast.error("Iltimos, ma'lumotlarni to'g'ri kiriting");
+      return;
+    }
+    try {
+      await updateProduct(id, {
+        name: eName.trim(),
+        price_per_unit: priceNum,
+        color: eColor.trim() || null,
+        category_id: eCatId === "none" ? null : eCatId,
+      });
+      setEditingId(null);
+      await load();
+      toast.success("Saqlandi");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
+  async function toggleActive(p: Product, val: boolean) {
+    try {
+      await updateProduct(p.id, { is_active: val });
+      setItems((prev) => prev.map((x) => (x.id === p.id ? { ...x, is_active: val } : x)));
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -99,51 +152,69 @@ function Page() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Yangi mahsulot</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-1.5">
-              <Label>Nomi</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan: Ko'ylak A1" />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Narx (so'm / dona)</Label>
-              <Input
-                type="number"
-                min="0"
-                step="100"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="15000"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Kategoriya</Label>
-              <Select value={catId} onValueChange={setCatId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">— Yo'q —</SelectItem>
-                  {cats.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-end">
-              <Button type="submit" className="w-full" disabled={busy}>
-                <Plus className="size-4" /> Qo'shish
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      {isAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Yangi mahsulot</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="space-y-1.5">
+                <Label>Nomi</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan: Ko'ylak A1" />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Narx (so'm / dona)</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="100"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="15000"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Rang</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="color"
+                    value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : "#000000"}
+                    onChange={(e) => setColor(e.target.value)}
+                    className="w-12 p-1 h-10 cursor-pointer"
+                  />
+                  <Input
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    placeholder="#FF0000 yoki Qizil"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Kategoriya</Label>
+                <Select value={catId} onValueChange={setCatId}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— Yo'q —</SelectItem>
+                    {cats.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-end">
+                <Button type="submit" className="w-full" disabled={busy}>
+                  <Plus className="size-4" /> Qo'shish
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -158,28 +229,121 @@ function Page() {
                 <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
                   <tr className="border-b">
                     <th className="py-3 pr-4">Mahsulot</th>
+                    <th className="py-3 pr-4">Rang</th>
                     <th className="py-3 pr-4">Kategoriya</th>
                     <th className="py-3 pr-4 text-right">Narxi</th>
-                    <th className="py-3 w-10"></th>
+                    <th className="py-3 pr-4">Faol</th>
+                    {isAdmin && <th className="py-3 w-24"></th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((p) => (
-                    <tr key={p.id} className="border-b last:border-0">
-                      <td className="py-3 pr-4 font-medium">{p.name}</td>
-                      <td className="py-3 pr-4 text-muted-foreground">
-                        {p.category?.name ?? "—"}
-                      </td>
-                      <td className="py-3 pr-4 text-right font-mono">
-                        {fmtMoney(p.price_per_unit)}
-                      </td>
-                      <td className="py-3">
-                        <Button variant="ghost" size="sm" onClick={() => remove(p.id)}>
-                          <Trash2 className="size-4 text-destructive" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {items.map((p) =>
+                    editingId === p.id ? (
+                      <tr key={p.id} className="border-b last:border-0 bg-muted/30">
+                        <td className="py-2 pr-4">
+                          <Input value={eName} onChange={(e) => setEName(e.target.value)} />
+                        </td>
+                        <td className="py-2 pr-4">
+                          <div className="flex gap-1">
+                            <Input
+                              type="color"
+                              value={/^#[0-9a-fA-F]{6}$/.test(eColor) ? eColor : "#000000"}
+                              onChange={(e) => setEColor(e.target.value)}
+                              className="w-10 p-1 h-9 cursor-pointer"
+                            />
+                            <Input value={eColor} onChange={(e) => setEColor(e.target.value)} placeholder="Rang" />
+                          </div>
+                        </td>
+                        <td className="py-2 pr-4">
+                          <Select value={eCatId} onValueChange={setECatId}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">— Yo'q —</SelectItem>
+                              {cats.map((c) => (
+                                <SelectItem key={c.id} value={c.id}>
+                                  {c.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="py-2 pr-4">
+                          <Input
+                            type="number"
+                            min="0"
+                            step="100"
+                            value={ePrice}
+                            onChange={(e) => setEPrice(e.target.value)}
+                            className="text-right font-mono"
+                          />
+                        </td>
+                        <td className="py-2 pr-4">
+                          <Switch checked={p.is_active} onCheckedChange={(v) => toggleActive(p, v)} />
+                        </td>
+                        {isAdmin && (
+                          <td className="py-2">
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => saveEdit(p.id)}>
+                                <Check className="size-4 text-primary" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={cancelEdit}>
+                                <X className="size-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ) : (
+                      <tr key={p.id} className={`border-b last:border-0 ${!p.is_active ? "opacity-50" : ""}`}>
+                        <td className="py-3 pr-4 font-medium">
+                          <div className="flex items-center gap-2">
+                            {p.name}
+                            {!p.is_active && <Badge variant="outline" className="text-xs">Nofaol</Badge>}
+                          </div>
+                        </td>
+                        <td className="py-3 pr-4">
+                          {p.color ? (
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="inline-block size-4 rounded-full border border-border"
+                                style={{ backgroundColor: p.color }}
+                              />
+                              <span className="text-muted-foreground text-xs">{p.color}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="py-3 pr-4 text-muted-foreground">
+                          {p.category?.name ?? "—"}
+                        </td>
+                        <td className="py-3 pr-4 text-right font-mono">
+                          {fmtMoney(p.price_per_unit)}
+                        </td>
+                        <td className="py-3 pr-4">
+                          <Switch
+                            checked={p.is_active}
+                            onCheckedChange={(v) => toggleActive(p, v)}
+                            disabled={!isAdmin}
+                          />
+                        </td>
+                        {isAdmin && (
+                          <td className="py-3">
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => startEdit(p)}>
+                                <Pencil className="size-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => remove(p.id)}>
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ),
+                  )}
                 </tbody>
               </table>
             </div>
