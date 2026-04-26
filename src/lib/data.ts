@@ -7,7 +7,7 @@ export type Product = {
   price_per_unit: number;
   category_id: string | null;
   is_active: boolean;
-  color: string | null;
+  colors: string[];
   created_at: string;
   category?: { name: string } | null;
 };
@@ -68,11 +68,11 @@ export async function createProduct(p: {
   name: string;
   price_per_unit: number;
   category_id: string | null;
-  color?: string | null;
+  colors?: string[];
   is_active?: boolean;
 }) {
   const user_id = await uid();
-  const { error } = await supabase.from("products").insert({ ...p, user_id });
+  const { error } = await supabase.from("products").insert({ ...p, user_id } as never);
   if (error) throw error;
 }
 export async function updateProduct(
@@ -81,11 +81,11 @@ export async function updateProduct(
     name: string;
     price_per_unit: number;
     category_id: string | null;
-    color: string | null;
+    colors: string[];
     is_active: boolean;
   }>,
 ) {
-  const { error } = await supabase.from("products").update(p).eq("id", id);
+  const { error } = await supabase.from("products").update(p as never).eq("id", id);
   if (error) throw error;
 }
 export async function deleteProduct(id: string) {
