@@ -23,6 +23,7 @@ export type Assignment = {
   completed_at: string | null;
   created_at: string;
   period_id: string | null;
+  color: string | null;
   worker?: { full_name: string } | null;
   product?: { name: string } | null;
 };
@@ -151,6 +152,7 @@ export async function createAssignment(a: {
   quantity: number;
   /** Optional custom start date (admin only). Defaults to now. */
   started_at?: string;
+  color?: string | null;
 }) {
   const user_id = await uid();
   const { data: prod, error: pe } = await supabase
@@ -176,7 +178,8 @@ export async function createAssignment(a: {
     status: "in_progress",
     started_at: a.started_at ?? new Date().toISOString(),
     period_id: openPeriod?.id ?? null,
-  });
+    color: a.color ?? null,
+  } as never);
   if (error) throw error;
 }
 
