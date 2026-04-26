@@ -93,6 +93,20 @@ function Page() {
   const previewSalary =
     selectedProduct && qty ? Number(selectedProduct.price_per_unit) * Number(qty) : 0;
 
+  // Reset color when product changes; preselect first variant if available
+  useEffect(() => {
+    if (!selectedProduct) {
+      setColor("");
+      return;
+    }
+    if (selectedProduct.colors && selectedProduct.colors.length > 0) {
+      setColor(selectedProduct.colors[0]);
+    } else {
+      setColor("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId]);
+
   async function add(e: React.FormEvent) {
     e.preventDefault();
     const q = parseInt(qty);
@@ -297,19 +311,40 @@ function Page() {
             </div>
             <div className="space-y-1.5">
               <Label>Rang</Label>
-              <div className="flex gap-1">
-                <Input
-                  type="color"
-                  value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : "#000000"}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="w-12 p-1 h-10 cursor-pointer shrink-0"
-                />
-                <Input
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  placeholder="#FF0000"
-                />
-              </div>
+              {selectedProduct && selectedProduct.colors && selectedProduct.colors.length > 0 ? (
+                <Select value={color || undefined} onValueChange={setColor}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Rangni tanlang">
+                      {color && (
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block size-4 rounded-full border"
+                            style={{ backgroundColor: color }}
+                          />
+                          <span className="font-mono text-xs">{color}</span>
+                        </span>
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedProduct.colors.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block size-4 rounded-full border"
+                            style={{ backgroundColor: c }}
+                          />
+                          <span className="font-mono text-xs">{c}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="flex h-10 items-center rounded-md border bg-muted px-3 text-xs text-muted-foreground">
+                  {selectedProduct ? "Mahsulotda rang variantlari yo'q" : "Avval mahsulot tanlang"}
+                </div>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label>Miqdor (dona)</Label>
