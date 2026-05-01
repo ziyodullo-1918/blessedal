@@ -64,6 +64,7 @@ function Page() {
   const [productId, setProductId] = useState("");
   const [qty, setQty] = useState("");
   const [color, setColor] = useState("");
+  const [colorName, setColorName] = useState("");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
 
