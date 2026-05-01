@@ -154,6 +154,7 @@ export async function createAssignment(a: {
   /** Optional custom start date (admin only). Defaults to now. */
   started_at?: string;
   color?: string | null;
+  color_name?: string | null;
 }) {
   const user_id = await uid();
   const { data: prod, error: pe } = await supabase
