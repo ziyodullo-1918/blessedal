@@ -431,10 +431,13 @@ function Page() {
                               <span
                                 className="inline-block size-3 rounded-full border border-border shrink-0"
                                 style={{ backgroundColor: a.color }}
-                                title={a.color}
+                                title={a.color_name || a.color}
                               />
                             )}
                             <span>{a.product?.name ?? "—"}</span>
+                            {a.color_name && (
+                              <span className="text-xs text-muted-foreground">({a.color_name})</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>
