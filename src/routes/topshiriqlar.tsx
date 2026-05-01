@@ -129,11 +129,13 @@ function Page() {
         quantity: q,
         started_at: startedAt,
         color: color || null,
+        color_name: colorName.trim() || null,
       });
       setWorkerId("");
       setProductId("");
       setQty("");
       setColor("");
+      setColorName("");
       setStartDate(todayStr());
       await load();
       toast.success("Topshiriq berildi");
