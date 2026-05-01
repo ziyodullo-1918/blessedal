@@ -316,6 +316,7 @@ function Page() {
       "Sana (berilgan)",
       "Sana (bajarilgan)",
       "Mahsulot",
+      "Rang",
       "Miqdor",
       "Narx",
       "Summa",
@@ -324,11 +325,15 @@ function Page() {
     for (const w of workers) {
       for (const it of w.items) {
         const sum = it.quantity * Number(it.unit_price);
+        const colorCell = it.color_name && it.color
+          ? `${it.color_name} (${it.color})`
+          : it.color_name || it.color || "";
         const row = [
           w.workerName,
           fmtDateTime(it.started_at),
           fmtDateTime(it.completed_at),
           it.product?.name ?? "",
+          colorCell,
           it.quantity,
           Number(it.unit_price),
           sum,
@@ -337,7 +342,7 @@ function Page() {
       }
     }
     lines.push("");
-    lines.push(`"JAMI","","","","","","${grand}"`);
+    lines.push(`"JAMI","","","","","","","${grand}"`);
     const blob = new Blob(["\uFEFF" + lines.join("\n")], {
       type: "text/csv;charset=utf-8",
     });
