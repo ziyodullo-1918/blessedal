@@ -24,6 +24,7 @@ export type Assignment = {
   created_at: string;
   period_id: string | null;
   color: string | null;
+  color_name: string | null;
   worker?: { full_name: string } | null;
   product?: { name: string } | null;
 };
