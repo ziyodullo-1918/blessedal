@@ -32,6 +32,7 @@ import { CheckCircle2, History, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate, fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { ColorChip } from "@/components/ColorChip";
 
 export const Route = createFileRoute("/topshiriqlar")({
   component: () => (
@@ -252,18 +253,9 @@ function Page() {
                         <tr key={it.id} className="border-b last:border-0">
                           <td className="px-3 py-2 font-medium">{it.worker?.full_name ?? "—"}</td>
                           <td className="px-3 py-2">
-                            <div className="flex items-center gap-2">
-                              {it.color && (
-                                <span
-                                  className="inline-block size-3 rounded-full border border-border shrink-0"
-                                  style={{ backgroundColor: it.color }}
-                                  title={it.color_name || it.color}
-                                />
-                              )}
+                            <div className="flex items-center gap-2 flex-wrap">
                               <span>{it.product?.name ?? "—"}</span>
-                              {it.color_name && (
-                                <span className="text-xs text-muted-foreground">({it.color_name})</span>
-                              )}
+                              <ColorChip color={it.color} name={it.color_name} />
                             </div>
                           </td>
                           <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
@@ -440,18 +432,9 @@ function Page() {
                       <tr key={a.id} className="border-b last:border-0">
                         <td className="px-4 py-3 font-medium">{a.worker?.full_name ?? "—"}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {a.color && (
-                              <span
-                                className="inline-block size-3 rounded-full border border-border shrink-0"
-                                style={{ backgroundColor: a.color }}
-                                title={a.color_name || a.color}
-                              />
-                            )}
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span>{a.product?.name ?? "—"}</span>
-                            {a.color_name && (
-                              <span className="text-xs text-muted-foreground">({a.color_name})</span>
-                            )}
+                            <ColorChip color={a.color} name={a.color_name} />
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>

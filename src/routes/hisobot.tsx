@@ -51,6 +51,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { ColorChip } from "@/components/ColorChip";
 
 export const Route = createFileRoute("/hisobot")({
   component: () => (
@@ -406,7 +407,16 @@ function Page() {
               (it) => `<tr>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.started_at)}</td>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.completed_at)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px">${it.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${escapeHtml(it.color)};border:1px solid #cbd5e1;vertical-align:middle;margin-right:6px"></span>` : ""}${escapeHtml(it.product?.name ?? "—")}${it.color_name ? ` <span style="color:#64748b;font-size:11px">(${escapeHtml(it.color_name)})</span>` : ""}</td>
+              <td style="border:1px solid #dcfce7;padding:6px">${(() => {
+                const c = it.color || "";
+                const isHex = /^#[0-9a-fA-F]{6}$/.test(c);
+                const label = it.color_name || (isHex ? "" : c);
+                const dot = c
+                  ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;${isHex ? `background:${escapeHtml(c)};` : ""}border:1px solid #cbd5e1;vertical-align:middle;margin-right:6px"></span>`
+                  : "";
+                const labelHtml = label ? ` <span style="color:#64748b;font-size:11px">(${escapeHtml(label)})</span>` : "";
+                return `${dot}${escapeHtml(it.product?.name ?? "—")}${labelHtml}`;
+              })()}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${it.quantity}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
@@ -850,18 +860,9 @@ function Page() {
                                     {fmtDateTime(it.completed_at)}
                                   </td>
                                   <td className="px-3 py-2">
-                                    <div className="flex items-center gap-2">
-                                      {it.color && (
-                                        <span
-                                          className="inline-block size-3 rounded-full border border-border shrink-0"
-                                          style={{ backgroundColor: it.color }}
-                                          title={it.color_name || it.color}
-                                        />
-                                      )}
+                                    <div className="flex items-center gap-2 flex-wrap">
                                       <span>{it.product?.name ?? "—"}</span>
-                                      {it.color_name && (
-                                        <span className="text-xs text-muted-foreground">({it.color_name})</span>
-                                      )}
+                                      <ColorChip color={it.color} name={it.color_name} />
                                     </div>
                                   </td>
                                   <td className="px-3 py-2 text-right font-mono">
