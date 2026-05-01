@@ -32,6 +32,7 @@ import { CheckCircle2, History, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate, fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { ColorChip } from "@/components/ColorChip";
 
 export const Route = createFileRoute("/topshiriqlar")({
   component: () => (
