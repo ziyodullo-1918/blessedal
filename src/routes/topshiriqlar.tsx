@@ -251,7 +251,21 @@ function Page() {
                       {historyItems.map((it) => (
                         <tr key={it.id} className="border-b last:border-0">
                           <td className="px-3 py-2 font-medium">{it.worker?.full_name ?? "—"}</td>
-                          <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
+                          <td className="px-3 py-2">
+                            <div className="flex items-center gap-2">
+                              {it.color && (
+                                <span
+                                  className="inline-block size-3 rounded-full border border-border shrink-0"
+                                  style={{ backgroundColor: it.color }}
+                                  title={it.color_name || it.color}
+                                />
+                              )}
+                              <span>{it.product?.name ?? "—"}</span>
+                              {it.color_name && (
+                                <span className="text-xs text-muted-foreground">({it.color_name})</span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
                           <td className="px-3 py-2 text-right font-mono">
                             {fmtMoney(it.quantity * Number(it.unit_price))}
