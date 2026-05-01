@@ -181,6 +181,7 @@ export async function createAssignment(a: {
     started_at: a.started_at ?? new Date().toISOString(),
     period_id: openPeriod?.id ?? null,
     color: a.color ?? null,
+    color_name: a.color_name ?? null,
   } as never);
   if (error) throw error;
 }
