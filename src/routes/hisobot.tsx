@@ -859,18 +859,9 @@ function Page() {
                                     {fmtDateTime(it.completed_at)}
                                   </td>
                                   <td className="px-3 py-2">
-                                    <div className="flex items-center gap-2">
-                                      {it.color && (
-                                        <span
-                                          className="inline-block size-3 rounded-full border border-border shrink-0"
-                                          style={{ backgroundColor: it.color }}
-                                          title={it.color_name || it.color}
-                                        />
-                                      )}
+                                    <div className="flex items-center gap-2 flex-wrap">
                                       <span>{it.product?.name ?? "—"}</span>
-                                      {it.color_name && (
-                                        <span className="text-xs text-muted-foreground">({it.color_name})</span>
-                                      )}
+                                      <ColorChip color={it.color} name={it.color_name} />
                                     </div>
                                   </td>
                                   <td className="px-3 py-2 text-right font-mono">
