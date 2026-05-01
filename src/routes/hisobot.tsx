@@ -51,6 +51,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
+import { ColorChip } from "@/components/ColorChip";
 
 export const Route = createFileRoute("/hisobot")({
   component: () => (
