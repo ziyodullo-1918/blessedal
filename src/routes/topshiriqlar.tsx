@@ -64,6 +64,7 @@ function Page() {
   const [productId, setProductId] = useState("");
   const [qty, setQty] = useState("");
   const [color, setColor] = useState("");
+  const [colorName, setColorName] = useState("");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
 
@@ -128,11 +129,13 @@ function Page() {
         quantity: q,
         started_at: startedAt,
         color: color || null,
+        color_name: colorName.trim() || null,
       });
       setWorkerId("");
       setProductId("");
       setQty("");
       setColor("");
+      setColorName("");
       setStartDate(todayStr());
       await load();
       toast.success("Topshiriq berildi");
@@ -248,7 +251,21 @@ function Page() {
                       {historyItems.map((it) => (
                         <tr key={it.id} className="border-b last:border-0">
                           <td className="px-3 py-2 font-medium">{it.worker?.full_name ?? "—"}</td>
-                          <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
+                          <td className="px-3 py-2">
+                            <div className="flex items-center gap-2">
+                              {it.color && (
+                                <span
+                                  className="inline-block size-3 rounded-full border border-border shrink-0"
+                                  style={{ backgroundColor: it.color }}
+                                  title={it.color_name || it.color}
+                                />
+                              )}
+                              <span>{it.product?.name ?? "—"}</span>
+                              {it.color_name && (
+                                <span className="text-xs text-muted-foreground">({it.color_name})</span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-3 py-2 text-right font-mono">{it.quantity}</td>
                           <td className="px-3 py-2 text-right font-mono">
                             {fmtMoney(it.quantity * Number(it.unit_price))}
@@ -280,7 +297,7 @@ function Page() {
           <CardTitle>Yangi topshiriq</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={add} className="grid gap-3 lg:grid-cols-7">
+          <form onSubmit={add} className="grid gap-3 lg:grid-cols-8">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
               <Select value={workerId || undefined} onValueChange={setWorkerId}>
@@ -345,6 +362,14 @@ function Page() {
                   {selectedProduct ? "Mahsulotda rang variantlari yo'q" : "Avval mahsulot tanlang"}
                 </div>
               )}
+            </div>
+            <div className="space-y-1.5">
+              <Label>Rang nomi</Label>
+              <Input
+                value={colorName}
+                onChange={(e) => setColorName(e.target.value)}
+                placeholder="masalan: yashil"
+              />
             </div>
             <div className="space-y-1.5">
               <Label>Miqdor (dona)</Label>
@@ -420,10 +445,13 @@ function Page() {
                               <span
                                 className="inline-block size-3 rounded-full border border-border shrink-0"
                                 style={{ backgroundColor: a.color }}
-                                title={a.color}
+                                title={a.color_name || a.color}
                               />
                             )}
                             <span>{a.product?.name ?? "—"}</span>
+                            {a.color_name && (
+                              <span className="text-xs text-muted-foreground">({a.color_name})</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>

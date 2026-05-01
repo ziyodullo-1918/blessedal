@@ -17,6 +17,7 @@ export type Database = {
       assignments: {
         Row: {
           color: string | null
+          color_name: string | null
           completed_at: string | null
           created_at: string
           id: string
@@ -31,6 +32,7 @@ export type Database = {
         }
         Insert: {
           color?: string | null
+          color_name?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string
@@ -45,6 +47,7 @@ export type Database = {
         }
         Update: {
           color?: string | null
+          color_name?: string | null
           completed_at?: string | null
           created_at?: string
           id?: string

@@ -316,6 +316,7 @@ function Page() {
       "Sana (berilgan)",
       "Sana (bajarilgan)",
       "Mahsulot",
+      "Rang",
       "Miqdor",
       "Narx",
       "Summa",
@@ -324,11 +325,15 @@ function Page() {
     for (const w of workers) {
       for (const it of w.items) {
         const sum = it.quantity * Number(it.unit_price);
+        const colorCell = it.color_name && it.color
+          ? `${it.color_name} (${it.color})`
+          : it.color_name || it.color || "";
         const row = [
           w.workerName,
           fmtDateTime(it.started_at),
           fmtDateTime(it.completed_at),
           it.product?.name ?? "",
+          colorCell,
           it.quantity,
           Number(it.unit_price),
           sum,
@@ -337,7 +342,7 @@ function Page() {
       }
     }
     lines.push("");
-    lines.push(`"JAMI","","","","","","${grand}"`);
+    lines.push(`"JAMI","","","","","","","${grand}"`);
     const blob = new Blob(["\uFEFF" + lines.join("\n")], {
       type: "text/csv;charset=utf-8",
     });
@@ -401,7 +406,7 @@ function Page() {
               (it) => `<tr>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.started_at)}</td>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.completed_at)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px">${escapeHtml(it.product?.name ?? "—")}</td>
+              <td style="border:1px solid #dcfce7;padding:6px">${it.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${escapeHtml(it.color)};border:1px solid #cbd5e1;vertical-align:middle;margin-right:6px"></span>` : ""}${escapeHtml(it.product?.name ?? "—")}${it.color_name ? ` <span style="color:#64748b;font-size:11px">(${escapeHtml(it.color_name)})</span>` : ""}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${it.quantity}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
@@ -844,7 +849,21 @@ function Page() {
                                   <td className="px-3 py-2 font-mono text-xs">
                                     {fmtDateTime(it.completed_at)}
                                   </td>
-                                  <td className="px-3 py-2">{it.product?.name ?? "—"}</td>
+                                  <td className="px-3 py-2">
+                                    <div className="flex items-center gap-2">
+                                      {it.color && (
+                                        <span
+                                          className="inline-block size-3 rounded-full border border-border shrink-0"
+                                          style={{ backgroundColor: it.color }}
+                                          title={it.color_name || it.color}
+                                        />
+                                      )}
+                                      <span>{it.product?.name ?? "—"}</span>
+                                      {it.color_name && (
+                                        <span className="text-xs text-muted-foreground">({it.color_name})</span>
+                                      )}
+                                    </div>
+                                  </td>
                                   <td className="px-3 py-2 text-right font-mono">
                                     {it.quantity}
                                   </td>
