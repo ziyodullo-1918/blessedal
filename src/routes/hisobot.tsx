@@ -401,7 +401,7 @@ function Page() {
               (it) => `<tr>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.started_at)}</td>
               <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.completed_at)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px">${escapeHtml(it.product?.name ?? "—")}</td>
+              <td style="border:1px solid #dcfce7;padding:6px">${it.color ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${escapeHtml(it.color)};border:1px solid #cbd5e1;vertical-align:middle;margin-right:6px"></span>` : ""}${escapeHtml(it.product?.name ?? "—")}${it.color_name ? ` <span style="color:#64748b;font-size:11px">(${escapeHtml(it.color_name)})</span>` : ""}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${it.quantity}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
               <td style="border:1px solid #dcfce7;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
