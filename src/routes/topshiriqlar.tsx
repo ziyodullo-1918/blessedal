@@ -180,6 +180,44 @@ function Page() {
     }
   }
 
+  function startEdit(a: Assignment) {
+    setEditingId(a.id);
+    setEWorkerId(a.worker_id);
+    setEProductId(a.product_id);
+    setEQty(String(a.quantity));
+    setEColor(a.color ?? "");
+    setEStartDate(a.started_at ? a.started_at.slice(0, 10) : "");
+  }
+  function cancelEdit() {
+    setEditingId(null);
+  }
+  async function saveEdit(id: string) {
+    const q = parseInt(eQty);
+    if (!eWorkerId || !eProductId || isNaN(q) || q <= 0) {
+      toast.error("Ma'lumotlarni to'g'ri kiriting");
+      return;
+    }
+    try {
+      await updateAssignment(id, {
+        worker_id: eWorkerId,
+        product_id: eProductId,
+        quantity: q,
+        color: eColor || null,
+        started_at: eStartDate ? new Date(eStartDate + "T12:00:00Z").toISOString() : undefined,
+      });
+      setEditingId(null);
+      await load();
+      toast.success("Saqlandi");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
+  const editingProduct = useMemo(
+    () => products.find((p) => p.id === eProductId),
+    [products, eProductId],
+  );
+
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
 
   async function loadHistoryItems(periodId: string) {
