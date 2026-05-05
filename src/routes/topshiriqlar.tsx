@@ -447,61 +447,227 @@ function Page() {
           {items.length === 0 ? (
             <p className="p-6 text-sm text-muted-foreground">Hozirgi davrda topshiriqlar yo'q.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  <tr className="border-b">
-                    <th className="px-4 py-3">Ishchi</th>
-                    <th className="px-4 py-3">Mahsulot</th>
-                    <th className="px-4 py-3 text-right">Miqdor</th>
-                    <th className="px-4 py-3 text-right">Maosh</th>
-                    <th className="px-4 py-3">Boshlandi</th>
-                    <th className="px-4 py-3">Tugadi</th>
-                    <th className="px-4 py-3">Holat</th>
-                    <th className="px-4 py-3 w-32"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((a) => {
-                    const salary = a.quantity * Number(a.unit_price);
+            <>
+              {/* Desktop table */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
+                    <tr className="border-b">
+                      <th className="px-4 py-3">Ishchi</th>
+                      <th className="px-4 py-3">Mahsulot</th>
+                      <th className="px-4 py-3 text-right">Miqdor</th>
+                      <th className="px-4 py-3 text-right">Maosh</th>
+                      <th className="px-4 py-3">Boshlandi</th>
+                      <th className="px-4 py-3">Tugadi</th>
+                      <th className="px-4 py-3">Holat</th>
+                      <th className="px-4 py-3 w-32"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((a) => {
+                      const salary = a.quantity * Number(a.unit_price);
+                      const isEditing = editingId === a.id;
+                      if (isEditing && isAdmin) {
+                        return (
+                          <tr key={a.id} className="border-b bg-muted/30">
+                            <td className="px-4 py-2">
+                              <Select value={eWorkerId || undefined} onValueChange={setEWorkerId}>
+                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {workers.map((w) => (
+                                    <SelectItem key={w.id} value={w.id}>{w.full_name}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="space-y-1">
+                                <Select value={eProductId || undefined} onValueChange={(v) => { setEProductId(v); setEColor(""); }}>
+                                  <SelectTrigger><SelectValue /></SelectTrigger>
+                                  <SelectContent>
+                                    {products.map((p) => (
+                                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                {editingProduct?.colors && editingProduct.colors.length > 0 && (
+                                  <Select value={eColor || undefined} onValueChange={setEColor}>
+                                    <SelectTrigger><SelectValue placeholder="Rang" /></SelectTrigger>
+                                    <SelectContent>
+                                      {editingProduct.colors.map((c) => (
+                                        <SelectItem key={c} value={c}>
+                                          <span className="flex items-center gap-2">
+                                            <span className="inline-block size-4 rounded-full border" style={{ backgroundColor: c }} />
+                                            <span className="font-mono text-xs">{c}</span>
+                                          </span>
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-4 py-2 text-right">
+                              <Input type="number" min="1" value={eQty} onChange={(e) => setEQty(e.target.value)} className="text-right font-mono w-20 ml-auto" />
+                            </td>
+                            <td className="px-4 py-3 text-right font-mono text-muted-foreground">—</td>
+                            <td className="px-4 py-2" colSpan={2}>
+                              <Input type="date" value={eStartDate} onChange={(e) => setEStartDate(e.target.value)} />
+                            </td>
+                            <td className="px-4 py-3"></td>
+                            <td className="px-4 py-3">
+                              <div className="flex justify-end gap-1">
+                                <Button variant="ghost" size="sm" onClick={() => saveEdit(a.id)}>
+                                  <Check className="size-4 text-primary" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={cancelEdit}>
+                                  <X className="size-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }
+                      return (
+                        <tr key={a.id} className="border-b last:border-0">
+                          <td className="px-4 py-3 font-medium">{a.worker?.full_name ?? "—"}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span>{a.product?.name ?? "—"}</span>
+                              <ColorChip color={a.color} name={a.color_name} />
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>
+                          <td className="px-4 py-3 text-right font-mono">{fmtMoney(salary)}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.started_at)}</td>
+                          <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.completed_at)}</td>
+                          <td className="px-4 py-3">
+                            {a.status === "completed" ? (
+                              <Badge className="bg-success text-success-foreground hover:bg-success">Bajarildi</Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-warning text-warning">Jarayonda</Badge>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex justify-end gap-1">
+                              {a.status === "in_progress" && (
+                                <Button variant="ghost" size="sm" onClick={() => complete(a.id)}>
+                                  <CheckCircle2 className="size-4 text-success" />
+                                </Button>
+                              )}
+                              {isAdmin && (
+                                <Button variant="ghost" size="sm" onClick={() => startEdit(a)}>
+                                  <Pencil className="size-4" />
+                                </Button>
+                              )}
+                              <Button variant="ghost" size="sm" onClick={() => remove(a.id)}>
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile cards */}
+              <div className="md:hidden divide-y">
+                {items.map((a) => {
+                  const salary = a.quantity * Number(a.unit_price);
+                  const isEditing = editingId === a.id;
+                  if (isEditing && isAdmin) {
                     return (
-                      <tr key={a.id} className="border-b last:border-0">
-                        <td className="px-4 py-3 font-medium">{a.worker?.full_name ?? "—"}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2 flex-wrap">
+                      <div key={a.id} className="p-3 space-y-2 bg-muted/30">
+                        <Select value={eWorkerId || undefined} onValueChange={setEWorkerId}>
+                          <SelectTrigger><SelectValue placeholder="Ishchi" /></SelectTrigger>
+                          <SelectContent>
+                            {workers.map((w) => (
+                              <SelectItem key={w.id} value={w.id}>{w.full_name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select value={eProductId || undefined} onValueChange={(v) => { setEProductId(v); setEColor(""); }}>
+                          <SelectTrigger><SelectValue placeholder="Mahsulot" /></SelectTrigger>
+                          <SelectContent>
+                            {products.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {editingProduct?.colors && editingProduct.colors.length > 0 && (
+                          <Select value={eColor || undefined} onValueChange={setEColor}>
+                            <SelectTrigger><SelectValue placeholder="Rang" /></SelectTrigger>
+                            <SelectContent>
+                              {editingProduct.colors.map((c) => (
+                                <SelectItem key={c} value={c}>
+                                  <span className="flex items-center gap-2">
+                                    <span className="inline-block size-4 rounded-full border" style={{ backgroundColor: c }} />
+                                    <span className="font-mono text-xs">{c}</span>
+                                  </span>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                        <div className="grid grid-cols-2 gap-2">
+                          <Input type="number" min="1" value={eQty} onChange={(e) => setEQty(e.target.value)} placeholder="Miqdor" />
+                          <Input type="date" value={eStartDate} onChange={(e) => setEStartDate(e.target.value)} />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={cancelEdit}>
+                            <X className="size-4" /> Bekor
+                          </Button>
+                          <Button size="sm" onClick={() => saveEdit(a.id)}>
+                            <Check className="size-4" /> Saqlash
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={a.id} className="p-3 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium truncate">{a.worker?.full_name ?? "—"}</div>
+                          <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap mt-0.5">
                             <span>{a.product?.name ?? "—"}</span>
                             <ColorChip color={a.color} name={a.color_name} />
                           </div>
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono">{a.quantity}</td>
-                        <td className="px-4 py-3 text-right font-mono">{fmtMoney(salary)}</td>
-                        <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.started_at)}</td>
-                        <td className="px-4 py-3 text-muted-foreground">{fmtDate(a.completed_at)}</td>
-                        <td className="px-4 py-3">
-                          {a.status === "completed" ? (
-                            <Badge className="bg-success text-success-foreground hover:bg-success">Bajarildi</Badge>
-                          ) : (
-                            <Badge variant="outline" className="border-warning text-warning">Jarayonda</Badge>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex justify-end gap-1">
-                            {a.status === "in_progress" && (
-                              <Button variant="ghost" size="sm" onClick={() => complete(a.id)}>
-                                <CheckCircle2 className="size-4 text-success" />
-                              </Button>
-                            )}
-                            <Button variant="ghost" size="sm" onClick={() => remove(a.id)}>
-                              <Trash2 className="size-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                        </div>
+                        {a.status === "completed" ? (
+                          <Badge className="bg-success text-success-foreground hover:bg-success shrink-0">Bajarildi</Badge>
+                        ) : (
+                          <Badge variant="outline" className="border-warning text-warning shrink-0">Jarayonda</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <div className="font-mono text-xs text-muted-foreground">
+                          {a.quantity} dona · {fmtDate(a.started_at)}
+                        </div>
+                        <div className="font-mono font-semibold text-primary">{fmtMoney(salary)}</div>
+                      </div>
+                      <div className="flex justify-end gap-1 -mr-2">
+                        {a.status === "in_progress" && (
+                          <Button variant="ghost" size="sm" onClick={() => complete(a.id)}>
+                            <CheckCircle2 className="size-4 text-success" />
+                          </Button>
+                        )}
+                        {isAdmin && (
+                          <Button variant="ghost" size="sm" onClick={() => startEdit(a)}>
+                            <Pencil className="size-4" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => remove(a.id)}>
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
