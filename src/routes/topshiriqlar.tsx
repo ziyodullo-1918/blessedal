@@ -362,14 +362,6 @@ function Page() {
               )}
             </div>
             <div className="space-y-1.5">
-              <Label>Rang nomi</Label>
-              <Input
-                value={colorName}
-                onChange={(e) => setColorName(e.target.value)}
-                placeholder="masalan: yashil"
-              />
-            </div>
-            <div className="space-y-1.5">
               <Label>Miqdor (dona)</Label>
               <Input
                 type="number"
