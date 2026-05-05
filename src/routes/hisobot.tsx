@@ -656,6 +656,14 @@ function Page() {
               Joriy davr yopiladi va yangi davr avtomatik ochiladi. Jarayondagi
               (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.
             </p>
+            {openPeriod && (
+              <div className="rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
+                <div className="font-medium text-primary">{openPeriod.label}</div>
+                <div className="text-xs text-muted-foreground font-mono">
+                  Boshlangan: {fmtDate(openPeriod.start_date)} → tugash: {fmtDate(closeDate)}
+                </div>
+              </div>
+            )}
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>Yopilish sanasi</Label>
