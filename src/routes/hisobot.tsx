@@ -543,7 +543,7 @@ function Page() {
               {openPeriod && (
                 <Badge className="bg-primary/15 text-primary hover:bg-primary/20">
                   <CalendarDays className="mr-1 size-3" />
-                  Joriy davr: {openPeriod.start_date}
+                  {openPeriod.label} · boshlangan: {fmtDate(openPeriod.start_date)}
                 </Badge>
               )}
             </div>
