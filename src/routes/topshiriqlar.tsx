@@ -66,9 +66,16 @@ function Page() {
   const [productId, setProductId] = useState("");
   const [qty, setQty] = useState("");
   const [color, setColor] = useState("");
-  const [colorName, setColorName] = useState("");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
+
+  // Edit state (admin only)
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [eWorkerId, setEWorkerId] = useState("");
+  const [eProductId, setEProductId] = useState("");
+  const [eQty, setEQty] = useState("");
+  const [eColor, setEColor] = useState("");
+  const [eStartDate, setEStartDate] = useState("");
 
   async function load() {
     const [a, w, p, prs] = await Promise.all([
