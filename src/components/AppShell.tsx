@@ -104,7 +104,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
         </aside>
 
-        <main className="min-h-[calc(100vh-4rem)] flex-1 px-4 py-6 lg:px-8">{children}</main>
+        <main className="min-h-[calc(100vh-4rem)] flex-1 min-w-0 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

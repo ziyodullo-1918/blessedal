@@ -357,8 +357,8 @@ function Page() {
   };
 
   const buildHTML = () => {
-    const rowsHtml = workers
-      .map((w) => {
+    const workerBlocks = workers
+      .map((w, idx) => {
         const byProduct = new Map<string, { name: string; qty: number; sum: number }>();
         for (const it of w.items) {
           const pid = it.product?.id ?? "—";
@@ -373,70 +373,84 @@ function Page() {
           .sort((a, b) => b.qty - a.qty)
           .map(
             (p) => `<tr>
-              <td style="border:1px solid #bbf7d0;padding:6px">${escapeHtml(p.name)}</td>
-              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right">${p.qty}</td>
-              <td style="border:1px solid #bbf7d0;padding:6px;text-align:right"><b>${fmtMoney(p.sum)}</b></td>
+              <td>${escapeHtml(p.name)}</td>
+              <td class="r">${p.qty}</td>
+              <td class="r"><b>${fmtMoney(p.sum)}</b></td>
             </tr>`,
           )
           .join("");
-
-        return `
-        <h3 style="margin:18px 0 6px;color:#166534">${escapeHtml(w.workerName)} — ${fmtMoney(w.totalSalary)}</h3>
-        <div style="font-size:11px;color:#64748b;margin-bottom:6px">Mahsulotlar bo'yicha jamlanma:</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px">
-          <thead><tr style="background:#dcfce7">
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:left">Mahsulot</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Umumiy miqdor</th>
-            <th style="border:1px solid #bbf7d0;padding:6px;text-align:right">Jami summa</th>
-          </tr></thead>
-          <tbody>${summaryRows}</tbody>
-        </table>
-        <div style="font-size:11px;color:#64748b;margin:8px 0 4px">Topshiriqlar tafsiloti:</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead><tr style="background:#f0fdf4">
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Berilgan</th>
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Bajarilgan</th>
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:left">Mahsulot</th>
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Miqdor</th>
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Narx</th>
-            <th style="border:1px solid #dcfce7;padding:6px;text-align:right">Summa</th>
-          </tr></thead>
-          <tbody>
-          ${w.items
-            .map(
-              (it) => `<tr>
-              <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.started_at)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px">${fmtDateTime(it.completed_at)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px">${(() => {
+        const detailRows = w.items
+          .map(
+            (it) => `<tr>
+              <td>${fmtDateTime(it.started_at)}</td>
+              <td>${fmtDateTime(it.completed_at)}</td>
+              <td>${(() => {
                 const c = it.color || "";
                 const isHex = /^#[0-9a-fA-F]{6}$/.test(c);
                 const label = it.color_name || (isHex ? "" : c);
                 const dot = c
-                  ? `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;${isHex ? `background:${escapeHtml(c)};` : ""}border:1px solid #cbd5e1;vertical-align:middle;margin-right:6px"></span>`
+                  ? `<span class="dot" style="${isHex ? `background:${escapeHtml(c)};` : ""}"></span>`
                   : "";
-                const labelHtml = label ? ` <span style="color:#64748b;font-size:11px">(${escapeHtml(label)})</span>` : "";
+                const labelHtml = label ? ` <span class="muted">(${escapeHtml(label)})</span>` : "";
                 return `${dot}${escapeHtml(it.product?.name ?? "—")}${labelHtml}`;
               })()}</td>
-              <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${it.quantity}</td>
-              <td style="border:1px solid #dcfce7;padding:6px;text-align:right">${fmtMoney(it.unit_price)}</td>
-              <td style="border:1px solid #dcfce7;padding:6px;text-align:right"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
+              <td class="r">${it.quantity}</td>
+              <td class="r">${fmtMoney(it.unit_price)}</td>
+              <td class="r"><b>${fmtMoney(it.quantity * Number(it.unit_price))}</b></td>
             </tr>`,
-            )
-            .join("")}
-          </tbody>
-        </table>`;
+          )
+          .join("");
+
+        // Each worker = half A4 page. Cut line between pairs (2 workers per page).
+        const isFirstHalf = idx % 2 === 0;
+        const cutLine = isFirstHalf
+          ? `<div class="cut">✂ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─</div>`
+          : "";
+        return `
+        <section class="half">
+          <div class="hdr">
+            <div>
+              <div class="title">Blessed Al — Oylik hisobot</div>
+              <div class="muted">${escapeHtml(periodTitle)}</div>
+            </div>
+            <div class="total">${fmtMoney(w.totalSalary)}</div>
+          </div>
+          <h3 class="wname">${escapeHtml(w.workerName)}</h3>
+          <table class="t">
+            <thead><tr><th>Mahsulot</th><th class="r">Miqdor</th><th class="r">Summa</th></tr></thead>
+            <tbody>${summaryRows}</tbody>
+          </table>
+          <div class="muted small">Topshiriqlar:</div>
+          <table class="t">
+            <thead><tr><th>Berilgan</th><th>Bajarilgan</th><th>Mahsulot</th><th class="r">Mq</th><th class="r">Narx</th><th class="r">Summa</th></tr></thead>
+            <tbody>${detailRows}</tbody>
+          </table>
+        </section>
+        ${cutLine}`;
       })
       .join("");
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
-      <style>body{font-family:Inter,system-ui,sans-serif;color:#0f172a;padding:24px;max-width:900px;margin:auto;background:#f0fdf4}
-      h1{color:#15803d;margin:0 0 4px}.muted{color:#64748b;font-size:12px}
-      .total{font-size:28px;color:#15803d;font-weight:700;margin:12px 0}</style></head>
+      <style>
+      @page { size: A4; margin: 8mm; }
+      *{box-sizing:border-box}
+      body{font-family:Inter,system-ui,sans-serif;color:#0f172a;margin:0;padding:0;background:#fff;font-size:11px}
+      .half{height:138mm;padding:6mm 4mm;overflow:hidden;page-break-inside:avoid;display:flex;flex-direction:column}
+      .cut{text-align:center;color:#94a3b8;font-size:9px;letter-spacing:2px;border-top:1px dashed #94a3b8;margin:0;padding-top:1mm}
+      .hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #15803d;padding-bottom:2mm;margin-bottom:2mm}
+      .title{color:#15803d;font-weight:700;font-size:13px}
+      .muted{color:#64748b;font-size:10px}
+      .small{font-size:9px;margin:1mm 0}
+      .total{font-size:16px;color:#15803d;font-weight:700}
+      .wname{margin:1mm 0 2mm;color:#15803d;font-size:14px;font-weight:600}
+      table.t{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:1mm}
+      table.t th{background:#dcfce7;border:1px solid #bbf7d0;padding:2px 4px;text-align:left}
+      table.t td{border:1px solid #dcfce7;padding:2px 4px}
+      table.t .r{text-align:right}
+      .dot{display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:3px}
+      </style></head>
       <body>
-        <h1>Blessed Al — Oylik hisobot</h1>
-        <div class="muted">Davr: ${escapeHtml(periodTitle)} · Chop: ${fmtDateTime(new Date())}</div>
-        <div class="total">Umumiy: ${fmtMoney(grand)}</div>
-        ${rowsHtml || '<p class="muted">Ma\'lumot yo\'q</p>'}
+        ${workerBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
         <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
       </body></html>`;
   };
@@ -543,7 +557,7 @@ function Page() {
               {openPeriod && (
                 <Badge className="bg-primary/15 text-primary hover:bg-primary/20">
                   <CalendarDays className="mr-1 size-3" />
-                  Joriy davr: {openPeriod.start_date}
+                  {openPeriod.label} · boshlangan: {fmtDate(openPeriod.start_date)}
                 </Badge>
               )}
             </div>
@@ -656,6 +670,14 @@ function Page() {
               Joriy davr yopiladi va yangi davr avtomatik ochiladi. Jarayondagi
               (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.
             </p>
+            {openPeriod && (
+              <div className="rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
+                <div className="font-medium text-primary">{openPeriod.label}</div>
+                <div className="text-xs text-muted-foreground font-mono">
+                  Boshlangan: {fmtDate(openPeriod.start_date)} → tugash: {fmtDate(closeDate)}
+                </div>
+              </div>
+            )}
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>Yopilish sanasi</Label>

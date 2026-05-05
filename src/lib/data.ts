@@ -186,6 +186,35 @@ export async function createAssignment(a: {
   if (error) throw error;
 }
 
+export async function updateAssignment(
+  id: string,
+  patch: Partial<{
+    worker_id: string;
+    product_id: string;
+    quantity: number;
+    color: string | null;
+    started_at: string;
+    completed_at: string | null;
+    status: "in_progress" | "completed";
+  }>,
+) {
+  // Recalculate unit_price if product changed
+  let unit_price: number | undefined;
+  if (patch.product_id) {
+    const { data: prod, error: pe } = await supabase
+      .from("products")
+      .select("price_per_unit")
+      .eq("id", patch.product_id)
+      .single();
+    if (pe) throw pe;
+    unit_price = Number(prod.price_per_unit);
+  }
+  const payload: Record<string, unknown> = { ...patch };
+  if (unit_price !== undefined) payload.unit_price = unit_price;
+  const { error } = await supabase.from("assignments").update(payload as never).eq("id", id);
+  if (error) throw error;
+}
+
 export async function completeAssignment(id: string) {
   const { error } = await supabase
     .from("assignments")
