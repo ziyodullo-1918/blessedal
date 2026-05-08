@@ -32,7 +32,13 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background">
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4">
+        <div
+          className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4"
+          style={{
+            paddingLeft: "max(1rem, env(safe-area-inset-left))",
+            paddingRight: "max(1rem, env(safe-area-inset-right))",
+          }}
+        >
           <button
             className="lg:hidden -ml-1 p-2"
             onClick={() => setOpen((v) => !v)}
@@ -104,7 +110,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
         </aside>
 
-        <main className="min-h-[calc(100vh-4rem)] flex-1 min-w-0 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">{children}</main>
+        <main
+          className="min-h-[calc(100vh-4rem)] flex-1 min-w-0 px-4 py-4 sm:px-6 sm:py-6 lg:px-8"
+          style={{
+            paddingLeft: "max(1rem, env(safe-area-inset-left))",
+            paddingRight: "max(1rem, env(safe-area-inset-right))",
+          }}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );
