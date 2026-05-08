@@ -24,6 +24,7 @@ import { fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
 import { useAuth } from "@/lib/auth";
 import { ColorVariantsEditor } from "@/components/ColorVariantsEditor";
+import { CategoriesManager } from "@/components/CategoriesManager";
 
 export const Route = createFileRoute("/mahsulotlar")({
   component: Page,
@@ -147,11 +148,13 @@ function Page() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-4xl">Mahsulotlar</h1>
+        <h1 className="font-display text-3xl sm:text-4xl">Mahsulotlar</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Mahsulotlar va birlik uchun narxlarni boshqarish
         </p>
       </div>
+
+      {isAdmin && <CategoriesManager onChange={load} />}
 
       {isAdmin && (
         <Card>
