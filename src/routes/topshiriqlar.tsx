@@ -338,7 +338,7 @@ function Page() {
               <Label>Ishchi</Label>
               <Select value={workerId || undefined} onValueChange={setWorkerId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Tanlang" />
+                  <SelectValue placeholder="Ishchini tanlang" />
                 </SelectTrigger>
                 <SelectContent>
                   {workers.map((w) => (
@@ -351,7 +351,7 @@ function Page() {
               <Label>Mahsulot</Label>
               <Select value={productId || undefined} onValueChange={setProductId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Tanlang" />
+                  <SelectValue placeholder="Mahsulotni tanlang" />
                 </SelectTrigger>
                 <SelectContent>
                   {products.map((p) => (
