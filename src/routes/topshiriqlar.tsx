@@ -351,7 +351,7 @@ function Page() {
               <Label>Mahsulot</Label>
               <Select value={productId || undefined} onValueChange={setProductId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Tanlang" />
+                  <SelectValue placeholder="Mahsulotni tanlang" />
                 </SelectTrigger>
                 <SelectContent>
                   {products.map((p) => (
