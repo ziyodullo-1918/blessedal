@@ -56,6 +56,23 @@ function Page() {
         <p className="mt-1 text-sm text-muted-foreground">Xavfsizlik, ta'sischilar va ilova sozlamalari</p>
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="size-4" /> Tezkor boshlash
+          </CardTitle>
+          <CardDescription>Ilovadan foydalanish bo'yicha qisqacha qo'llanma</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>1. <strong className="text-foreground">Mahsulotlar</strong> bo'limida har bir mahsulot va uning birlik narxini qo'shing.</p>
+          <p>2. <strong className="text-foreground">Ishchilar</strong> bo'limida xodimlarni ro'yxatga oling.</p>
+          <p>3. <strong className="text-foreground">Hisobot</strong> da yangi davrni boshlang.</p>
+          <p>4. <strong className="text-foreground">Topshiriqlar</strong> bo'limida ishchiga yarim tayyor mahsulot bering.</p>
+          <p>5. Ish tugagach, holatni "Bajarildi" ga o'zgartiring — maosh avtomatik hisoblanadi.</p>
+          <p>6. Davr tugaganda Hisobotdan <strong className="text-foreground">Davrni tugatish</strong> tugmasini bosing — yangi davr avtomatik ochiladi va jarayondagi topshiriqlar yangi davrga ko'chadi.</p>
+        </CardContent>
+      </Card>
+
       <FoundersCard />
 
       <Card>
