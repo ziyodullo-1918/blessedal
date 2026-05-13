@@ -335,7 +335,7 @@ function Page() {
           <CardTitle>Yangi topshiriq</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
+          <form key={formKey} onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
               <Select value={workerId || undefined} onValueChange={setWorkerId}>
