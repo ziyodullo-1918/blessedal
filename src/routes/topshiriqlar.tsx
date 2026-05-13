@@ -68,6 +68,7 @@ function Page() {
   const [color, setColor] = useState("");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   // Edit state (admin only)
   const [editingId, setEditingId] = useState<string | null>(null);
