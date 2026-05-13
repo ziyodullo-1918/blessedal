@@ -145,6 +145,7 @@ function Page() {
       setQty("");
       setColor("");
       setStartDate(todayStr());
+      setFormKey((k) => k + 1);
       await load();
       toast.success("Topshiriq berildi");
     } catch (err: any) {
