@@ -401,11 +401,6 @@ function Page() {
           )
           .join("");
 
-        // Each worker = half A4 page. Cut line between pairs (2 workers per page).
-        const isFirstHalf = idx % 2 === 0;
-        const cutLine = isFirstHalf
-          ? `<div class="cut">✂ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─</div>`
-          : "";
         return `
         <section class="half">
           <div class="hdr">
@@ -425,32 +420,43 @@ function Page() {
             <thead><tr><th>Berilgan</th><th>Bajarilgan</th><th>Mahsulot</th><th class="r">Mq</th><th class="r">Narx</th><th class="r">Summa</th></tr></thead>
             <tbody>${detailRows}</tbody>
           </table>
-        </section>
-        ${cutLine}`;
+        </section>`;
       })
       .join("");
 
+    // Group workers in pairs (2 per page) — side by side (left/right halves of A4 landscape)
+    const sections = workerBlocks.split("</section>").filter((s) => s.trim()).map((s) => s + "</section>");
+    const pagesHtml: string[] = [];
+    for (let i = 0; i < sections.length; i += 2) {
+      const a = sections[i] ?? "";
+      const b = sections[i + 1] ?? '<section class="half empty"></section>';
+      pagesHtml.push(`<div class="page">${a}<div class="vcut"></div>${b}</div>`);
+    }
+    const finalBlocks = pagesHtml.join("");
+
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
       <style>
-      @page { size: A4; margin: 8mm; }
+      @page { size: A4 landscape; margin: 6mm; }
       *{box-sizing:border-box}
-      body{font-family:Inter,system-ui,sans-serif;color:#0f172a;margin:0;padding:0;background:#fff;font-size:11px}
-      .half{height:138mm;padding:6mm 4mm;overflow:hidden;page-break-inside:avoid;display:flex;flex-direction:column}
-      .cut{text-align:center;color:#94a3b8;font-size:9px;letter-spacing:2px;border-top:1px dashed #94a3b8;margin:0;padding-top:1mm}
-      .hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #15803d;padding-bottom:2mm;margin-bottom:2mm}
-      .title{color:#15803d;font-weight:700;font-size:13px}
-      .muted{color:#64748b;font-size:10px}
-      .small{font-size:9px;margin:1mm 0}
-      .total{font-size:16px;color:#15803d;font-weight:700}
-      .wname{margin:1mm 0 2mm;color:#15803d;font-size:14px;font-weight:600}
-      table.t{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:1mm}
-      table.t th{background:#dcfce7;border:1px solid #bbf7d0;padding:2px 4px;text-align:left}
-      table.t td{border:1px solid #dcfce7;padding:2px 4px}
+      body{font-family:Inter,system-ui,sans-serif;color:#0f172a;margin:0;padding:0;background:#fff;font-size:9px}
+      .page{display:flex;flex-direction:row;gap:0;width:100%;height:197mm;page-break-after:always;page-break-inside:avoid}
+      .page:last-child{page-break-after:auto}
+      .half{flex:1 1 50%;width:50%;max-width:50%;padding:4mm;overflow:hidden;display:flex;flex-direction:column}
+      .vcut{width:0;border-left:1px dashed #94a3b8;margin:0 2mm}
+      .hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #15803d;padding-bottom:1.5mm;margin-bottom:1.5mm}
+      .title{color:#15803d;font-weight:700;font-size:11px}
+      .muted{color:#64748b;font-size:8px}
+      .small{font-size:8px;margin:1mm 0}
+      .total{font-size:13px;color:#15803d;font-weight:700;white-space:nowrap}
+      .wname{margin:1mm 0 1.5mm;color:#15803d;font-size:12px;font-weight:600}
+      table.t{width:100%;border-collapse:collapse;font-size:8.5px;margin-bottom:1mm;table-layout:fixed}
+      table.t th{background:#dcfce7;border:1px solid #bbf7d0;padding:1.5px 3px;text-align:left;font-weight:600}
+      table.t td{border:1px solid #dcfce7;padding:1.5px 3px;word-wrap:break-word;overflow-wrap:break-word}
       table.t .r{text-align:right}
-      .dot{display:inline-block;width:8px;height:8px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:3px}
+      .dot{display:inline-block;width:7px;height:7px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:2px}
       </style></head>
       <body>
-        ${workerBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
+        ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
         <script>window.onload=()=>setTimeout(()=>window.print(),300)</script>
       </body></html>`;
   };

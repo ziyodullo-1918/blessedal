@@ -10,7 +10,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
-import { Lock, ShieldCheck, Smartphone, UserPlus, Trash2, KeyRound, Users } from "lucide-react";
+import { Lock, ShieldCheck, Smartphone, UserPlus, Trash2, KeyRound, Users, BookOpen } from "lucide-react";
 import { listFounders, createFounder, deleteFounder, updateFounderPin, type Founder } from "@/lib/data";
 
 export const Route = createFileRoute("/sozlamalar")({
@@ -55,6 +55,23 @@ function Page() {
         <h1 className="font-display text-4xl">Sozlamalar</h1>
         <p className="mt-1 text-sm text-muted-foreground">Xavfsizlik, ta'sischilar va ilova sozlamalari</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="size-4" /> Tezkor boshlash
+          </CardTitle>
+          <CardDescription>Ilovadan foydalanish bo'yicha qisqacha qo'llanma</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>1. <strong className="text-foreground">Mahsulotlar</strong> bo'limida har bir mahsulot va uning birlik narxini qo'shing.</p>
+          <p>2. <strong className="text-foreground">Ishchilar</strong> bo'limida xodimlarni ro'yxatga oling.</p>
+          <p>3. <strong className="text-foreground">Hisobot</strong> da yangi davrni boshlang.</p>
+          <p>4. <strong className="text-foreground">Topshiriqlar</strong> bo'limida ishchiga yarim tayyor mahsulot bering.</p>
+          <p>5. Ish tugagach, holatni "Bajarildi" ga o'zgartiring — maosh avtomatik hisoblanadi.</p>
+          <p>6. Davr tugaganda Hisobotdan <strong className="text-foreground">Davrni tugatish</strong> tugmasini bosing — yangi davr avtomatik ochiladi va jarayondagi topshiriqlar yangi davrga ko'chadi.</p>
+        </CardContent>
+      </Card>
 
       <FoundersCard />
 

@@ -113,8 +113,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main
           className="min-h-[calc(100vh-4rem)] flex-1 min-w-0 py-4 sm:py-6"
           style={{
-            paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
-            paddingRight: "max(1.25rem, env(safe-area-inset-right))",
+            paddingLeft: "max(1.5rem, env(safe-area-inset-left))",
+            paddingRight: "max(1.5rem, env(safe-area-inset-right))",
           }}
         >
           {children}

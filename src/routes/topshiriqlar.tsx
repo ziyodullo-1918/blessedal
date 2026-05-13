@@ -68,6 +68,7 @@ function Page() {
   const [color, setColor] = useState("");
   const [startDate, setStartDate] = useState<string>(todayStr());
   const [busy, setBusy] = useState(false);
+  const [formKey, setFormKey] = useState(0);
 
   // Edit state (admin only)
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -144,6 +145,7 @@ function Page() {
       setQty("");
       setColor("");
       setStartDate(todayStr());
+      setFormKey((k) => k + 1);
       await load();
       toast.success("Topshiriq berildi");
     } catch (err: any) {
@@ -333,7 +335,7 @@ function Page() {
           <CardTitle>Yangi topshiriq</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
+          <form key={formKey} onSubmit={add} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
             <div className="space-y-1.5">
               <Label>Ishchi</Label>
               <Select value={workerId || undefined} onValueChange={setWorkerId}>
