@@ -401,11 +401,6 @@ function Page() {
           )
           .join("");
 
-        // Each worker = half A4 page. Cut line between pairs (2 workers per page).
-        const isFirstHalf = idx % 2 === 0;
-        const cutLine = isFirstHalf
-          ? `<div class="cut">✂ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─</div>`
-          : "";
         return `
         <section class="half">
           <div class="hdr">
@@ -425,10 +420,25 @@ function Page() {
             <thead><tr><th>Berilgan</th><th>Bajarilgan</th><th>Mahsulot</th><th class="r">Mq</th><th class="r">Narx</th><th class="r">Summa</th></tr></thead>
             <tbody>${detailRows}</tbody>
           </table>
-        </section>
-        ${cutLine}`;
+        </section>`;
       })
       .join("");
+
+    // Group workers in pairs (2 per page) — side by side (left/right halves)
+    const pages: string[] = [];
+    for (let i = 0; i < workers.length; i += 2) {
+      const left = workerBlocks.split("</section>")[i];
+      // simpler: just concat two sections inside a .page wrapper
+    }
+    // Build pages by splitting workerBlocks back into sections
+    const sections = workerBlocks.split("</section>").filter((s) => s.trim()).map((s) => s + "</section>");
+    const pagesHtml: string[] = [];
+    for (let i = 0; i < sections.length; i += 2) {
+      const a = sections[i] ?? "";
+      const b = sections[i + 1] ?? '<section class="half empty"></section>';
+      pagesHtml.push(`<div class="page">${a}<div class="vcut"></div>${b}</div>`);
+    }
+    const finalBlocks = pagesHtml.join("");
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
       <style>
