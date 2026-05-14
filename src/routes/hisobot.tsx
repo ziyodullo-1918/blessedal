@@ -436,24 +436,24 @@ function Page() {
 
     return `<!doctype html><html lang="uz"><head><meta charset="utf-8"><title>${escapeHtml(periodTitle)}</title>
       <style>
-      @page { size: A4 landscape; margin: 6mm; }
+      @page { size: A4 landscape; margin: 5mm; }
       *{box-sizing:border-box}
-      body{font-family:Inter,system-ui,sans-serif;color:#0f172a;margin:0;padding:0;background:#fff;font-size:9px}
-      .page{display:flex;flex-direction:row;gap:0;width:100%;height:197mm;page-break-after:always;page-break-inside:avoid}
+      body{font-family:Inter,system-ui,sans-serif;color:#0f172a;margin:0;padding:0;background:#fff;font-size:7.5px;line-height:1.15}
+      .page{display:flex;flex-direction:row;gap:0;width:100%;height:200mm;page-break-after:always;page-break-inside:avoid}
       .page:last-child{page-break-after:auto}
-      .half{flex:1 1 50%;width:50%;max-width:50%;padding:4mm;overflow:hidden;display:flex;flex-direction:column}
-      .vcut{width:0;border-left:1px dashed #94a3b8;margin:0 2mm}
-      .hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #15803d;padding-bottom:1.5mm;margin-bottom:1.5mm}
-      .title{color:#15803d;font-weight:700;font-size:11px}
-      .muted{color:#64748b;font-size:8px}
-      .small{font-size:8px;margin:1mm 0}
-      .total{font-size:13px;color:#15803d;font-weight:700;white-space:nowrap}
-      .wname{margin:1mm 0 1.5mm;color:#15803d;font-size:12px;font-weight:600}
-      table.t{width:100%;border-collapse:collapse;font-size:8.5px;margin-bottom:1mm;table-layout:fixed}
-      table.t th{background:#dcfce7;border:1px solid #bbf7d0;padding:1.5px 3px;text-align:left;font-weight:600}
-      table.t td{border:1px solid #dcfce7;padding:1.5px 3px;word-wrap:break-word;overflow-wrap:break-word}
+      .half{flex:1 1 50%;width:50%;max-width:50%;padding:2mm 3mm;overflow:hidden;display:flex;flex-direction:column}
+      .vcut{width:0;border-left:1px dashed #94a3b8;margin:0 1mm}
+      .hdr{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1.5px solid #15803d;padding-bottom:1mm;margin-bottom:1mm}
+      .title{color:#15803d;font-weight:700;font-size:9.5px}
+      .muted{color:#64748b;font-size:7px}
+      .small{font-size:7px;margin:0.5mm 0}
+      .total{font-size:11px;color:#15803d;font-weight:700;white-space:nowrap}
+      .wname{margin:0.5mm 0 1mm;color:#15803d;font-size:10px;font-weight:600}
+      table.t{width:100%;border-collapse:collapse;font-size:6.8px;margin-bottom:0.5mm;table-layout:fixed}
+      table.t th{background:#dcfce7;border:1px solid #bbf7d0;padding:0.6px 2px;text-align:left;font-weight:600;line-height:1.05}
+      table.t td{border:1px solid #dcfce7;padding:0.6px 2px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.05}
       table.t .r{text-align:right}
-      .dot{display:inline-block;width:7px;height:7px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:2px}
+      .dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:1px}
       </style></head>
       <body>
         ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}

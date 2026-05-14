@@ -114,6 +114,45 @@ export async function deleteWorker(id: string) {
   if (error) throw error;
 }
 
+// Attendance — presence of a row means worker was ABSENT on that date.
+export type AbsenceRow = { id: string; worker_id: string; date: string };
+
+export async function listAbsences(date: string): Promise<AbsenceRow[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select("id, worker_id, date")
+    .eq("date", date);
+  if (error) throw error;
+  return data as AbsenceRow[];
+}
+
+export async function listAbsencesRange(startDate: string, endDate: string): Promise<AbsenceRow[]> {
+  const { data, error } = await supabase
+    .from("attendance")
+    .select("id, worker_id, date")
+    .gte("date", startDate)
+    .lte("date", endDate);
+  if (error) throw error;
+  return data as AbsenceRow[];
+}
+
+export async function markAbsent(worker_id: string, date: string) {
+  const user_id = await uid();
+  const { error } = await supabase
+    .from("attendance")
+    .upsert({ worker_id, date, user_id } as never, { onConflict: "worker_id,date" });
+  if (error) throw error;
+}
+
+export async function markPresent(worker_id: string, date: string) {
+  const { error } = await supabase
+    .from("attendance")
+    .delete()
+    .eq("worker_id", worker_id)
+    .eq("date", date);
+  if (error) throw error;
+}
+
 // Assignments
 export async function listAssignments(filters?: {
   status?: "in_progress" | "completed";
