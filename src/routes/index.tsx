@@ -383,6 +383,77 @@ function DashboardPage() {
         </Card>
       </div>
 
+      {/* Daily product totals — assigned to workers on the selected day */}
+      <Card>
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="text-base">Kunlik berilgan mahsulot</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Tanlangan kunda ishchilarga berilgan umumiy mahsulot soni
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-xs whitespace-nowrap">Sana</Label>
+            <Input
+              type="date"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              min={openPeriod?.start_date}
+              max={openPeriod?.end_date}
+              className="w-auto"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {dailyProductAgg.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Bu kunda berilgan mahsulot yo'q.
+            </p>
+          ) : (
+            <>
+              <div className="mb-3 text-sm">
+                Jami:{" "}
+                <span className="font-semibold text-primary">
+                  {dailyProductAgg.reduce((s, x) => s + x.qty, 0)} dona
+                </span>{" "}
+                ·{" "}
+                <span className="text-muted-foreground">
+                  {dailyProductAgg.length} xil mahsulot
+                </span>
+              </div>
+              <div style={{ height: Math.max(180, dailyProductAgg.length * 32 + 40) }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={dailyProductAgg}
+                    layout="vertical"
+                    margin={{ top: 4, right: 50, left: 4, bottom: 4 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      tick={{ fontSize: 11 }}
+                      width={130}
+                      interval={0}
+                    />
+                    <Tooltip
+                      formatter={(v: number) => `${v} dona`}
+                      contentStyle={{
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        fontSize: 12,
+                      }}
+                    />
+                    <Bar dataKey="qty" fill="#22c55e" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Daily worker summary */}
       <Card>
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
