@@ -12,6 +12,7 @@ import {
   type PayrollPeriod,
   type Worker,
   type AbsenceRow,
+  type Assignment,
 } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -55,6 +56,7 @@ function DashboardPage() {
   });
   const [openPeriod, setOpenPeriod] = useState<PayrollPeriod | null>(null);
   const [periodRows, setPeriodRows] = useState<ReportRow[]>([]);
+  const [inProgressRows, setInProgressRows] = useState<Assignment[]>([]);
   const [allWorkers, setAllWorkers] = useState<Worker[]>([]);
   const [todayAbsences, setTodayAbsences] = useState<AbsenceRow[]>([]);
   const [dayAbsences, setDayAbsences] = useState<AbsenceRow[]>([]);
@@ -75,6 +77,7 @@ function DashboardPage() {
       setOpenPeriod(open);
       setAllWorkers(workers);
       setTodayAbsences(absToday);
+      setInProgressRows(assignments);
 
       let rows: ReportRow[] = [];
       if (open) rows = await reportByPeriod(open.id);
@@ -189,8 +192,39 @@ function DashboardPage() {
         w.completedJobs.push(r);
       }
     }
+    // Also include in-progress assignments started on the selected day
+    for (const a of inProgressRows) {
+      if (localDateStr(a.started_at) !== day) continue;
+      const w = ensure(a.worker_id, a.worker?.full_name ?? "—");
+      w.receivedQty += a.quantity;
+      // Adapt Assignment shape to ReportRow display fields used in the list
+      w.receivedJobs.push({
+        ...a,
+        worker: { id: a.worker_id, full_name: a.worker?.full_name ?? "—" },
+        product: a.product ? { id: a.product_id, name: a.product.name } : null,
+      } as ReportRow);
+    }
     return [...map.values()].sort((a, b) => b.completedTotal - a.completedTotal);
-  }, [periodRows, day]);
+  }, [periodRows, inProgressRows, day]);
+
+  // Daily product totals — what was assigned to workers on the selected day
+  const dailyProductAgg = useMemo(() => {
+    const m = new Map<string, { name: string; qty: number }>();
+    const bump = (id: string, name: string, qty: number) => {
+      const cur = m.get(id) ?? { name, qty: 0 };
+      cur.qty += qty;
+      m.set(id, cur);
+    };
+    for (const r of periodRows) {
+      if (localDateStr(r.started_at) !== day) continue;
+      bump(r.product?.id ?? "—", r.product?.name ?? "—", r.quantity);
+    }
+    for (const a of inProgressRows) {
+      if (localDateStr(a.started_at) !== day) continue;
+      bump(a.product_id, a.product?.name ?? "—", a.quantity);
+    }
+    return [...m.values()].sort((a, b) => b.qty - a.qty);
+  }, [periodRows, inProgressRows, day]);
 
   const dayAbsentSet = useMemo(() => new Set(dayAbsences.map((a) => a.worker_id)), [dayAbsences]);
   const dayAbsentNames = allWorkers.filter((w) => dayAbsentSet.has(w.id));
@@ -348,6 +382,77 @@ function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Daily product totals — assigned to workers on the selected day */}
+      <Card>
+        <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="text-base">Kunlik berilgan mahsulot</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Tanlangan kunda ishchilarga berilgan umumiy mahsulot soni
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Label className="text-xs whitespace-nowrap">Sana</Label>
+            <Input
+              type="date"
+              value={day}
+              onChange={(e) => setDay(e.target.value)}
+              min={openPeriod?.start_date}
+              max={openPeriod?.end_date}
+              className="w-auto"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {dailyProductAgg.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Bu kunda berilgan mahsulot yo'q.
+            </p>
+          ) : (
+            <>
+              <div className="mb-3 text-sm">
+                Jami:{" "}
+                <span className="font-semibold text-primary">
+                  {dailyProductAgg.reduce((s, x) => s + x.qty, 0)} dona
+                </span>{" "}
+                ·{" "}
+                <span className="text-muted-foreground">
+                  {dailyProductAgg.length} xil mahsulot
+                </span>
+              </div>
+              <div style={{ height: Math.max(180, dailyProductAgg.length * 32 + 40) }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={dailyProductAgg}
+                    layout="vertical"
+                    margin={{ top: 4, right: 50, left: 4, bottom: 4 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      tick={{ fontSize: 11 }}
+                      width={130}
+                      interval={0}
+                    />
+                    <Tooltip
+                      formatter={(v: number) => `${v} dona`}
+                      contentStyle={{
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        fontSize: 12,
+                      }}
+                    />
+                    <Bar dataKey="qty" fill="#22c55e" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Daily worker summary */}
       <Card>
