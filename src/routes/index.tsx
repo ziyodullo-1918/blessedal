@@ -12,6 +12,7 @@ import {
   type PayrollPeriod,
   type Worker,
   type AbsenceRow,
+  type Assignment,
 } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
