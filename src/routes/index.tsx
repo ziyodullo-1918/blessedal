@@ -192,8 +192,39 @@ function DashboardPage() {
         w.completedJobs.push(r);
       }
     }
+    // Also include in-progress assignments started on the selected day
+    for (const a of inProgressRows) {
+      if (localDateStr(a.started_at) !== day) continue;
+      const w = ensure(a.worker_id, a.worker?.full_name ?? "—");
+      w.receivedQty += a.quantity;
+      // Adapt Assignment shape to ReportRow display fields used in the list
+      w.receivedJobs.push({
+        ...a,
+        worker: { id: a.worker_id, full_name: a.worker?.full_name ?? "—" },
+        product: a.product ? { id: a.product_id, name: a.product.name } : null,
+      } as ReportRow);
+    }
     return [...map.values()].sort((a, b) => b.completedTotal - a.completedTotal);
-  }, [periodRows, day]);
+  }, [periodRows, inProgressRows, day]);
+
+  // Daily product totals — what was assigned to workers on the selected day
+  const dailyProductAgg = useMemo(() => {
+    const m = new Map<string, { name: string; qty: number }>();
+    const bump = (id: string, name: string, qty: number) => {
+      const cur = m.get(id) ?? { name, qty: 0 };
+      cur.qty += qty;
+      m.set(id, cur);
+    };
+    for (const r of periodRows) {
+      if (localDateStr(r.started_at) !== day) continue;
+      bump(r.product?.id ?? "—", r.product?.name ?? "—", r.quantity);
+    }
+    for (const a of inProgressRows) {
+      if (localDateStr(a.started_at) !== day) continue;
+      bump(a.product_id, a.product?.name ?? "—", a.quantity);
+    }
+    return [...m.values()].sort((a, b) => b.qty - a.qty);
+  }, [periodRows, inProgressRows, day]);
 
   const dayAbsentSet = useMemo(() => new Set(dayAbsences.map((a) => a.worker_id)), [dayAbsences]);
   const dayAbsentNames = allWorkers.filter((w) => dayAbsentSet.has(w.id));
