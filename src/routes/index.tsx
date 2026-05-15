@@ -56,6 +56,7 @@ function DashboardPage() {
   });
   const [openPeriod, setOpenPeriod] = useState<PayrollPeriod | null>(null);
   const [periodRows, setPeriodRows] = useState<ReportRow[]>([]);
+  const [inProgressRows, setInProgressRows] = useState<Assignment[]>([]);
   const [allWorkers, setAllWorkers] = useState<Worker[]>([]);
   const [todayAbsences, setTodayAbsences] = useState<AbsenceRow[]>([]);
   const [dayAbsences, setDayAbsences] = useState<AbsenceRow[]>([]);
@@ -76,6 +77,7 @@ function DashboardPage() {
       setOpenPeriod(open);
       setAllWorkers(workers);
       setTodayAbsences(absToday);
+      setInProgressRows(assignments);
 
       let rows: ReportRow[] = [];
       if (open) rows = await reportByPeriod(open.id);
