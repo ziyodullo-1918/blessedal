@@ -772,6 +772,35 @@ function Page() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit period dialog */}
+      <Dialog open={!!editPeriod} onOpenChange={(v) => !v && setEditPeriod(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Davrni tahrirlash</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Davr nomi</Label>
+              <Input value={editLabel} onChange={(e) => setEditLabel(e.target.value)} />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Boshlanish sanasi</Label>
+                <Input type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Tugash sanasi</Label>
+                <Input type="date" value={editEnd} onChange={(e) => setEditEnd(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEditPeriod(null)}>Bekor qilish</Button>
+              <Button onClick={handleSaveEdit}>Saqlash</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="grid gap-3 p-4 md:grid-cols-5">
           <div className="space-y-1">
