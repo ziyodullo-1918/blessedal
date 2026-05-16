@@ -385,25 +385,63 @@ export function autoPeriodLabel(dateISO: string): string {
   return `${month} ${part} (${y})`;
 }
 
-// Assignments grouped/filtered by period
-export async function listAssignmentsByPeriod(periodId: string): Promise<Assignment[]> {
-  const { data, error } = await supabase
+type PeriodRef = string | { id: string; start_date?: string; end_date?: string };
+
+async function resolvePeriod(p: PeriodRef): Promise<{ id: string; start_date: string; end_date: string } | null> {
+  if (typeof p === "object" && p.start_date && p.end_date) {
+    return { id: p.id, start_date: p.start_date, end_date: p.end_date };
+  }
+  const id = typeof p === "string" ? p : p.id;
+  const { data } = await supabase
+    .from("payroll_periods")
+    .select("id, start_date, end_date")
+    .eq("id", id)
+    .maybeSingle();
+  return data as { id: string; start_date: string; end_date: string } | null;
+}
+
+// Assignments by period — matches by period_id OR by started_at date range
+// (handles duplicate periods / rollovers where assignments may be tagged with a different period_id)
+export async function listAssignmentsByPeriod(periodRef: PeriodRef): Promise<Assignment[]> {
+  const period = await resolvePeriod(periodRef);
+  let q = supabase
     .from("assignments")
     .select("*, worker:workers(full_name), product:products(name)")
-    .eq("period_id", periodId)
     .order("created_at", { ascending: false });
+  if (period) {
+    const endNext = new Date(period.end_date);
+    endNext.setDate(endNext.getDate() + 1);
+    const endISO = endNext.toISOString().slice(0, 10);
+    q = q.or(
+      `period_id.eq.${period.id},and(started_at.gte.${period.start_date},started_at.lt.${endISO})`,
+    );
+  } else {
+    q = q.eq("period_id", typeof periodRef === "string" ? periodRef : periodRef.id);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return data as unknown as Assignment[];
 }
 
-// Report by saved period (uses period_id, not date range — handles rollovers)
-export async function reportByPeriod(periodId: string): Promise<ReportRow[]> {
-  const { data, error } = await supabase
+// Report by saved period — matches by period_id OR by completed_at date range
+export async function reportByPeriod(periodRef: PeriodRef): Promise<ReportRow[]> {
+  const period = await resolvePeriod(periodRef);
+  let q = supabase
     .from("assignments")
     .select("*, worker:workers(id, full_name), product:products(id, name)")
     .eq("status", "completed")
-    .eq("period_id", periodId)
     .order("completed_at", { ascending: true });
+  if (period) {
+    const endNext = new Date(period.end_date);
+    endNext.setDate(endNext.getDate() + 1);
+    const endISO = endNext.toISOString().slice(0, 10);
+    q = q.or(
+      `period_id.eq.${period.id},and(completed_at.gte.${period.start_date},completed_at.lt.${endISO})`,
+    );
+  } else {
+    q = q.eq("period_id", typeof periodRef === "string" ? periodRef : periodRef.id);
+  }
+  const { data, error } = await q;
   if (error) throw error;
   return data as unknown as ReportRow[];
 }
