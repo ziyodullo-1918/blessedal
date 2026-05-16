@@ -1081,22 +1081,6 @@ function PeriodHistory({
           </div>
         </div>
       )}
-  void periods;
-  return (
-    <div className="max-h-[60vh] space-y-2 overflow-y-auto">
-      {openPeriod && (
-        <div className="rounded-lg border-2 border-primary/40 bg-primary/10 p-3">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <div className="font-medium text-primary">{openPeriod.label}</div>
-              <div className="text-xs text-muted-foreground">
-                {openPeriod.start_date} — {openPeriod.end_date}
-              </div>
-            </div>
-            <Badge className="bg-primary text-primary-foreground">Ochiq</Badge>
-          </div>
-        </div>
-      )}
       {closedPeriods.length === 0 && !openPeriod && (
         <div className="py-8 text-center text-sm text-muted-foreground">
           Hali davrlar yo'q
