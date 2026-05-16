@@ -9,6 +9,7 @@ import {
   closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
+  updatePayrollPeriod,
   autoPeriodLabel,
   type ReportRow,
   type PayrollPeriod,
@@ -48,6 +49,7 @@ import {
   CalendarDays,
   Users,
   Package,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
@@ -111,6 +113,37 @@ function Page() {
   const [closeDate, setCloseDate] = useState(todayISO());
   const [nextStart, setNextStart] = useState(todayISO());
   const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
+
+  // Edit period dialog
+  const [editPeriod, setEditPeriod] = useState<PayrollPeriod | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editStart, setEditStart] = useState("");
+  const [editEnd, setEditEnd] = useState("");
+
+  const openEditDialog = (p: PayrollPeriod) => {
+    setEditPeriod(p);
+    setEditLabel(p.label);
+    setEditStart(p.start_date);
+    setEditEnd(p.end_date);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editPeriod) return;
+    if (!editStart || !editEnd) return toast.error("Sanalarni kiriting");
+    if (editEnd < editStart) return toast.error("Tugash sanasi boshlanishdan keyin bo'lishi kerak");
+    try {
+      await updatePayrollPeriod(editPeriod.id, {
+        label: editLabel.trim() || editPeriod.label,
+        start_date: editStart,
+        end_date: editEnd,
+      });
+      toast.success("Davr yangilandi");
+      setEditPeriod(null);
+      loadPeriods();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Xatolik");
+    }
+  };
 
   const openPeriod = useMemo(() => periods.find((p) => !p.closed_at) ?? null, [periods]);
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
@@ -590,6 +623,10 @@ function Page() {
                   }}
                   onReopen={handleReopen}
                   onDelete={handleDelete}
+                  onEdit={(p) => {
+                    openEditDialog(p);
+                    setHistoryOpen(false);
+                  }}
                 />
               </DialogContent>
             </Dialog>
@@ -730,6 +767,35 @@ function Page() {
               >
                 <Lock className="size-4" /> Tugatish va yangisini boshlash
               </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit period dialog */}
+      <Dialog open={!!editPeriod} onOpenChange={(v) => !v && setEditPeriod(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Davrni tahrirlash</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>Davr nomi</Label>
+              <Input value={editLabel} onChange={(e) => setEditLabel(e.target.value)} />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Boshlanish sanasi</Label>
+                <Input type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Tugash sanasi</Label>
+                <Input type="date" value={editEnd} onChange={(e) => setEditEnd(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setEditPeriod(null)}>Bekor qilish</Button>
+              <Button onClick={handleSaveEdit}>Saqlash</Button>
             </div>
           </div>
         </DialogContent>
@@ -1013,6 +1079,7 @@ function PeriodHistory({
   onView,
   onReopen,
   onDelete,
+  onEdit,
 }: {
   periods: PayrollPeriod[];
   closedPeriods: PayrollPeriod[];
@@ -1020,6 +1087,7 @@ function PeriodHistory({
   onView: (id: string) => void;
   onReopen: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (p: PayrollPeriod) => void;
 }) {
   void periods;
   return (
@@ -1033,7 +1101,12 @@ function PeriodHistory({
                 {openPeriod.start_date} — {openPeriod.end_date}
               </div>
             </div>
-            <Badge className="bg-primary text-primary-foreground">Ochiq</Badge>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="outline" onClick={() => onEdit(openPeriod)}>
+                <Pencil className="size-4" /> Tahrirlash
+              </Button>
+              <Badge className="bg-primary text-primary-foreground">Ochiq</Badge>
+            </div>
           </div>
         </div>
       )}
@@ -1057,6 +1130,9 @@ function PeriodHistory({
             <div className="flex gap-1">
               <Button size="sm" variant="outline" onClick={() => onView(p.id)}>
                 Ko'rish
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => onEdit(p)} title="Tahrirlash">
+                <Pencil className="size-4" />
               </Button>
               <Button size="sm" variant="ghost" onClick={() => onReopen(p.id)}>
                 <Unlock className="size-4" />

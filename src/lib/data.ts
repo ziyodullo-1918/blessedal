@@ -322,6 +322,17 @@ export async function createPayrollPeriod(p: { label: string; start_date: string
   return data as PayrollPeriod;
 }
 
+export async function updatePayrollPeriod(
+  id: string,
+  patch: Partial<{ label: string; start_date: string; end_date: string }>,
+) {
+  const { error } = await supabase
+    .from("payroll_periods")
+    .update(patch as never)
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export async function closePayrollPeriod(id: string) {
   const { error } = await supabase
     .from("payroll_periods")
