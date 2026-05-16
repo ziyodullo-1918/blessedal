@@ -294,6 +294,7 @@ function Page() {
     }
     const t = todayISO();
     setCloseDate(t);
+    setCurrentStart(openPeriod.start_date);
     // Next period starts day after close
     const next = new Date(t);
     next.setDate(next.getDate() + 1);
