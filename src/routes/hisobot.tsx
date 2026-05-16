@@ -622,6 +622,10 @@ function Page() {
                   }}
                   onReopen={handleReopen}
                   onDelete={handleDelete}
+                  onEdit={(p) => {
+                    openEditDialog(p);
+                    setHistoryOpen(false);
+                  }}
                 />
               </DialogContent>
             </Dialog>
