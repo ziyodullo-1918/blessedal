@@ -186,7 +186,7 @@ function Page() {
     let cancelled = false;
     setLoading(true);
     const promise = selectedPeriod
-      ? reportByPeriod(selectedPeriod.id)
+      ? reportByPeriod(selectedPeriod)
       : reportByRange(range.start, range.end);
     promise
       .then((r) => {
