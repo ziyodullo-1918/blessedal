@@ -1102,6 +1102,9 @@ function PeriodHistory({
               <Button size="sm" variant="outline" onClick={() => onView(p.id)}>
                 Ko'rish
               </Button>
+              <Button size="sm" variant="ghost" onClick={() => onEdit(p)} title="Tahrirlash">
+                <Pencil className="size-4" />
+              </Button>
               <Button size="sm" variant="ghost" onClick={() => onReopen(p.id)}>
                 <Unlock className="size-4" />
               </Button>
