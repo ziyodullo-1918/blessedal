@@ -113,6 +113,7 @@ function Page() {
   const [closeDate, setCloseDate] = useState(todayISO());
   const [nextStart, setNextStart] = useState(todayISO());
   const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
+  const [currentStart, setCurrentStart] = useState(todayISO());
 
   // Edit period dialog
   const [editPeriod, setEditPeriod] = useState<PayrollPeriod | null>(null);
@@ -293,6 +294,7 @@ function Page() {
     }
     const t = todayISO();
     setCloseDate(t);
+    setCurrentStart(openPeriod.start_date);
     // Next period starts day after close
     const next = new Date(t);
     next.setDate(next.getDate() + 1);
@@ -305,6 +307,9 @@ function Page() {
   const handleCloseAndStart = async () => {
     if (!openPeriod) return;
     try {
+      if (currentStart && currentStart !== openPeriod.start_date) {
+        await updatePayrollPeriod(openPeriod.id, { start_date: currentStart });
+      }
       await closeAndStartNextPeriod(
         openPeriod.id,
         nextLabel.trim() || autoPeriodLabel(nextStart),
@@ -714,10 +719,15 @@ function Page() {
               (bajarilmagan) topshiriqlar yangi davrga ko'chiriladi.
             </p>
             {openPeriod && (
-              <div className="rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
-                <div className="font-medium text-primary">{openPeriod.label}</div>
-                <div className="text-xs text-muted-foreground font-mono">
-                  Boshlangan: {fmtDate(openPeriod.start_date)} → tugash: {fmtDate(closeDate)}
+              <div className="rounded-md border border-primary/30 bg-primary/10 p-3 space-y-2">
+                <div className="font-medium text-primary text-sm">{openPeriod.label}</div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Joriy davr boshlanish sanasi</Label>
+                  <Input
+                    type="date"
+                    value={currentStart}
+                    onChange={(e) => setCurrentStart(e.target.value)}
+                  />
                 </div>
               </div>
             )}
