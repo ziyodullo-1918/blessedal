@@ -49,6 +49,7 @@ import {
   CalendarDays,
   Users,
   Package,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
