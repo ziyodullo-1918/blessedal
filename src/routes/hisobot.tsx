@@ -9,6 +9,7 @@ import {
   closeAndStartNextPeriod,
   reopenPayrollPeriod,
   deletePayrollPeriod,
+  updatePayrollPeriod,
   autoPeriodLabel,
   type ReportRow,
   type PayrollPeriod,
