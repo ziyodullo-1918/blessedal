@@ -1050,6 +1050,7 @@ function PeriodHistory({
   onView,
   onReopen,
   onDelete,
+  onEdit,
 }: {
   periods: PayrollPeriod[];
   closedPeriods: PayrollPeriod[];
@@ -1057,7 +1058,29 @@ function PeriodHistory({
   onView: (id: string) => void;
   onReopen: (id: string) => void;
   onDelete: (id: string) => void;
+  onEdit: (p: PayrollPeriod) => void;
 }) {
+  void periods;
+  return (
+    <div className="max-h-[60vh] space-y-2 overflow-y-auto">
+      {openPeriod && (
+        <div className="rounded-lg border-2 border-primary/40 bg-primary/10 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <div className="font-medium text-primary">{openPeriod.label}</div>
+              <div className="text-xs text-muted-foreground">
+                {openPeriod.start_date} — {openPeriod.end_date}
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="outline" onClick={() => onEdit(openPeriod)}>
+                <Pencil className="size-4" /> Tahrirlash
+              </Button>
+              <Badge className="bg-primary text-primary-foreground">Ochiq</Badge>
+            </div>
+          </div>
+        </div>
+      )}
   void periods;
   return (
     <div className="max-h-[60vh] space-y-2 overflow-y-auto">
