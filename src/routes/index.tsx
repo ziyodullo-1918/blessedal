@@ -80,7 +80,7 @@ function DashboardPage() {
       setInProgressRows(assignments);
 
       let rows: ReportRow[] = [];
-      if (open) rows = await reportByPeriod(open.id);
+      if (open) rows = await reportByPeriod(open);
       setPeriodRows(rows);
 
       const periodSalary = rows.reduce((s, a) => s + a.quantity * Number(a.unit_price), 0);
