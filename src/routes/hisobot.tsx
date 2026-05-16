@@ -113,6 +113,37 @@ function Page() {
   const [nextStart, setNextStart] = useState(todayISO());
   const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
 
+  // Edit period dialog
+  const [editPeriod, setEditPeriod] = useState<PayrollPeriod | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editStart, setEditStart] = useState("");
+  const [editEnd, setEditEnd] = useState("");
+
+  const openEditDialog = (p: PayrollPeriod) => {
+    setEditPeriod(p);
+    setEditLabel(p.label);
+    setEditStart(p.start_date);
+    setEditEnd(p.end_date);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editPeriod) return;
+    if (!editStart || !editEnd) return toast.error("Sanalarni kiriting");
+    if (editEnd < editStart) return toast.error("Tugash sanasi boshlanishdan keyin bo'lishi kerak");
+    try {
+      await updatePayrollPeriod(editPeriod.id, {
+        label: editLabel.trim() || editPeriod.label,
+        start_date: editStart,
+        end_date: editEnd,
+      });
+      toast.success("Davr yangilandi");
+      setEditPeriod(null);
+      loadPeriods();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Xatolik");
+    }
+  };
+
   const openPeriod = useMemo(() => periods.find((p) => !p.closed_at) ?? null, [periods]);
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
 
