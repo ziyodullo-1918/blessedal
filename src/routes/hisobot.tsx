@@ -307,6 +307,9 @@ function Page() {
   const handleCloseAndStart = async () => {
     if (!openPeriod) return;
     try {
+      if (currentStart && currentStart !== openPeriod.start_date) {
+        await updatePayrollPeriod(openPeriod.id, { start_date: currentStart });
+      }
       await closeAndStartNextPeriod(
         openPeriod.id,
         nextLabel.trim() || autoPeriodLabel(nextStart),
