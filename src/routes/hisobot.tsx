@@ -113,6 +113,7 @@ function Page() {
   const [closeDate, setCloseDate] = useState(todayISO());
   const [nextStart, setNextStart] = useState(todayISO());
   const [nextLabel, setNextLabel] = useState(autoPeriodLabel(todayISO()));
+  const [currentStart, setCurrentStart] = useState(todayISO());
 
   // Edit period dialog
   const [editPeriod, setEditPeriod] = useState<PayrollPeriod | null>(null);
