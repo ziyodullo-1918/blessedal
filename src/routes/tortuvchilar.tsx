@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell, adminSignOut } from "@/components/tortuvchilar/app-shell";
 import { useRequireAdmin } from "@/hooks/use-require-tortuvchilar-admin";
@@ -7,8 +7,18 @@ import { t } from "@/lib/tortuvchilar/i18n";
 import { lockPin } from "@/lib/tortuvchilar/admin-pin";
 
 export const Route = createFileRoute("/tortuvchilar")({
-  component: AdminLayout,
+  component: TortuvchilarRoot,
 });
+
+function TortuvchilarRoot() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  // Worker-facing routes skip the admin layout/auth entirely.
+  const isWorkerRoute =
+    path === "/tortuvchilar/worker-login" ||
+    path.startsWith("/tortuvchilar/worker");
+  if (isWorkerRoute) return <Outlet />;
+  return <AdminLayout />;
+}
 
 function AdminLayout() {
   const ready = useRequireAdmin();
