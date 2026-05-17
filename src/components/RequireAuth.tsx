@@ -4,7 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { AppShell } from "./AppShell";
 import { PinProvider, PinGate } from "@/lib/pin";
 
-const FOUNDER_ALLOWED = new Set<string>(["/topshiriqlar"]);
+const FOUNDER_ALLOWED = new Set<string>(["/topshiriqlar", "/ishchilar"]);
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading, role } = useAuth();
