@@ -15,6 +15,7 @@ const adminNav = [
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
   { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
+  { to: "/tortuvchilar", label: "Tortuvchilar", icon: Scissors },
 ] as const;
 
 const founderNav = [
