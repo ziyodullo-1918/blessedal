@@ -43,9 +43,12 @@ function WorkerHome() {
     enabled: !!session,
     queryKey: ["my-periods", session?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_my_periods", { _token: session!.token });
+      const { data, error } = await supabase
+        .from("pullers_periods")
+        .select("id, start_date, end_date, status, name")
+        .order("start_date", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Period[];
+      return (data ?? []) as unknown as Period[];
     },
     refetchInterval: 10000,
   });
