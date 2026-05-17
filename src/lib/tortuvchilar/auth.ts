@@ -1,15 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// In the merged app, any authenticated Supabase user is treated as a
+// Tortuvchilar admin. There is no separate user_roles table.
 export async function isCurrentUserAdmin(): Promise<boolean> {
-  const { data: sess } = await supabase.auth.getSession();
-  const uid = sess.session?.user.id;
-  if (!uid) return false;
-  const { data, error } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", uid)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error) return false;
-  return !!data;
+  const { data } = await supabase.auth.getSession();
+  return !!data.session?.user?.id;
 }
