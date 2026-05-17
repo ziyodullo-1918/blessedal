@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TortuvchilarRouteImport } from './routes/tortuvchilar'
 import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
 import { Route as SozlamalarRouteImport } from './routes/sozlamalar'
 import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
@@ -16,7 +17,22 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IshchilarRouteImport } from './routes/ishchilar'
 import { Route as HisobotRouteImport } from './routes/hisobot'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TortuvchilarIndexRouteImport } from './routes/tortuvchilar.index'
+import { Route as TortuvchilarWorkersRouteImport } from './routes/tortuvchilar.workers'
+import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchilar.worker-login'
+import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
+import { Route as TortuvchilarSettingsRouteImport } from './routes/tortuvchilar.settings'
+import { Route as TortuvchilarReportsRouteImport } from './routes/tortuvchilar.reports'
+import { Route as TortuvchilarProductsRouteImport } from './routes/tortuvchilar.products'
+import { Route as TortuvchilarLiveRouteImport } from './routes/tortuvchilar.live'
+import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
+import { Route as TortuvchilarWorkerNewRouteImport } from './routes/tortuvchilar.worker.new'
 
+const TortuvchilarRoute = TortuvchilarRouteImport.update({
+  id: '/tortuvchilar',
+  path: '/tortuvchilar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
   id: '/topshiriqlar',
   path: '/topshiriqlar',
@@ -52,6 +68,56 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TortuvchilarIndexRoute = TortuvchilarIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarWorkersRoute = TortuvchilarWorkersRouteImport.update({
+  id: '/workers',
+  path: '/workers',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarWorkerLoginRoute = TortuvchilarWorkerLoginRouteImport.update({
+  id: '/worker-login',
+  path: '/worker-login',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarWorkerRoute = TortuvchilarWorkerRouteImport.update({
+  id: '/worker',
+  path: '/worker',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarSettingsRoute = TortuvchilarSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarReportsRoute = TortuvchilarReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarProductsRoute = TortuvchilarProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarLiveRoute = TortuvchilarLiveRouteImport.update({
+  id: '/live',
+  path: '/live',
+  getParentRoute: () => TortuvchilarRoute,
+} as any)
+const TortuvchilarWorkerIndexRoute = TortuvchilarWorkerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TortuvchilarWorkerRoute,
+} as any)
+const TortuvchilarWorkerNewRoute = TortuvchilarWorkerNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => TortuvchilarWorkerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +127,17 @@ export interface FileRoutesByFullPath {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/tortuvchilar': typeof TortuvchilarRouteWithChildren
+  '/tortuvchilar/live': typeof TortuvchilarLiveRoute
+  '/tortuvchilar/products': typeof TortuvchilarProductsRoute
+  '/tortuvchilar/reports': typeof TortuvchilarReportsRoute
+  '/tortuvchilar/settings': typeof TortuvchilarSettingsRoute
+  '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
+  '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/tortuvchilar/workers': typeof TortuvchilarWorkersRoute
+  '/tortuvchilar/': typeof TortuvchilarIndexRoute
+  '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +147,15 @@ export interface FileRoutesByTo {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/tortuvchilar/live': typeof TortuvchilarLiveRoute
+  '/tortuvchilar/products': typeof TortuvchilarProductsRoute
+  '/tortuvchilar/reports': typeof TortuvchilarReportsRoute
+  '/tortuvchilar/settings': typeof TortuvchilarSettingsRoute
+  '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/tortuvchilar/workers': typeof TortuvchilarWorkersRoute
+  '/tortuvchilar': typeof TortuvchilarIndexRoute
+  '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/tortuvchilar/worker': typeof TortuvchilarWorkerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +166,17 @@ export interface FileRoutesById {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/tortuvchilar': typeof TortuvchilarRouteWithChildren
+  '/tortuvchilar/live': typeof TortuvchilarLiveRoute
+  '/tortuvchilar/products': typeof TortuvchilarProductsRoute
+  '/tortuvchilar/reports': typeof TortuvchilarReportsRoute
+  '/tortuvchilar/settings': typeof TortuvchilarSettingsRoute
+  '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
+  '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/tortuvchilar/workers': typeof TortuvchilarWorkersRoute
+  '/tortuvchilar/': typeof TortuvchilarIndexRoute
+  '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +188,17 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/tortuvchilar'
+    | '/tortuvchilar/live'
+    | '/tortuvchilar/products'
+    | '/tortuvchilar/reports'
+    | '/tortuvchilar/settings'
+    | '/tortuvchilar/worker'
+    | '/tortuvchilar/worker-login'
+    | '/tortuvchilar/workers'
+    | '/tortuvchilar/'
+    | '/tortuvchilar/worker/new'
+    | '/tortuvchilar/worker/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +208,15 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/tortuvchilar/live'
+    | '/tortuvchilar/products'
+    | '/tortuvchilar/reports'
+    | '/tortuvchilar/settings'
+    | '/tortuvchilar/worker-login'
+    | '/tortuvchilar/workers'
+    | '/tortuvchilar'
+    | '/tortuvchilar/worker/new'
+    | '/tortuvchilar/worker'
   id:
     | '__root__'
     | '/'
@@ -109,6 +226,17 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/tortuvchilar'
+    | '/tortuvchilar/live'
+    | '/tortuvchilar/products'
+    | '/tortuvchilar/reports'
+    | '/tortuvchilar/settings'
+    | '/tortuvchilar/worker'
+    | '/tortuvchilar/worker-login'
+    | '/tortuvchilar/workers'
+    | '/tortuvchilar/'
+    | '/tortuvchilar/worker/new'
+    | '/tortuvchilar/worker/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,10 +247,18 @@ export interface RootRouteChildren {
   MahsulotlarRoute: typeof MahsulotlarRoute
   SozlamalarRoute: typeof SozlamalarRoute
   TopshiriqlarRoute: typeof TopshiriqlarRoute
+  TortuvchilarRoute: typeof TortuvchilarRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tortuvchilar': {
+      id: '/tortuvchilar'
+      path: '/tortuvchilar'
+      fullPath: '/tortuvchilar'
+      preLoaderRoute: typeof TortuvchilarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/topshiriqlar': {
       id: '/topshiriqlar'
       path: '/topshiriqlar'
@@ -172,8 +308,117 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tortuvchilar/': {
+      id: '/tortuvchilar/'
+      path: '/'
+      fullPath: '/tortuvchilar/'
+      preLoaderRoute: typeof TortuvchilarIndexRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/workers': {
+      id: '/tortuvchilar/workers'
+      path: '/workers'
+      fullPath: '/tortuvchilar/workers'
+      preLoaderRoute: typeof TortuvchilarWorkersRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/worker-login': {
+      id: '/tortuvchilar/worker-login'
+      path: '/worker-login'
+      fullPath: '/tortuvchilar/worker-login'
+      preLoaderRoute: typeof TortuvchilarWorkerLoginRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/worker': {
+      id: '/tortuvchilar/worker'
+      path: '/worker'
+      fullPath: '/tortuvchilar/worker'
+      preLoaderRoute: typeof TortuvchilarWorkerRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/settings': {
+      id: '/tortuvchilar/settings'
+      path: '/settings'
+      fullPath: '/tortuvchilar/settings'
+      preLoaderRoute: typeof TortuvchilarSettingsRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/reports': {
+      id: '/tortuvchilar/reports'
+      path: '/reports'
+      fullPath: '/tortuvchilar/reports'
+      preLoaderRoute: typeof TortuvchilarReportsRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/products': {
+      id: '/tortuvchilar/products'
+      path: '/products'
+      fullPath: '/tortuvchilar/products'
+      preLoaderRoute: typeof TortuvchilarProductsRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/live': {
+      id: '/tortuvchilar/live'
+      path: '/live'
+      fullPath: '/tortuvchilar/live'
+      preLoaderRoute: typeof TortuvchilarLiveRouteImport
+      parentRoute: typeof TortuvchilarRoute
+    }
+    '/tortuvchilar/worker/': {
+      id: '/tortuvchilar/worker/'
+      path: '/'
+      fullPath: '/tortuvchilar/worker/'
+      preLoaderRoute: typeof TortuvchilarWorkerIndexRouteImport
+      parentRoute: typeof TortuvchilarWorkerRoute
+    }
+    '/tortuvchilar/worker/new': {
+      id: '/tortuvchilar/worker/new'
+      path: '/new'
+      fullPath: '/tortuvchilar/worker/new'
+      preLoaderRoute: typeof TortuvchilarWorkerNewRouteImport
+      parentRoute: typeof TortuvchilarWorkerRoute
+    }
   }
 }
+
+interface TortuvchilarWorkerRouteChildren {
+  TortuvchilarWorkerNewRoute: typeof TortuvchilarWorkerNewRoute
+  TortuvchilarWorkerIndexRoute: typeof TortuvchilarWorkerIndexRoute
+}
+
+const TortuvchilarWorkerRouteChildren: TortuvchilarWorkerRouteChildren = {
+  TortuvchilarWorkerNewRoute: TortuvchilarWorkerNewRoute,
+  TortuvchilarWorkerIndexRoute: TortuvchilarWorkerIndexRoute,
+}
+
+const TortuvchilarWorkerRouteWithChildren =
+  TortuvchilarWorkerRoute._addFileChildren(TortuvchilarWorkerRouteChildren)
+
+interface TortuvchilarRouteChildren {
+  TortuvchilarLiveRoute: typeof TortuvchilarLiveRoute
+  TortuvchilarProductsRoute: typeof TortuvchilarProductsRoute
+  TortuvchilarReportsRoute: typeof TortuvchilarReportsRoute
+  TortuvchilarSettingsRoute: typeof TortuvchilarSettingsRoute
+  TortuvchilarWorkerRoute: typeof TortuvchilarWorkerRouteWithChildren
+  TortuvchilarWorkerLoginRoute: typeof TortuvchilarWorkerLoginRoute
+  TortuvchilarWorkersRoute: typeof TortuvchilarWorkersRoute
+  TortuvchilarIndexRoute: typeof TortuvchilarIndexRoute
+}
+
+const TortuvchilarRouteChildren: TortuvchilarRouteChildren = {
+  TortuvchilarLiveRoute: TortuvchilarLiveRoute,
+  TortuvchilarProductsRoute: TortuvchilarProductsRoute,
+  TortuvchilarReportsRoute: TortuvchilarReportsRoute,
+  TortuvchilarSettingsRoute: TortuvchilarSettingsRoute,
+  TortuvchilarWorkerRoute: TortuvchilarWorkerRouteWithChildren,
+  TortuvchilarWorkerLoginRoute: TortuvchilarWorkerLoginRoute,
+  TortuvchilarWorkersRoute: TortuvchilarWorkersRoute,
+  TortuvchilarIndexRoute: TortuvchilarIndexRoute,
+}
+
+const TortuvchilarRouteWithChildren = TortuvchilarRoute._addFileChildren(
+  TortuvchilarRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -183,16 +428,8 @@ const rootRouteChildren: RootRouteChildren = {
   MahsulotlarRoute: MahsulotlarRoute,
   SozlamalarRoute: SozlamalarRoute,
   TopshiriqlarRoute: TopshiriqlarRoute,
+  TortuvchilarRoute: TortuvchilarRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

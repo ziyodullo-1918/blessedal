@@ -227,6 +227,210 @@ export type Database = {
           },
         ]
       }
+      pullers_app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      pullers_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      pullers_periods: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          end_date: string | null
+          id: string
+          name: string | null
+          start_date: string
+          status: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name?: string | null
+          start_date: string
+          status?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name?: string | null
+          start_date?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      pullers_products: {
+        Row: {
+          active: boolean
+          category_id: string | null
+          created_at: string
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          active?: boolean
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pullers_products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "pullers_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pullers_work_entries: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          total: number | null
+          unit_price: number
+          work_date: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity: number
+          total?: number | null
+          unit_price: number
+          work_date?: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          total?: number | null
+          unit_price?: number
+          work_date?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pullers_work_entries_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "pullers_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pullers_work_entries_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "pullers_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pullers_work_entries_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "pullers_workers_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pullers_worker_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          token: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          token?: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          token?: string
+          worker_id?: string
+        }
+        Relationships: []
+      }
+      pullers_workers: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          pin_hash: string
+          worker_code: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          pin_hash: string
+          worker_code: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          pin_hash?: string
+          worker_code?: string
+        }
+        Relationships: []
+      }
       workers: {
         Row: {
           created_at: string
@@ -253,7 +457,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      pullers_workers_safe: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          worker_code: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          worker_code?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          worker_code?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       close_period_and_rollover:
@@ -267,6 +494,94 @@ export type Database = {
             }
             Returns: string
           }
+      pullers_admin_update_entry: {
+        Args: {
+          _entry_id: string
+          _product_id: string
+          _quantity: number
+          _work_date: string
+        }
+        Returns: undefined
+      }
+      pullers_admin_upsert_worker: {
+        Args: {
+          _active: boolean
+          _code: string
+          _id: string
+          _name: string
+          _pin: string
+        }
+        Returns: string
+      }
+      pullers_close_current_period: {
+        Args: { _end_date?: string; _next_start?: string }
+        Returns: string
+      }
+      pullers_delete_my_entry: {
+        Args: { _entry_id: string; _token: string }
+        Returns: undefined
+      }
+      pullers_get_current_period: {
+        Args: never
+        Returns: {
+          id: string
+          name: string
+          start_date: string
+        }[]
+      }
+      pullers_get_my_entries: {
+        Args: { _token: string }
+        Returns: {
+          category_name: string
+          created_at: string
+          id: string
+          product_name: string
+          quantity: number
+          total: number
+          unit_price: number
+          work_date: string
+        }[]
+      }
+      pullers_period_auto_name: { Args: { _d: string }; Returns: string }
+      pullers_set_admin_pin: {
+        Args: { _new_pin: string; _old_pin: string }
+        Returns: undefined
+      }
+      pullers_submit_work_entry: {
+        Args: {
+          _product_id: string
+          _quantity: number
+          _token: string
+          _work_date: string
+        }
+        Returns: string
+      }
+      pullers_update_my_entry: {
+        Args: {
+          _entry_id: string
+          _product_id: string
+          _quantity: number
+          _token: string
+          _work_date: string
+        }
+        Returns: undefined
+      }
+      pullers_verify_admin_pin: { Args: { _pin: string }; Returns: boolean }
+      pullers_worker_login: {
+        Args: { _code: string; _pin: string }
+        Returns: {
+          expires_at: string
+          id: string
+          name: string
+          session_token: string
+          worker_code: string
+        }[]
+      }
+      pullers_worker_logout: { Args: { _token: string }; Returns: undefined }
+      pullers_worker_session_check: {
+        Args: { _token: string }
+        Returns: string
+      }
     }
     Enums: {
       assignment_status: "in_progress" | "completed"
