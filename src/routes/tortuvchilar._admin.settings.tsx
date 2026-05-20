@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/tortuvchilar/page-header";
-import { PinGate } from "@/components/tortuvchilar/pin-gate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +11,7 @@ import { lockPin } from "@/lib/tortuvchilar/admin-pin";
 import { Lock, KeyRound } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/settings")({
-  component: () => (<PinGate><SettingsPage /></PinGate>),
+  component: () => SettingsPage,
 });
 
 function SettingsPage() {

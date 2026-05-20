@@ -14,10 +14,9 @@ import { formatMoney, formatNumber, t } from "@/lib/tortuvchilar/i18n";
 import { Download, FileText, Filter, Pencil, Trash2, CalendarClock, History } from "lucide-react";
 import { workerMonthlyPdf, productsPdf, salariesPdf } from "@/lib/tortuvchilar/pdf";
 import { toast } from "sonner";
-import { PinGate } from "@/components/tortuvchilar/pin-gate";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/reports")({
-  component: () => (<PinGate><ReportsPage /></PinGate>),
+  component: () => ReportsPage,
 });
 
 type Row = {

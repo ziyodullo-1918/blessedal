@@ -12,10 +12,9 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { formatMoney, t } from "@/lib/tortuvchilar/i18n";
 import { Pencil, Plus, Trash2, Tag, Box, X } from "lucide-react";
-import { PinGate } from "@/components/tortuvchilar/pin-gate";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/products")({
-  component: () => (<PinGate><ProductsPage /></PinGate>),
+  component: () => ProductsPage,
 });
 
 type Cat = { id: string; name: string };

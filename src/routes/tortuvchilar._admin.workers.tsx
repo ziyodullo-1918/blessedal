@@ -11,10 +11,9 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { t } from "@/lib/tortuvchilar/i18n";
 import { Pencil, Plus, Trash2, UserCog } from "lucide-react";
-import { PinGate } from "@/components/tortuvchilar/pin-gate";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/workers")({
-  component: () => (<PinGate><WorkersPage /></PinGate>),
+  component: () => WorkersPage,
 });
 
 type Worker = { id: string; worker_code: string; name: string; active: boolean; created_at: string };
