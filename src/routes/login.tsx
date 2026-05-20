@@ -184,7 +184,30 @@ function LoginPage() {
                 </p>
               </form>
             </TabsContent>
+
+            <TabsContent value="puller">
+              <form onSubmit={submitPuller} className="mt-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="worker_code">Hodim ID</Label>
+                  <Input id="worker_code" required value={workerCode}
+                    onChange={(e) => setWorkerCode(e.target.value.toUpperCase())} placeholder="W-001" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="worker_pin">PIN</Label>
+                  <Input id="worker_pin" type="password" inputMode="numeric"
+                    value={workerPin} onChange={(e) => setWorkerPin(e.target.value)}
+                    required placeholder="••••" maxLength={12} />
+                </div>
+                <Button type="submit" className="w-full" disabled={busy}>
+                  {busy ? "Kuting…" : "Kirish"}
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Tortuvchilar bo'limi hodimlari uchun
+                </p>
+              </form>
+            </TabsContent>
           </Tabs>
+
         </div>
       </div>
     </div>
