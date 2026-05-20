@@ -7,8 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { t } from "@/lib/tortuvchilar/i18n";
-import { lockPin } from "@/lib/tortuvchilar/admin-pin";
-import { Lock, KeyRound } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/settings")({
   component: SettingsPage,
