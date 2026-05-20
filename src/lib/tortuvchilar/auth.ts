@@ -1,15 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// Tortuvchilar admin = any authenticated supabase user that is NOT a founder.
+// (Founders are scoped sub-users created by the main admin.)
 export async function isCurrentUserAdmin(): Promise<boolean> {
   const { data: sess } = await supabase.auth.getSession();
-  const uid = sess.session?.user.id;
-  if (!uid) return false;
-  const { data, error } = await supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", uid)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error) return false;
-  return !!data;
+  if (!sess.session?.user) return false;
+  if (typeof window !== "undefined") {
+    try {
+      if (sessionStorage.getItem("tikuv.founder.session")) return false;
+    } catch {}
+  }
+  return true;
 }
