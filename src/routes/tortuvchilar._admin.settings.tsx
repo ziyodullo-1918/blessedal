@@ -2,17 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/tortuvchilar/page-header";
-import { PinGate } from "@/components/tortuvchilar/pin-gate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { t } from "@/lib/tortuvchilar/i18n";
-import { lockPin } from "@/lib/tortuvchilar/admin-pin";
-import { Lock, KeyRound } from "lucide-react";
+import { KeyRound } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/settings")({
-  component: () => (<PinGate><SettingsPage /></PinGate>),
+  component: SettingsPage,
 });
 
 function SettingsPage() {
@@ -40,14 +38,7 @@ function SettingsPage() {
 
   return (
     <>
-      <PageHeader
-        title={t.settings}
-        actions={
-          <Button variant="secondary" onClick={() => { lockPin(); toast.success(t.lock); }}>
-            <Lock className="size-4" /> {t.lock}
-          </Button>
-        }
-      />
+      <PageHeader title={t.settings} />
       <div className="surface mx-auto max-w-md rounded-xl border border-border p-5">
         <div className="mb-4 flex items-center gap-2">
           <KeyRound className="size-5 text-primary" />

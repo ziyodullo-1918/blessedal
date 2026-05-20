@@ -21,7 +21,6 @@ const tortuvchilarNav = [
   { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
   { to: "/tortuvchilar/workers", label: "Ishchilar", icon: Users },
   { to: "/tortuvchilar/products", label: "Mahsulotlar", icon: Package },
-  { to: "/tortuvchilar/live", label: "Jonli", icon: ClipboardList },
   { to: "/tortuvchilar/reports", label: "Hisobot", icon: BarChart3 },
   { to: "/tortuvchilar/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
