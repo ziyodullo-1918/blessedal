@@ -542,6 +542,16 @@ export type Database = {
           work_date: string
         }[]
       }
+      pullers_get_my_periods: {
+        Args: { _token: string }
+        Returns: {
+          end_date: string
+          id: string
+          name: string
+          start_date: string
+          status: string
+        }[]
+      }
       pullers_period_auto_name: { Args: { _d: string }; Returns: string }
       pullers_set_admin_pin: {
         Args: { _new_pin: string; _old_pin: string }
