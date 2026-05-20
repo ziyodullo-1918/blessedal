@@ -38,14 +38,7 @@ function SettingsPage() {
 
   return (
     <>
-      <PageHeader
-        title={t.settings}
-        actions={
-          <Button variant="secondary" onClick={() => { lockPin(); toast.success(t.lock); }}>
-            <Lock className="size-4" /> {t.lock}
-          </Button>
-        }
-      />
+      <PageHeader title={t.settings} />
       <div className="surface mx-auto max-w-md rounded-xl border border-border p-5">
         <div className="mb-4 flex items-center gap-2">
           <KeyRound className="size-5 text-primary" />
