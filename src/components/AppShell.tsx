@@ -98,27 +98,36 @@ export function AppShell({ children }: { children: ReactNode }) {
             open ? "translate-x-0" : "-translate-x-full",
           )}
         >
-          <nav className="flex flex-col gap-1">
-            {nav.map((n) => {
-              const Icon = n.icon;
-              const active = loc.pathname === n.to;
-              return (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-foreground hover:bg-accent",
-                  )}
-                >
-                  <Icon className="size-4" />
-                  {n.label}
-                </Link>
-              );
-            })}
+          <nav className="flex flex-col gap-4">
+            {sections.map((section, si) => (
+              <div key={si} className="flex flex-col gap-1">
+                {section.heading && (
+                  <div className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {section.heading}
+                  </div>
+                )}
+                {section.items.map((n) => {
+                  const Icon = n.icon;
+                  const active = loc.pathname === n.to || (n.to !== "/" && loc.pathname.startsWith(n.to + "/"));
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "text-foreground hover:bg-accent",
+                      )}
+                    >
+                      <Icon className="size-4" />
+                      {n.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
         </aside>
 
