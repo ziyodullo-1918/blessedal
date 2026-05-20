@@ -24,13 +24,16 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { signIn, signUp, signInAsFounder, user, loading, role } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"admin" | "founder">("admin");
+  const [tab, setTab] = useState<"admin" | "founder" | "puller">("admin");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginId, setLoginId] = useState("");
   const [pin, setPin] = useState("");
+  const [workerCode, setWorkerCode] = useState("");
+  const [workerPin, setWorkerPin] = useState("");
   const [busy, setBusy] = useState(false);
+
 
   useEffect(() => {
     if (!loading && user) {
