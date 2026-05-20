@@ -26,7 +26,6 @@ import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchi
 import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
 import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
 import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
-import { Route as TortuvchilarAdminLiveRouteImport } from './routes/tortuvchilar._admin.live'
 
 const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
   id: '/topshiriqlar',
@@ -117,11 +116,6 @@ const TortuvchilarAdminProductsRoute =
     path: '/products',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
-const TortuvchilarAdminLiveRoute = TortuvchilarAdminLiveRouteImport.update({
-  id: '/live',
-  path: '/live',
-  getParentRoute: () => TortuvchilarAdminRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -134,7 +128,6 @@ export interface FileRoutesByFullPath {
   '/tortuvchilar': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
-  '/tortuvchilar/live': typeof TortuvchilarAdminLiveRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
@@ -152,7 +145,6 @@ export interface FileRoutesByTo {
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
-  '/tortuvchilar/live': typeof TortuvchilarAdminLiveRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
@@ -173,7 +165,6 @@ export interface FileRoutesById {
   '/tortuvchilar/_admin': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
-  '/tortuvchilar/_admin/live': typeof TortuvchilarAdminLiveRoute
   '/tortuvchilar/_admin/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/_admin/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/_admin/settings': typeof TortuvchilarAdminSettingsRoute
@@ -195,7 +186,6 @@ export interface FileRouteTypes {
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
     | '/tortuvchilar/worker-login'
-    | '/tortuvchilar/live'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
@@ -213,7 +203,6 @@ export interface FileRouteTypes {
     | '/sozlamalar'
     | '/topshiriqlar'
     | '/tortuvchilar/worker-login'
-    | '/tortuvchilar/live'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
@@ -233,7 +222,6 @@ export interface FileRouteTypes {
     | '/tortuvchilar/_admin'
     | '/tortuvchilar/worker'
     | '/tortuvchilar/worker-login'
-    | '/tortuvchilar/_admin/live'
     | '/tortuvchilar/_admin/products'
     | '/tortuvchilar/_admin/reports'
     | '/tortuvchilar/_admin/settings'
@@ -377,18 +365,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
     }
-    '/tortuvchilar/_admin/live': {
-      id: '/tortuvchilar/_admin/live'
-      path: '/live'
-      fullPath: '/tortuvchilar/live'
-      preLoaderRoute: typeof TortuvchilarAdminLiveRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
   }
 }
 
 interface TortuvchilarAdminRouteChildren {
-  TortuvchilarAdminLiveRoute: typeof TortuvchilarAdminLiveRoute
   TortuvchilarAdminProductsRoute: typeof TortuvchilarAdminProductsRoute
   TortuvchilarAdminReportsRoute: typeof TortuvchilarAdminReportsRoute
   TortuvchilarAdminSettingsRoute: typeof TortuvchilarAdminSettingsRoute
@@ -397,7 +377,6 @@ interface TortuvchilarAdminRouteChildren {
 }
 
 const TortuvchilarAdminRouteChildren: TortuvchilarAdminRouteChildren = {
-  TortuvchilarAdminLiveRoute: TortuvchilarAdminLiveRoute,
   TortuvchilarAdminProductsRoute: TortuvchilarAdminProductsRoute,
   TortuvchilarAdminReportsRoute: TortuvchilarAdminReportsRoute,
   TortuvchilarAdminSettingsRoute: TortuvchilarAdminSettingsRoute,
@@ -436,3 +415,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
