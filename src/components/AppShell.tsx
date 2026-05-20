@@ -4,17 +4,21 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, Scissors } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-const adminNav = [
+const tikuvchilarNav = [
   { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
   { to: "/ishchilar", label: "Ishchilar", icon: Users },
   { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
   { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
+] as const;
+
+const tortuvchilarNav = [
+  { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
 ] as const;
 
 const founderNav = [
