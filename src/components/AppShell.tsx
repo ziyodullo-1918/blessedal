@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,11 @@ const tikuvchilarNav = [
 
 const tortuvchilarNav = [
   { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/tortuvchilar/workers", label: "Ishchilar", icon: Users },
+  { to: "/tortuvchilar/products", label: "Mahsulotlar", icon: Package },
+  { to: "/tortuvchilar/live", label: "Jonli", icon: ClipboardList },
+  { to: "/tortuvchilar/reports", label: "Hisobot", icon: BarChart3 },
+  { to: "/tortuvchilar/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 const founderNav = [
@@ -26,23 +31,38 @@ const founderNav = [
 ] as const;
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard };
-type NavSection = { heading: string | null; items: readonly NavItem[] };
+type NavGroup = { key: string; label: string; icon: typeof LayoutDashboard; items: readonly NavItem[] };
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, signOut, role, founder } = useAuth();
-  const sections: NavSection[] = role === "founder"
-    ? [{ heading: null, items: founderNav }]
-    : [
-        { heading: "Tikuvchilar", items: tikuvchilarNav },
-        { heading: "Tortuvchilar", items: tortuvchilarNav },
-      ];
   const navigate = useNavigate();
   const loc = useLocation();
   const [open, setOpen] = useState(false);
 
+  const groups: NavGroup[] = role === "founder"
+    ? [{ key: "founder", label: "Topshiriqlar", icon: ClipboardList, items: founderNav }]
+    : [
+        { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
+        { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
+      ];
+
+  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
+  const isInGroup = (g: NavGroup) => {
+    if (g.key === "tikuvchilar") {
+      return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
+    }
+    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/tortuvchilar");
+    return true;
+  };
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    groups.forEach((g) => { init[g.key] = isInGroup(g); });
+    return init;
+  });
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Top bar */}
       <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur">
         <div
           className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4"
@@ -51,22 +71,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             paddingRight: "max(1rem, env(safe-area-inset-right))",
           }}
         >
-          <button
-            className="lg:hidden -ml-1 p-2"
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Menyu"
-          >
+          <button className="lg:hidden -ml-1 p-2" onClick={() => setOpen((v) => !v)} aria-label="Menyu">
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-display text-xl">
-              B
-            </div>
+            <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-display text-xl">B</div>
             <div>
               <div className="font-display text-xl leading-none">BLESSED AL</div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                Boshqaruv paneli
-              </div>
+              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Boshqaruv paneli</div>
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -75,14 +87,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </span>
             <PinLockBtn />
             <ThemeToggle />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async () => {
-                await signOut();
-                navigate({ to: "/login" });
-              }}
-            >
+            <Button variant="outline" size="sm" onClick={async () => { await signOut(); navigate({ to: "/login" }); }}>
               <LogOut className="size-4" />
               <span className="hidden sm:inline">Chiqish</span>
             </Button>
@@ -91,43 +96,56 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <div className="mx-auto flex max-w-7xl">
-        {/* Sidebar */}
         <aside
           className={cn(
             "fixed inset-y-16 left-0 z-20 w-64 shrink-0 border-r bg-card px-3 py-4 transition-transform lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:translate-x-0",
             open ? "translate-x-0" : "-translate-x-full",
           )}
         >
-          <nav className="flex flex-col gap-4">
-            {sections.map((section, si) => (
-              <div key={si} className="flex flex-col gap-1">
-                {section.heading && (
-                  <div className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    {section.heading}
-                  </div>
-                )}
-                {section.items.map((n) => {
-                  const Icon = n.icon;
-                  const active = loc.pathname === n.to || (n.to !== "/" && loc.pathname.startsWith(n.to + "/"));
-                  return (
-                    <Link
-                      key={n.to}
-                      to={n.to}
-                      onClick={() => setOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        active
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "text-foreground hover:bg-accent",
-                      )}
-                    >
-                      <Icon className="size-4" />
-                      {n.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+          <nav className="flex flex-col gap-1">
+            {groups.map((g) => {
+              const GIcon = g.icon;
+              const isOpen = openGroups[g.key];
+              const groupActive = isInGroup(g);
+              return (
+                <div key={g.key} className="flex flex-col">
+                  <button
+                    type="button"
+                    onClick={() => setOpenGroups((s) => ({ ...s, [g.key]: !s[g.key] }))}
+                    className={cn(
+                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors",
+                      groupActive ? "bg-accent text-foreground" : "text-foreground hover:bg-accent",
+                    )}
+                  >
+                    <GIcon className="size-4" />
+                    <span className="flex-1 text-left">{g.label}</span>
+                    <ChevronDown className={cn("size-4 transition-transform", isOpen ? "rotate-0" : "-rotate-90")} />
+                  </button>
+                  {isOpen && (
+                    <div className="mt-1 ml-3 flex flex-col gap-1 border-l border-border pl-2">
+                      {g.items.map((n) => {
+                        const Icon = n.icon;
+                        const active = loc.pathname === n.to || (n.to !== "/" && loc.pathname.startsWith(n.to + "/"));
+                        return (
+                          <Link
+                            key={n.to}
+                            to={n.to}
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                              active ? "bg-primary text-primary-foreground shadow-sm" : "text-foreground hover:bg-accent",
+                            )}
+                          >
+                            <Icon className="size-4" />
+                            {n.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </aside>
 
