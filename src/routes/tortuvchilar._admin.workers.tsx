@@ -13,7 +13,7 @@ import { t } from "@/lib/tortuvchilar/i18n";
 import { Pencil, Plus, Trash2, UserCog } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/workers")({
-  component: () => WorkersPage,
+  component: WorkersPage,
 });
 
 type Worker = { id: string; worker_code: string; name: string; active: boolean; created_at: string };

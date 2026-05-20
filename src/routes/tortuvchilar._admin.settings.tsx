@@ -11,7 +11,7 @@ import { lockPin } from "@/lib/tortuvchilar/admin-pin";
 import { Lock, KeyRound } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/settings")({
-  component: () => SettingsPage,
+  component: SettingsPage,
 });
 
 function SettingsPage() {

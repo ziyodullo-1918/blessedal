@@ -16,7 +16,7 @@ import { workerMonthlyPdf, productsPdf, salariesPdf } from "@/lib/tortuvchilar/p
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/reports")({
-  component: () => ReportsPage,
+  component: ReportsPage,
 });
 
 type Row = {

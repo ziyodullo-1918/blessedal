@@ -14,7 +14,7 @@ import { formatMoney, t } from "@/lib/tortuvchilar/i18n";
 import { Pencil, Plus, Trash2, Tag, Box, X } from "lucide-react";
 
 export const Route = createFileRoute("/tortuvchilar/_admin/products")({
-  component: () => ProductsPage,
+  component: ProductsPage,
 });
 
 type Cat = { id: string; name: string };
