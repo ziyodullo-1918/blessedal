@@ -69,6 +69,38 @@ function LoginPage() {
     navigate({ to: "/topshiriqlar" });
   }
 
+  async function submitPuller(e: React.FormEvent) {
+    e.preventDefault();
+    if (!workerCode.trim() || !workerPin.trim()) return toast.error("ID va PIN kiriting");
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("pullers_worker_login", {
+        _code: workerCode.trim().toUpperCase(),
+        _pin: workerPin.trim(),
+      });
+      if (error) throw error;
+      const row = (data as any[])?.[0];
+      if (!row) {
+        toast.error("ID yoki PIN noto'g'ri");
+        return;
+      }
+      setWorkerSession({
+        id: row.id,
+        worker_code: row.worker_code,
+        name: row.name,
+        token: row.session_token,
+        expires_at: row.expires_at,
+      });
+      toast.success(`Salom, ${row.name}`);
+      navigate({ to: "/tortuvchilar/worker" });
+    } catch (err: any) {
+      toast.error(err.message ?? "Kirish xatosi");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden lg:flex flex-col justify-between bg-foreground p-10 text-background">
