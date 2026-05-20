@@ -43,7 +43,7 @@ function WorkerHome() {
     enabled: !!session,
     queryKey: ["my-periods", session?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_my_periods", { _token: session!.token });
+      const { data, error } = await supabase.rpc("pullers_get_my_periods", { _token: session!.token });
       if (error) throw error;
       return (data ?? []) as Period[];
     },
