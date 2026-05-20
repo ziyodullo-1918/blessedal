@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { setWorkerSession } from "@/lib/tortuvchilar/worker-session";
+
 
 export const Route = createFileRoute("/login")({
   head: () => ({
