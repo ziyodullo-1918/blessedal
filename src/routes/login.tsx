@@ -128,10 +128,12 @@ function LoginPage() {
           <p className="mt-1 text-sm text-muted-foreground">Rolni tanlang.</p>
 
           <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="mt-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="admin">Administrator</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="admin">Admin</TabsTrigger>
               <TabsTrigger value="founder">Ta'sischi</TabsTrigger>
+              <TabsTrigger value="puller">Tortuvchi</TabsTrigger>
             </TabsList>
+
 
             <TabsContent value="admin">
               <form onSubmit={submitAdmin} className="mt-4 space-y-4">
