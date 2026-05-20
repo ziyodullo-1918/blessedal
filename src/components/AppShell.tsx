@@ -25,9 +25,17 @@ const founderNav = [
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
 
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard };
+type NavSection = { heading: string | null; items: readonly NavItem[] };
+
 export function AppShell({ children }: { children: ReactNode }) {
   const { user, signOut, role, founder } = useAuth();
-  const nav = role === "founder" ? founderNav : adminNav;
+  const sections: NavSection[] = role === "founder"
+    ? [{ heading: null, items: founderNav }]
+    : [
+        { heading: "Tikuvchilar", items: tikuvchilarNav },
+        { heading: "Tortuvchilar", items: tortuvchilarNav },
+      ];
   const navigate = useNavigate();
   const loc = useLocation();
   const [open, setOpen] = useState(false);
