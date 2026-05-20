@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { setWorkerSession } from "@/lib/tortuvchilar/worker-session";
+
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -21,13 +24,16 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { signIn, signUp, signInAsFounder, user, loading, role } = useAuth();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"admin" | "founder">("admin");
+  const [tab, setTab] = useState<"admin" | "founder" | "puller">("admin");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginId, setLoginId] = useState("");
   const [pin, setPin] = useState("");
+  const [workerCode, setWorkerCode] = useState("");
+  const [workerPin, setWorkerPin] = useState("");
   const [busy, setBusy] = useState(false);
+
 
   useEffect(() => {
     if (!loading && user) {
@@ -63,6 +69,38 @@ function LoginPage() {
     navigate({ to: "/topshiriqlar" });
   }
 
+  async function submitPuller(e: React.FormEvent) {
+    e.preventDefault();
+    if (!workerCode.trim() || !workerPin.trim()) return toast.error("ID va PIN kiriting");
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("pullers_worker_login", {
+        _code: workerCode.trim().toUpperCase(),
+        _pin: workerPin.trim(),
+      });
+      if (error) throw error;
+      const row = (data as any[])?.[0];
+      if (!row) {
+        toast.error("ID yoki PIN noto'g'ri");
+        return;
+      }
+      setWorkerSession({
+        id: row.id,
+        worker_code: row.worker_code,
+        name: row.name,
+        token: row.session_token,
+        expires_at: row.expires_at,
+      });
+      toast.success(`Salom, ${row.name}`);
+      navigate({ to: "/tortuvchilar/worker" });
+    } catch (err: any) {
+      toast.error(err.message ?? "Kirish xatosi");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden lg:flex flex-col justify-between bg-foreground p-10 text-background">
@@ -90,10 +128,12 @@ function LoginPage() {
           <p className="mt-1 text-sm text-muted-foreground">Rolni tanlang.</p>
 
           <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="mt-6">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="admin">Administrator</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="admin">Admin</TabsTrigger>
               <TabsTrigger value="founder">Ta'sischi</TabsTrigger>
+              <TabsTrigger value="puller">Tortuvchi</TabsTrigger>
             </TabsList>
+
 
             <TabsContent value="admin">
               <form onSubmit={submitAdmin} className="mt-4 space-y-4">
@@ -144,7 +184,30 @@ function LoginPage() {
                 </p>
               </form>
             </TabsContent>
+
+            <TabsContent value="puller">
+              <form onSubmit={submitPuller} className="mt-4 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="worker_code">Hodim ID</Label>
+                  <Input id="worker_code" required value={workerCode}
+                    onChange={(e) => setWorkerCode(e.target.value.toUpperCase())} placeholder="W-001" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="worker_pin">PIN</Label>
+                  <Input id="worker_pin" type="password" inputMode="numeric"
+                    value={workerPin} onChange={(e) => setWorkerPin(e.target.value)}
+                    required placeholder="••••" maxLength={12} />
+                </div>
+                <Button type="submit" className="w-full" disabled={busy}>
+                  {busy ? "Kuting…" : "Kirish"}
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Tortuvchilar bo'limi hodimlari uchun
+                </p>
+              </form>
+            </TabsContent>
           </Tabs>
+
         </div>
       </div>
     </div>
