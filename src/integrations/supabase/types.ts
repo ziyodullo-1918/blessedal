@@ -180,6 +180,74 @@ export type Database = {
         }
         Relationships: []
       }
+      factory_payroll_periods: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          end_date: string
+          id: string
+          label: string
+          start_date: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          end_date: string
+          id?: string
+          label: string
+          start_date: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          end_date?: string
+          id?: string
+          label?: string
+          start_date?: string
+        }
+        Relationships: []
+      }
+      factory_payroll_snapshots: {
+        Row: {
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id: string
+          period_id: string
+          total_amount: number
+          total_units: number
+          worker_id: string
+          worker_name: string
+        }
+        Insert: {
+          created_at?: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          period_id: string
+          total_amount?: number
+          total_units?: number
+          worker_id: string
+          worker_name: string
+        }
+        Update: {
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          period_id?: string
+          total_amount?: number
+          total_units?: number
+          worker_id?: string
+          worker_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factory_payroll_snapshots_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "factory_payroll_periods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       factory_stage_events: {
         Row: {
           created_at: string
@@ -336,6 +404,56 @@ export type Database = {
           worker_code?: string
         }
         Relationships: []
+      }
+      finished_inventory: {
+        Row: {
+          color: string | null
+          created_at: string
+          damaged_quantity: number
+          id: string
+          note: string | null
+          order_id: string | null
+          packaged_at: string
+          packaged_by: string | null
+          product_name: string
+          quantity: number
+          size: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          damaged_quantity?: number
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          packaged_at?: string
+          packaged_by?: string | null
+          product_name: string
+          quantity?: number
+          size?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          damaged_quantity?: number
+          id?: string
+          note?: string | null
+          order_id?: string | null
+          packaged_at?: string
+          packaged_by?: string | null
+          product_name?: string
+          quantity?: number
+          size?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finished_inventory_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "factory_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       founders: {
         Row: {
@@ -752,6 +870,36 @@ export type Database = {
         }
         Relationships: []
       }
+      salary_rates: {
+        Row: {
+          active: boolean
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id: string
+          product_name: string | null
+          rate_per_unit: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          product_name?: string | null
+          rate_per_unit?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          product_name?: string | null
+          rate_per_unit?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       workers: {
         Row: {
           created_at: string
@@ -815,9 +963,23 @@ export type Database = {
             }
             Returns: string
           }
+      factory_close_payroll_period: {
+        Args: { _period_id: string }
+        Returns: undefined
+      }
       factory_consume_order_materials: {
         Args: { _order_id: string }
         Returns: undefined
+      }
+      factory_finalize_packaging: {
+        Args: {
+          _damaged?: number
+          _note?: string
+          _quantity: number
+          _stage_id: string
+          _worker_id?: string
+        }
+        Returns: string
       }
       factory_next_order_number: { Args: never; Returns: string }
       factory_order_material_requirements: {
@@ -848,6 +1010,16 @@ export type Database = {
           _status: Database["public"]["Enums"]["factory_stage_status"]
         }
         Returns: undefined
+      }
+      factory_worker_salary: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          department: Database["public"]["Enums"]["factory_department"]
+          total_amount: number
+          total_units: number
+          worker_id: string
+          worker_name: string
+        }[]
       }
       inventory_adjust_stock: {
         Args: {
