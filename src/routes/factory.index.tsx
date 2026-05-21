@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEPT_FLOW, DEPT_LABEL, dashboardSummary, listOrders, type FactoryOrder } from "@/lib/factory/data";
+import { workerSalary } from "@/lib/factory/salary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 import { StatusBadge } from "@/components/factory/order-flow";
-import { Activity, Package, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Activity, Package, AlertTriangle, CheckCircle2, Clock, TrendingDown, Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/factory/")({
   component: () => <RequireAuth><FactoryDashboard /></RequireAuth>,
@@ -15,11 +16,26 @@ export const Route = createFileRoute("/factory/")({
 function FactoryDashboard() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof dashboardSummary>> | null>(null);
   const [orders, setOrders] = useState<FactoryOrder[]>([]);
+  const [allOrders, setAllOrders] = useState<FactoryOrder[]>([]);
+  const [shortages, setShortages] = useState<{ id: string; name: string; stock_quantity: number; min_stock: number; unit: string }[]>([]);
+  const [monthSalary, setMonthSalary] = useState(0);
 
   const refresh = async () => {
-    const [s, o] = await Promise.all([dashboardSummary(), listOrders()]);
+    const today = new Date();
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+    const todayIso = today.toISOString().slice(0, 10);
+    const [s, o, shortRes, sal] = await Promise.all([
+      dashboardSummary(),
+      listOrders(),
+      supabase.from("inventory_materials").select("id,name,stock_quantity,min_stock,unit"),
+      workerSalary(monthStart, todayIso).catch(() => []),
+    ]);
     setSummary(s);
+    setAllOrders(o);
     setOrders(o.slice(0, 10));
+    const lows = (shortRes.data ?? []).filter((m) => Number(m.stock_quantity) < Number(m.min_stock)) as typeof shortages;
+    setShortages(lows);
+    setMonthSalary(sal.reduce((a, r) => a + Number(r.total_amount), 0));
   };
 
   useEffect(() => {
@@ -28,6 +44,7 @@ function FactoryDashboard() {
       .channel("factory_dashboard")
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_orders" }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_stages" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "inventory_materials" }, refresh)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
@@ -36,6 +53,19 @@ function FactoryDashboard() {
   const activeOrders = summary?.orders.filter((o) => o.status === "in_progress" || o.status === "partial").length ?? 0;
   const completedOrders = summary?.orders.filter((o) => o.status === "completed").length ?? 0;
   const waiting = summary?.orders.filter((o) => o.status === "waiting_material" || o.status === "rejected").length ?? 0;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const delayed = useMemo(() => allOrders.filter((o) => o.due_date && o.due_date < today && o.status !== "completed"), [allOrders, today]);
+
+  const bottleneck = useMemo(() => {
+    const map = new Map<string, number>();
+    (summary?.stages ?? []).forEach((s) => {
+      if (s.status === "waiting_material" || s.status === "pending") {
+        map.set(s.department, (map.get(s.department) ?? 0) + 1);
+      }
+    });
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  }, [summary]);
 
   return (
     <div className="space-y-6">
@@ -58,6 +88,54 @@ function FactoryDashboard() {
         <Kpi icon={Activity} label="Faol" value={activeOrders} tone="info" />
         <Kpi icon={CheckCircle2} label="Tugatilgan" value={completedOrders} tone="success" />
         <Kpi icon={AlertTriangle} label="To'xtagan" value={waiting} tone="warning" />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Clock className="size-4 text-red-400" />Muddati o'tgan</CardTitle></CardHeader>
+          <CardContent>
+            {delayed.length === 0 ? <div className="text-xs text-muted-foreground">Yo'q</div> : (
+              <div className="space-y-1 text-sm">
+                {delayed.slice(0, 5).map((o) => (
+                  <Link key={o.id} to="/factory/orders/$id" params={{ id: o.id }} className="flex justify-between hover:text-primary">
+                    <span className="truncate">{o.order_number} · {o.product_name}</span>
+                    <span className="text-xs text-red-400">{o.due_date}</span>
+                  </Link>
+                ))}
+                {delayed.length > 5 && <div className="text-xs text-muted-foreground">+{delayed.length - 5} ko'proq</div>}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><TrendingDown className="size-4 text-orange-400" />Material kamomadi</CardTitle></CardHeader>
+          <CardContent>
+            {shortages.length === 0 ? <div className="text-xs text-muted-foreground">Yetarli</div> : (
+              <div className="space-y-1 text-sm">
+                {shortages.slice(0, 5).map((m) => (
+                  <Link key={m.id} to="/factory/inventory" className="flex justify-between hover:text-primary">
+                    <span className="truncate">{m.name}</span>
+                    <span className="text-xs text-orange-400">{Number(m.stock_quantity)}/{Number(m.min_stock)} {m.unit}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Wallet className="size-4 text-emerald-400" />Oylik (joriy oy)</CardTitle></CardHeader>
+          <CardContent>
+            <Link to="/factory/salary" className="block">
+              <div className="text-2xl font-semibold">{monthSalary.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground">so'm · barcha bo'limlar</div>
+            </Link>
+            {bottleneck.length > 0 && (
+              <div className="mt-3 text-xs text-muted-foreground">
+                Bottleneck: {bottleneck.map(([d, n]) => `${DEPT_LABEL[d as keyof typeof DEPT_LABEL]} (${n})`).join(", ")}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Department breakdown */}

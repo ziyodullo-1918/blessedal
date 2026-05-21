@@ -11,8 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/factory/order-flow";
-import { AlertTriangle, Send } from "lucide-react";
+import { AlertTriangle, Send, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
+import { finalizePackaging } from "@/lib/factory/salary";
 
 const VALID_DEPTS: FactoryDept[] = ["laser", "packaging", "warehouse", "delivery"];
 
@@ -96,15 +97,20 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
     ? Math.round((stage.completed_quantity / stage.planned_quantity) * 100) : 0;
   const remaining = stage.planned_quantity - stage.completed_quantity - stage.rejected_quantity;
   const isLaser = stage.department === "laser";
+  const isPackaging = stage.department === "packaging";
 
   const submit = async () => {
     const d = Number(done) || 0; const r = Number(rej) || 0;
     if (d <= 0 && r <= 0) return;
     setBusy(true);
     try {
-      await reportProgress(stage.id, d, r);
+      if (isPackaging && d > 0) {
+        await finalizePackaging(stage.id, d, r);
+      } else {
+        await reportProgress(stage.id, d, r);
+      }
       setDone(""); setRej("");
-      toast.success("Yangilandi");
+      toast.success(isPackaging ? "Qadoqlandi va tayyor omborga qo'shildi" : "Yangilandi");
       onChanged();
     } catch (e) { toast.error((e as Error).message); }
     finally { setBusy(false); }
@@ -170,8 +176,8 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
 
         <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="default" disabled={busy || stage.completed_quantity === 0} onClick={sendNext}>
-            <Send className="size-3 mr-1" />
-            {isLaser ? "Tikuvga yuborish" : "Keyingi bo'limga"}
+            {isPackaging ? <PackageCheck className="size-3 mr-1" /> : <Send className="size-3 mr-1" />}
+            {isLaser ? "Tikuvga yuborish" : isPackaging ? "Omborga yopish" : "Keyingi bo'limga"}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowIssue((v) => !v)}>
             <AlertTriangle className="size-3 mr-1" />Muammo
