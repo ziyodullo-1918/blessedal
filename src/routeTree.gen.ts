@@ -21,6 +21,8 @@ import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchil
 import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
 import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
 import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
+import { Route as FactoryInventoryRouteImport } from './routes/factory.inventory'
+import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
 import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
 import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
 import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
@@ -92,6 +94,16 @@ const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
   path: '/factory/workers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FactoryInventoryRoute = FactoryInventoryRouteImport.update({
+  id: '/factory/inventory',
+  path: '/factory/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryFormulasRoute = FactoryFormulasRouteImport.update({
+  id: '/factory/formulas',
+  path: '/factory/formulas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TortuvchilarWorkerIndexRoute = TortuvchilarWorkerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -155,6 +167,8 @@ export interface FileRoutesByFullPath {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/formulas': typeof FactoryFormulasRoute
+  '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
@@ -179,6 +193,8 @@ export interface FileRoutesByTo {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/formulas': typeof FactoryFormulasRoute
+  '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
   '/factory': typeof FactoryIndexRoute
@@ -202,6 +218,8 @@ export interface FileRoutesById {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/formulas': typeof FactoryFormulasRoute
+  '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/_admin': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
@@ -228,6 +246,8 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/formulas'
+    | '/factory/inventory'
     | '/factory/workers'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
@@ -252,6 +272,8 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/formulas'
+    | '/factory/inventory'
     | '/factory/workers'
     | '/tortuvchilar/worker-login'
     | '/factory'
@@ -274,6 +296,8 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/formulas'
+    | '/factory/inventory'
     | '/factory/workers'
     | '/tortuvchilar/_admin'
     | '/tortuvchilar/worker'
@@ -299,6 +323,8 @@ export interface RootRouteChildren {
   MahsulotlarRoute: typeof MahsulotlarRoute
   SozlamalarRoute: typeof SozlamalarRoute
   TopshiriqlarRoute: typeof TopshiriqlarRoute
+  FactoryFormulasRoute: typeof FactoryFormulasRoute
+  FactoryInventoryRoute: typeof FactoryInventoryRoute
   FactoryWorkersRoute: typeof FactoryWorkersRoute
   TortuvchilarAdminRoute: typeof TortuvchilarAdminRouteWithChildren
   TortuvchilarWorkerRoute: typeof TortuvchilarWorkerRouteWithChildren
@@ -393,6 +419,20 @@ declare module '@tanstack/react-router' {
       path: '/factory/workers'
       fullPath: '/factory/workers'
       preLoaderRoute: typeof FactoryWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/inventory': {
+      id: '/factory/inventory'
+      path: '/factory/inventory'
+      fullPath: '/factory/inventory'
+      preLoaderRoute: typeof FactoryInventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/formulas': {
+      id: '/factory/formulas'
+      path: '/factory/formulas'
+      fullPath: '/factory/formulas'
+      preLoaderRoute: typeof FactoryFormulasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tortuvchilar/worker/': {
@@ -508,6 +548,8 @@ const rootRouteChildren: RootRouteChildren = {
   MahsulotlarRoute: MahsulotlarRoute,
   SozlamalarRoute: SozlamalarRoute,
   TopshiriqlarRoute: TopshiriqlarRoute,
+  FactoryFormulasRoute: FactoryFormulasRoute,
+  FactoryInventoryRoute: FactoryInventoryRoute,
   FactoryWorkersRoute: FactoryWorkersRoute,
   TortuvchilarAdminRoute: TortuvchilarAdminRouteWithChildren,
   TortuvchilarWorkerRoute: TortuvchilarWorkerRouteWithChildren,

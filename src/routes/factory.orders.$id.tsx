@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OrderFlow, StatusBadge } from "@/components/factory/order-flow";
+import { MaterialRequirements } from "@/components/factory/material-requirements";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -62,6 +63,8 @@ function OrderDetail() {
         <CardHeader><CardTitle>Ishlab chiqarish jarayoni</CardTitle></CardHeader>
         <CardContent><OrderFlow stages={stages} /></CardContent>
       </Card>
+
+      <MaterialRequirements orderId={order.id} onConsumed={refresh} />
 
       <div className="grid gap-3 lg:grid-cols-2">
         {stages.map((s) => <StageCard key={s.id} stage={s} />)}
