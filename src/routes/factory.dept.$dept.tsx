@@ -97,15 +97,20 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
     ? Math.round((stage.completed_quantity / stage.planned_quantity) * 100) : 0;
   const remaining = stage.planned_quantity - stage.completed_quantity - stage.rejected_quantity;
   const isLaser = stage.department === "laser";
+  const isPackaging = stage.department === "packaging";
 
   const submit = async () => {
     const d = Number(done) || 0; const r = Number(rej) || 0;
     if (d <= 0 && r <= 0) return;
     setBusy(true);
     try {
-      await reportProgress(stage.id, d, r);
+      if (isPackaging && d > 0) {
+        await finalizePackaging(stage.id, d, r);
+      } else {
+        await reportProgress(stage.id, d, r);
+      }
       setDone(""); setRej("");
-      toast.success("Yangilandi");
+      toast.success(isPackaging ? "Qadoqlandi va tayyor omborga qo'shildi" : "Yangilandi");
       onChanged();
     } catch (e) { toast.error((e as Error).message); }
     finally { setBusy(false); }
