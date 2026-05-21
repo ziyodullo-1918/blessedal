@@ -22,22 +22,22 @@ function DeptPage() {
   const { dept } = useParams({ from: "/factory/dept/$dept" });
   const department = dept as FactoryDept;
   const [rows, setRows] = useState<(FactoryStage & { order: FactoryOrder })[]>([]);
-
-  if (!VALID_DEPTS.includes(department) && !DEPT_FLOW.includes(department)) {
-    return <div className="p-6">Noma'lum bo'lim</div>;
-  }
-
-  const refresh = async () => setRows(await listStagesByDept(department));
+  const valid = VALID_DEPTS.includes(department) || DEPT_FLOW.includes(department);
 
   useEffect(() => {
+    if (!valid) return;
+    const refresh = async () => setRows(await listStagesByDept(department));
     refresh();
     const ch = supabase.channel(`dept_${department}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_stages", filter: `department=eq.${department}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_orders" }, refresh)
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [department]);
+  }, [department, valid]);
 
+  if (!valid) return <div className="p-6">Noma'lum bo'lim</div>;
+
+  const refresh = async () => setRows(await listStagesByDept(department));
   const pending = rows.filter((r) => r.status !== "completed");
   const done = rows.filter((r) => r.status === "completed");
 
