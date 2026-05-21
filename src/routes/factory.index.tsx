@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEPT_FLOW, DEPT_LABEL, dashboardSummary, listOrders, type FactoryOrder } from "@/lib/factory/data";
+import { workerSalary } from "@/lib/factory/salary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 import { StatusBadge } from "@/components/factory/order-flow";
-import { Activity, Package, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Activity, Package, AlertTriangle, CheckCircle2, Clock, TrendingDown, Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/factory/")({
   component: () => <RequireAuth><FactoryDashboard /></RequireAuth>,
