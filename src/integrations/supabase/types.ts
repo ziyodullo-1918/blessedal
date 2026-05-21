@@ -364,6 +364,87 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory_materials: {
+        Row: {
+          created_at: string
+          id: string
+          material_type: string
+          min_stock: number
+          name: string
+          notes: string | null
+          stock_quantity: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_type?: string
+          min_stock?: number
+          name: string
+          notes?: string | null
+          stock_quantity?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_type?: string
+          min_stock?: number
+          name?: string
+          notes?: string | null
+          stock_quantity?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          material_id: string
+          note: string | null
+          order_id: string | null
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          material_id: string
+          note?: string | null
+          order_id?: string | null
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          material_id?: string
+          note?: string | null
+          order_id?: string | null
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_materials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "factory_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payroll_periods: {
         Row: {
           closed_at: string | null
@@ -393,6 +474,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      product_formulas: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          product_name: string
+          quantity_per_unit: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          product_name: string
+          quantity_per_unit: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          product_name?: string
+          quantity_per_unit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_formulas_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_materials"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -702,7 +815,22 @@ export type Database = {
             }
             Returns: string
           }
+      factory_consume_order_materials: {
+        Args: { _order_id: string }
+        Returns: undefined
+      }
       factory_next_order_number: { Args: never; Returns: string }
+      factory_order_material_requirements: {
+        Args: { _order_id: string }
+        Returns: {
+          available_qty: number
+          material_id: string
+          material_name: string
+          required_qty: number
+          shortage: number
+          unit: string
+        }[]
+      }
       factory_report_stage_progress: {
         Args: {
           _completed_delta: number
@@ -718,6 +846,15 @@ export type Database = {
           _note?: string
           _stage_id: string
           _status: Database["public"]["Enums"]["factory_stage_status"]
+        }
+        Returns: undefined
+      }
+      inventory_adjust_stock: {
+        Args: {
+          _delta: number
+          _material_id: string
+          _note?: string
+          _reason: string
         }
         Returns: undefined
       }
