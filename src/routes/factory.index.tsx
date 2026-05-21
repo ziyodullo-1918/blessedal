@@ -90,6 +90,54 @@ function FactoryDashboard() {
         <Kpi icon={AlertTriangle} label="To'xtagan" value={waiting} tone="warning" />
       </div>
 
+      <div className="grid gap-3 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Clock className="size-4 text-red-400" />Muddati o'tgan</CardTitle></CardHeader>
+          <CardContent>
+            {delayed.length === 0 ? <div className="text-xs text-muted-foreground">Yo'q</div> : (
+              <div className="space-y-1 text-sm">
+                {delayed.slice(0, 5).map((o) => (
+                  <Link key={o.id} to="/factory/orders/$id" params={{ id: o.id }} className="flex justify-between hover:text-primary">
+                    <span className="truncate">{o.order_number} · {o.product_name}</span>
+                    <span className="text-xs text-red-400">{o.due_date}</span>
+                  </Link>
+                ))}
+                {delayed.length > 5 && <div className="text-xs text-muted-foreground">+{delayed.length - 5} ko'proq</div>}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><TrendingDown className="size-4 text-orange-400" />Material kamomadi</CardTitle></CardHeader>
+          <CardContent>
+            {shortages.length === 0 ? <div className="text-xs text-muted-foreground">Yetarli</div> : (
+              <div className="space-y-1 text-sm">
+                {shortages.slice(0, 5).map((m) => (
+                  <Link key={m.id} to="/factory/inventory" className="flex justify-between hover:text-primary">
+                    <span className="truncate">{m.name}</span>
+                    <span className="text-xs text-orange-400">{Number(m.stock_quantity)}/{Number(m.min_stock)} {m.unit}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Wallet className="size-4 text-emerald-400" />Oylik (joriy oy)</CardTitle></CardHeader>
+          <CardContent>
+            <Link to="/factory/salary" className="block">
+              <div className="text-2xl font-semibold">{monthSalary.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground">so'm · barcha bo'limlar</div>
+            </Link>
+            {bottleneck.length > 0 && (
+              <div className="mt-3 text-xs text-muted-foreground">
+                Bottleneck: {bottleneck.map(([d, n]) => `${DEPT_LABEL[d as keyof typeof DEPT_LABEL]} (${n})`).join(", ")}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Department breakdown */}
       <Card>
         <CardHeader><CardTitle>Bo'limlar bo'yicha holat</CardTitle></CardHeader>
