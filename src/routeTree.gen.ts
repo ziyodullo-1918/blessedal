@@ -22,6 +22,7 @@ import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.wo
 import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
 import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
 import { Route as FactorySalaryRouteImport } from './routes/factory.salary'
+import { Route as FactoryPayrollRouteImport } from './routes/factory.payroll'
 import { Route as FactoryInventoryRouteImport } from './routes/factory.inventory'
 import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
 import { Route as FactoryFinishedRouteImport } from './routes/factory.finished'
@@ -99,6 +100,11 @@ const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
 const FactorySalaryRoute = FactorySalaryRouteImport.update({
   id: '/factory/salary',
   path: '/factory/salary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPayrollRoute = FactoryPayrollRouteImport.update({
+  id: '/factory/payroll',
+  path: '/factory/payroll',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryInventoryRoute = FactoryInventoryRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/factory/finished': typeof FactoryFinishedRoute
   '/factory/formulas': typeof FactoryFormulasRoute
   '/factory/inventory': typeof FactoryInventoryRoute
+  '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/salary': typeof FactorySalaryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar': typeof TortuvchilarAdminRouteWithChildren
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/factory/finished': typeof FactoryFinishedRoute
   '/factory/formulas': typeof FactoryFormulasRoute
   '/factory/inventory': typeof FactoryInventoryRoute
+  '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/salary': typeof FactorySalaryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/factory/finished': typeof FactoryFinishedRoute
   '/factory/formulas': typeof FactoryFormulasRoute
   '/factory/inventory': typeof FactoryInventoryRoute
+  '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/salary': typeof FactorySalaryRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/_admin': typeof TortuvchilarAdminRouteWithChildren
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/factory/finished'
     | '/factory/formulas'
     | '/factory/inventory'
+    | '/factory/payroll'
     | '/factory/salary'
     | '/factory/workers'
     | '/tortuvchilar'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/factory/finished'
     | '/factory/formulas'
     | '/factory/inventory'
+    | '/factory/payroll'
     | '/factory/salary'
     | '/factory/workers'
     | '/tortuvchilar/worker-login'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/factory/finished'
     | '/factory/formulas'
     | '/factory/inventory'
+    | '/factory/payroll'
     | '/factory/salary'
     | '/factory/workers'
     | '/tortuvchilar/_admin'
@@ -350,6 +362,7 @@ export interface RootRouteChildren {
   FactoryFinishedRoute: typeof FactoryFinishedRoute
   FactoryFormulasRoute: typeof FactoryFormulasRoute
   FactoryInventoryRoute: typeof FactoryInventoryRoute
+  FactoryPayrollRoute: typeof FactoryPayrollRoute
   FactorySalaryRoute: typeof FactorySalaryRoute
   FactoryWorkersRoute: typeof FactoryWorkersRoute
   TortuvchilarAdminRoute: typeof TortuvchilarAdminRouteWithChildren
@@ -452,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/factory/salary'
       fullPath: '/factory/salary'
       preLoaderRoute: typeof FactorySalaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/payroll': {
+      id: '/factory/payroll'
+      path: '/factory/payroll'
+      fullPath: '/factory/payroll'
+      preLoaderRoute: typeof FactoryPayrollRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/inventory': {
@@ -591,6 +611,7 @@ const rootRouteChildren: RootRouteChildren = {
   FactoryFinishedRoute: FactoryFinishedRoute,
   FactoryFormulasRoute: FactoryFormulasRoute,
   FactoryInventoryRoute: FactoryInventoryRoute,
+  FactoryPayrollRoute: FactoryPayrollRoute,
   FactorySalaryRoute: FactorySalaryRoute,
   FactoryWorkersRoute: FactoryWorkersRoute,
   TortuvchilarAdminRoute: TortuvchilarAdminRouteWithChildren,
