@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { DEPT_FLOW, DEPT_LABEL, STATUS_LABEL, dashboardSummary, listOrders, type FactoryOrder } from "@/lib/factory/data";
+import { DEPT_FLOW, DEPT_LABEL, dashboardSummary, listOrders, type FactoryOrder } from "@/lib/factory/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
 import { StatusBadge } from "@/components/factory/order-flow";
