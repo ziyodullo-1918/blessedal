@@ -16,16 +16,21 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IshchilarRouteImport } from './routes/ishchilar'
 import { Route as HisobotRouteImport } from './routes/hisobot'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FactoryIndexRouteImport } from './routes/factory.index'
 import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchilar.worker-login'
 import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
 import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
+import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
 import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
 import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
+import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
 import { Route as TortuvchilarWorkerNewRouteImport } from './routes/tortuvchilar.worker.new'
 import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchilar._admin.workers'
 import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
 import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
 import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
+import { Route as FactoryOrdersIdRouteImport } from './routes/factory.orders.$id'
+import { Route as FactoryDeptDeptRouteImport } from './routes/factory.dept.$dept'
 
 const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
   id: '/topshiriqlar',
@@ -62,6 +67,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FactoryIndexRoute = FactoryIndexRouteImport.update({
+  id: '/factory/',
+  path: '/factory/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TortuvchilarWorkerLoginRoute = TortuvchilarWorkerLoginRouteImport.update({
   id: '/tortuvchilar/worker-login',
   path: '/tortuvchilar/worker-login',
@@ -77,6 +87,11 @@ const TortuvchilarAdminRoute = TortuvchilarAdminRouteImport.update({
   path: '/tortuvchilar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
+  id: '/factory/workers',
+  path: '/factory/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TortuvchilarWorkerIndexRoute = TortuvchilarWorkerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -86,6 +101,11 @@ const TortuvchilarAdminIndexRoute = TortuvchilarAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TortuvchilarAdminRoute,
+} as any)
+const FactoryOrdersIndexRoute = FactoryOrdersIndexRouteImport.update({
+  id: '/factory/orders/',
+  path: '/factory/orders/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TortuvchilarWorkerNewRoute = TortuvchilarWorkerNewRouteImport.update({
   id: '/new',
@@ -116,6 +136,16 @@ const TortuvchilarAdminProductsRoute =
     path: '/products',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
+const FactoryOrdersIdRoute = FactoryOrdersIdRouteImport.update({
+  id: '/factory/orders/$id',
+  path: '/factory/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryDeptDeptRoute = FactoryDeptDeptRouteImport.update({
+  id: '/factory/dept/$dept',
+  path: '/factory/dept/$dept',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -125,14 +155,19 @@ export interface FileRoutesByFullPath {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/factory/': typeof FactoryIndexRoute
+  '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/orders/': typeof FactoryOrdersIndexRoute
   '/tortuvchilar/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -144,12 +179,17 @@ export interface FileRoutesByTo {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/factory': typeof FactoryIndexRoute
+  '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/orders': typeof FactoryOrdersIndexRoute
   '/tortuvchilar': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker': typeof TortuvchilarWorkerIndexRoute
 }
@@ -162,14 +202,19 @@ export interface FileRoutesById {
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
   '/topshiriqlar': typeof TopshiriqlarRoute
+  '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/_admin': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
+  '/factory/': typeof FactoryIndexRoute
+  '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/tortuvchilar/_admin/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/_admin/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/_admin/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/_admin/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/orders/': typeof FactoryOrdersIndexRoute
   '/tortuvchilar/_admin/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -183,14 +228,19 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/workers'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
     | '/tortuvchilar/worker-login'
+    | '/factory/'
+    | '/factory/dept/$dept'
+    | '/factory/orders/$id'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
     | '/tortuvchilar/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/orders/'
     | '/tortuvchilar/'
     | '/tortuvchilar/worker/'
   fileRoutesByTo: FileRoutesByTo
@@ -202,12 +252,17 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/workers'
     | '/tortuvchilar/worker-login'
+    | '/factory'
+    | '/factory/dept/$dept'
+    | '/factory/orders/$id'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
     | '/tortuvchilar/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/orders'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
   id:
@@ -219,14 +274,19 @@ export interface FileRouteTypes {
     | '/mahsulotlar'
     | '/sozlamalar'
     | '/topshiriqlar'
+    | '/factory/workers'
     | '/tortuvchilar/_admin'
     | '/tortuvchilar/worker'
     | '/tortuvchilar/worker-login'
+    | '/factory/'
+    | '/factory/dept/$dept'
+    | '/factory/orders/$id'
     | '/tortuvchilar/_admin/products'
     | '/tortuvchilar/_admin/reports'
     | '/tortuvchilar/_admin/settings'
     | '/tortuvchilar/_admin/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/orders/'
     | '/tortuvchilar/_admin/'
     | '/tortuvchilar/worker/'
   fileRoutesById: FileRoutesById
@@ -239,9 +299,14 @@ export interface RootRouteChildren {
   MahsulotlarRoute: typeof MahsulotlarRoute
   SozlamalarRoute: typeof SozlamalarRoute
   TopshiriqlarRoute: typeof TopshiriqlarRoute
+  FactoryWorkersRoute: typeof FactoryWorkersRoute
   TortuvchilarAdminRoute: typeof TortuvchilarAdminRouteWithChildren
   TortuvchilarWorkerRoute: typeof TortuvchilarWorkerRouteWithChildren
   TortuvchilarWorkerLoginRoute: typeof TortuvchilarWorkerLoginRoute
+  FactoryIndexRoute: typeof FactoryIndexRoute
+  FactoryDeptDeptRoute: typeof FactoryDeptDeptRoute
+  FactoryOrdersIdRoute: typeof FactoryOrdersIdRoute
+  FactoryOrdersIndexRoute: typeof FactoryOrdersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -295,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/factory/': {
+      id: '/factory/'
+      path: '/factory'
+      fullPath: '/factory/'
+      preLoaderRoute: typeof FactoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tortuvchilar/worker-login': {
       id: '/tortuvchilar/worker-login'
       path: '/tortuvchilar/worker-login'
@@ -316,6 +388,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TortuvchilarAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/factory/workers': {
+      id: '/factory/workers'
+      path: '/factory/workers'
+      fullPath: '/factory/workers'
+      preLoaderRoute: typeof FactoryWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tortuvchilar/worker/': {
       id: '/tortuvchilar/worker/'
       path: '/'
@@ -329,6 +408,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/tortuvchilar/'
       preLoaderRoute: typeof TortuvchilarAdminIndexRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/factory/orders/': {
+      id: '/factory/orders/'
+      path: '/factory/orders'
+      fullPath: '/factory/orders/'
+      preLoaderRoute: typeof FactoryOrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/tortuvchilar/worker/new': {
       id: '/tortuvchilar/worker/new'
@@ -364,6 +450,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/tortuvchilar/products'
       preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/factory/orders/$id': {
+      id: '/factory/orders/$id'
+      path: '/factory/orders/$id'
+      fullPath: '/factory/orders/$id'
+      preLoaderRoute: typeof FactoryOrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/dept/$dept': {
+      id: '/factory/dept/$dept'
+      path: '/factory/dept/$dept'
+      fullPath: '/factory/dept/$dept'
+      preLoaderRoute: typeof FactoryDeptDeptRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -408,9 +508,14 @@ const rootRouteChildren: RootRouteChildren = {
   MahsulotlarRoute: MahsulotlarRoute,
   SozlamalarRoute: SozlamalarRoute,
   TopshiriqlarRoute: TopshiriqlarRoute,
+  FactoryWorkersRoute: FactoryWorkersRoute,
   TortuvchilarAdminRoute: TortuvchilarAdminRouteWithChildren,
   TortuvchilarWorkerRoute: TortuvchilarWorkerRouteWithChildren,
   TortuvchilarWorkerLoginRoute: TortuvchilarWorkerLoginRoute,
+  FactoryIndexRoute: FactoryIndexRoute,
+  FactoryDeptDeptRoute: FactoryDeptDeptRoute,
+  FactoryOrdersIdRoute: FactoryOrdersIdRoute,
+  FactoryOrdersIndexRoute: FactoryOrdersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

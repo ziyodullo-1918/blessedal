@@ -4,9 +4,19 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+
+const factoryNav = [
+  { to: "/factory", label: "Boshqaruv paneli", icon: LayoutDashboard },
+  { to: "/factory/orders", label: "Buyurtmalar", icon: ClipboardList },
+  { to: "/factory/dept/laser", label: "Laser", icon: Flame },
+  { to: "/factory/dept/packaging", label: "Qadoq", icon: Boxes },
+  { to: "/factory/dept/warehouse", label: "Ombor", icon: Archive },
+  { to: "/factory/dept/delivery", label: "Yetkazib berish", icon: Truck },
+  { to: "/factory/workers", label: "Hodimlar", icon: Users },
+] as const;
 
 const tikuvchilarNav = [
   { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
@@ -41,12 +51,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   const groups: NavGroup[] = role === "founder"
     ? [{ key: "founder", label: "Topshiriqlar", icon: ClipboardList, items: founderNav }]
     : [
+        { key: "factory", label: "Zavod (umumiy)", icon: Factory, items: factoryNav },
         { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
         { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
   const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
+    if (g.key === "factory") return loc.pathname.startsWith("/factory");
     if (g.key === "tikuvchilar") {
       return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
     }

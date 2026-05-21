@@ -129,6 +129,214 @@ export type Database = {
         }
         Relationships: []
       }
+      factory_orders: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string | null
+          customer_name: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          order_number: string
+          priority: number
+          product_name: string
+          size: string | null
+          status: Database["public"]["Enums"]["factory_order_status"]
+          total_quantity: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number: string
+          priority?: number
+          product_name: string
+          size?: string | null
+          status?: Database["public"]["Enums"]["factory_order_status"]
+          total_quantity: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_name?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: string
+          priority?: number
+          product_name?: string
+          size?: string | null
+          status?: Database["public"]["Enums"]["factory_order_status"]
+          total_quantity?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      factory_stage_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          note: string | null
+          order_id: string
+          quantity: number
+          rejected: number
+          stage_id: string
+          worker_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          note?: string | null
+          order_id: string
+          quantity?: number
+          rejected?: number
+          stage_id: string
+          worker_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          note?: string | null
+          order_id?: string
+          quantity?: number
+          rejected?: number
+          stage_id?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factory_stage_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "factory_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factory_stage_events_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "factory_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factory_stage_events_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "factory_workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      factory_stages: {
+        Row: {
+          assigned_worker_id: string | null
+          completed_at: string | null
+          completed_quantity: number
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id: string
+          notes: string | null
+          order_id: string
+          planned_quantity: number
+          rejected_quantity: number
+          sequence_no: number
+          started_at: string | null
+          status: Database["public"]["Enums"]["factory_stage_status"]
+          updated_at: string
+        }
+        Insert: {
+          assigned_worker_id?: string | null
+          completed_at?: string | null
+          completed_quantity?: number
+          created_at?: string
+          department: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          notes?: string | null
+          order_id: string
+          planned_quantity?: number
+          rejected_quantity?: number
+          sequence_no: number
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["factory_stage_status"]
+          updated_at?: string
+        }
+        Update: {
+          assigned_worker_id?: string | null
+          completed_at?: string | null
+          completed_quantity?: number
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"]
+          id?: string
+          notes?: string | null
+          order_id?: string
+          planned_quantity?: number
+          rejected_quantity?: number
+          sequence_no?: number
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["factory_stage_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factory_stages_assigned_worker_id_fkey"
+            columns: ["assigned_worker_id"]
+            isOneToOne: false
+            referencedRelation: "factory_workers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factory_stages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "factory_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      factory_workers: {
+        Row: {
+          active: boolean
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"]
+          full_name: string
+          id: string
+          phone: string | null
+          pin_hash: string
+          worker_code: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          department: Database["public"]["Enums"]["factory_department"]
+          full_name: string
+          id?: string
+          phone?: string | null
+          pin_hash: string
+          worker_code: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"]
+          full_name?: string
+          id?: string
+          phone?: string | null
+          pin_hash?: string
+          worker_code?: string
+        }
+        Relationships: []
+      }
       founders: {
         Row: {
           admin_user_id: string
@@ -494,6 +702,25 @@ export type Database = {
             }
             Returns: string
           }
+      factory_next_order_number: { Args: never; Returns: string }
+      factory_report_stage_progress: {
+        Args: {
+          _completed_delta: number
+          _note?: string
+          _rejected_delta?: number
+          _stage_id: string
+          _worker_id?: string
+        }
+        Returns: undefined
+      }
+      factory_set_stage_status: {
+        Args: {
+          _note?: string
+          _stage_id: string
+          _status: Database["public"]["Enums"]["factory_stage_status"]
+        }
+        Returns: undefined
+      }
       pullers_admin_update_entry: {
         Args: {
           _entry_id: string
@@ -595,6 +822,28 @@ export type Database = {
     }
     Enums: {
       assignment_status: "in_progress" | "completed"
+      factory_department:
+        | "laser"
+        | "sewing"
+        | "stretching"
+        | "packaging"
+        | "warehouse"
+        | "delivery"
+        | "admin"
+      factory_order_status:
+        | "pending"
+        | "in_progress"
+        | "partial"
+        | "completed"
+        | "waiting_material"
+        | "rejected"
+      factory_stage_status:
+        | "pending"
+        | "in_progress"
+        | "partial"
+        | "completed"
+        | "waiting_material"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -723,6 +972,31 @@ export const Constants = {
   public: {
     Enums: {
       assignment_status: ["in_progress", "completed"],
+      factory_department: [
+        "laser",
+        "sewing",
+        "stretching",
+        "packaging",
+        "warehouse",
+        "delivery",
+        "admin",
+      ],
+      factory_order_status: [
+        "pending",
+        "in_progress",
+        "partial",
+        "completed",
+        "waiting_material",
+        "rejected",
+      ],
+      factory_stage_status: [
+        "pending",
+        "in_progress",
+        "partial",
+        "completed",
+        "waiting_material",
+        "rejected",
+      ],
     },
   },
 } as const
