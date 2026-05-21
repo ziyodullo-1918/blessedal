@@ -84,7 +84,7 @@ function OrdersPage() {
 function NewOrderForm({ onDone }: { onDone: () => void }) {
   const [form, setForm] = useState({
     customer_name: "", product_name: "", color: "", size: "",
-    total_quantity: 1, due_date: "", notes: "",
+    total_quantity: 1, due_date: "", priority: 0, notes: "",
   });
   const [busy, setBusy] = useState(false);
 
@@ -103,9 +103,10 @@ function NewOrderForm({ onDone }: { onDone: () => void }) {
             size: form.size || null,
             total_quantity: form.total_quantity,
             due_date: form.due_date || null,
+            priority: form.priority,
             notes: form.notes || null,
           });
-          toast.success("Buyurtma yaratildi");
+          toast.success("Buyurtma yaratildi — Laser bo'limiga yuborildi");
           onDone();
         } catch (err) {
           toast.error((err as Error).message);
@@ -118,13 +119,17 @@ function NewOrderForm({ onDone }: { onDone: () => void }) {
           <Input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} required />
         </div>
         <div className="col-span-2">
-          <Label>Mahsulot</Label>
-          <Input value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} required />
+          <Label>Mahsulot turi</Label>
+          <Input value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} required placeholder="masalan: Oq Basanoshka" />
         </div>
         <div><Label>Rang</Label><Input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} /></div>
-        <div><Label>O'lcham</Label><Input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} /></div>
-        <div><Label>Soni</Label><Input type="number" min={1} value={form.total_quantity} onChange={(e) => setForm({ ...form, total_quantity: Number(e.target.value) })} required /></div>
+        <div><Label>O'lchamlar</Label><Input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} placeholder="39, 40, 41" /></div>
+        <div><Label>Jami soni (juft/dona)</Label><Input type="number" min={1} value={form.total_quantity} onChange={(e) => setForm({ ...form, total_quantity: Number(e.target.value) })} required /></div>
         <div><Label>Muddat</Label><Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} /></div>
+        <div className="col-span-2">
+          <Label>Muhimlik darajasi (0–10)</Label>
+          <Input type="number" min={0} max={10} value={form.priority} onChange={(e) => setForm({ ...form, priority: Number(e.target.value) })} />
+        </div>
         <div className="col-span-2"><Label>Izoh</Label><Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
       </div>
       <Button type="submit" disabled={busy} className="w-full">{busy ? "Yaratilmoqda…" : "Yaratish"}</Button>

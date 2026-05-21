@@ -3,13 +3,15 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  DEPT_FLOW, DEPT_LABEL, listStagesByDept, reportProgress,
+  DEPT_FLOW, DEPT_LABEL, listStagesByDept, reportProgress, setStageStatus,
   type FactoryDept, type FactoryOrder, type FactoryStage,
 } from "@/lib/factory/data";
+import { MaterialRequirements } from "@/components/factory/material-requirements";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/factory/order-flow";
+import { AlertTriangle, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const VALID_DEPTS: FactoryDept[] = ["laser", "packaging", "warehouse", "delivery"];
@@ -87,9 +89,13 @@ function DeptPage() {
 function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: FactoryOrder }; onChanged: () => void }) {
   const [done, setDone] = useState("");
   const [rej, setRej] = useState("");
+  const [reason, setReason] = useState("");
+  const [showIssue, setShowIssue] = useState(false);
   const [busy, setBusy] = useState(false);
   const pct = stage.planned_quantity > 0
     ? Math.round((stage.completed_quantity / stage.planned_quantity) * 100) : 0;
+  const remaining = stage.planned_quantity - stage.completed_quantity - stage.rejected_quantity;
+  const isLaser = stage.department === "laser";
 
   const submit = async () => {
     const d = Number(done) || 0; const r = Number(rej) || 0;
@@ -99,6 +105,29 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
       await reportProgress(stage.id, d, r);
       setDone(""); setRej("");
       toast.success("Yangilandi");
+      onChanged();
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setBusy(false); }
+  };
+
+  const sendNext = async () => {
+    if (!confirm("Bosqichni tugatib keyingi bo'limga yuborilsinmi?")) return;
+    setBusy(true);
+    try {
+      await setStageStatus(stage.id, "completed", "sent_to_next");
+      toast.success(isLaser ? "Tikuv bo'limiga yuborildi" : "Keyingi bo'limga yuborildi");
+      onChanged();
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setBusy(false); }
+  };
+
+  const flagIssue = async () => {
+    if (!reason.trim()) return;
+    setBusy(true);
+    try {
+      await setStageStatus(stage.id, "waiting_material", reason.trim());
+      toast.success("Muammo qayd etildi");
+      setReason(""); setShowIssue(false);
       onChanged();
     } catch (e) { toast.error((e as Error).message); }
     finally { setBusy(false); }
@@ -126,13 +155,35 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
           <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
         </div>
         <div className="text-xs text-muted-foreground">
-          {stage.completed_quantity} / {stage.planned_quantity} · Brak: {stage.rejected_quantity}
+          {stage.completed_quantity} / {stage.planned_quantity} · Brak: {stage.rejected_quantity} · Qoldi: {remaining}
         </div>
+
+        {isLaser && stage.status === "waiting_material" && (
+          <MaterialRequirements orderId={stage.order_id} onConsumed={onChanged} />
+        )}
+
         <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
           <Input type="number" min={0} placeholder="+Bajarildi" value={done} onChange={(e) => setDone(e.target.value)} />
           <Input type="number" min={0} placeholder="+Brak" value={rej} onChange={(e) => setRej(e.target.value)} />
           <Button size="sm" disabled={busy} onClick={submit}>OK</Button>
         </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="default" disabled={busy || stage.completed_quantity === 0} onClick={sendNext}>
+            <Send className="size-3 mr-1" />
+            {isLaser ? "Tikuvga yuborish" : "Keyingi bo'limga"}
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setShowIssue((v) => !v)}>
+            <AlertTriangle className="size-3 mr-1" />Muammo
+          </Button>
+        </div>
+
+        {showIssue && (
+          <div className="flex gap-2">
+            <Input placeholder="Muammo sababi" value={reason} onChange={(e) => setReason(e.target.value)} />
+            <Button size="sm" variant="destructive" disabled={busy || !reason.trim()} onClick={flagIssue}>Saqlash</Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
