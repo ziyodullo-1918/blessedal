@@ -176,8 +176,8 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
 
         <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="default" disabled={busy || stage.completed_quantity === 0} onClick={sendNext}>
-            <Send className="size-3 mr-1" />
-            {isLaser ? "Tikuvga yuborish" : "Keyingi bo'limga"}
+            {isPackaging ? <PackageCheck className="size-3 mr-1" /> : <Send className="size-3 mr-1" />}
+            {isLaser ? "Tikuvga yuborish" : isPackaging ? "Omborga yopish" : "Keyingi bo'limga"}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowIssue((v) => !v)}>
             <AlertTriangle className="size-3 mr-1" />Muammo
