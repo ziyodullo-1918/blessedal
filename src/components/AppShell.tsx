@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame, Warehouse, FlaskConical } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const factoryNav = [
   { to: "/factory", label: "Boshqaruv paneli", icon: LayoutDashboard },
   { to: "/factory/orders", label: "Buyurtmalar", icon: ClipboardList },
+  { to: "/factory/inventory", label: "Xom ashyo ombori", icon: Warehouse },
+  { to: "/factory/formulas", label: "Formulalar", icon: FlaskConical },
   { to: "/factory/dept/laser", label: "Laser", icon: Flame },
   { to: "/factory/dept/packaging", label: "Qadoq", icon: Boxes },
   { to: "/factory/dept/warehouse", label: "Ombor", icon: Archive },
