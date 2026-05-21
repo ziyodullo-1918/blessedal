@@ -16,11 +16,26 @@ export const Route = createFileRoute("/factory/")({
 function FactoryDashboard() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof dashboardSummary>> | null>(null);
   const [orders, setOrders] = useState<FactoryOrder[]>([]);
+  const [allOrders, setAllOrders] = useState<FactoryOrder[]>([]);
+  const [shortages, setShortages] = useState<{ id: string; name: string; stock_quantity: number; min_stock: number; unit: string }[]>([]);
+  const [monthSalary, setMonthSalary] = useState(0);
 
   const refresh = async () => {
-    const [s, o] = await Promise.all([dashboardSummary(), listOrders()]);
+    const today = new Date();
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+    const todayIso = today.toISOString().slice(0, 10);
+    const [s, o, shortRes, sal] = await Promise.all([
+      dashboardSummary(),
+      listOrders(),
+      supabase.from("inventory_materials").select("id,name,stock_quantity,min_stock,unit"),
+      workerSalary(monthStart, todayIso).catch(() => []),
+    ]);
     setSummary(s);
+    setAllOrders(o);
     setOrders(o.slice(0, 10));
+    const lows = (shortRes.data ?? []).filter((m) => Number(m.stock_quantity) < Number(m.min_stock)) as typeof shortages;
+    setShortages(lows);
+    setMonthSalary(sal.reduce((a, r) => a + Number(r.total_amount), 0));
   };
 
   useEffect(() => {
@@ -29,6 +44,7 @@ function FactoryDashboard() {
       .channel("factory_dashboard")
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_orders" }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "factory_stages" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "inventory_materials" }, refresh)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
@@ -37,6 +53,19 @@ function FactoryDashboard() {
   const activeOrders = summary?.orders.filter((o) => o.status === "in_progress" || o.status === "partial").length ?? 0;
   const completedOrders = summary?.orders.filter((o) => o.status === "completed").length ?? 0;
   const waiting = summary?.orders.filter((o) => o.status === "waiting_material" || o.status === "rejected").length ?? 0;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const delayed = useMemo(() => allOrders.filter((o) => o.due_date && o.due_date < today && o.status !== "completed"), [allOrders, today]);
+
+  const bottleneck = useMemo(() => {
+    const map = new Map<string, number>();
+    (summary?.stages ?? []).forEach((s) => {
+      if (s.status === "waiting_material" || s.status === "pending") {
+        map.set(s.department, (map.get(s.department) ?? 0) + 1);
+      }
+    });
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  }, [summary]);
 
   return (
     <div className="space-y-6">
