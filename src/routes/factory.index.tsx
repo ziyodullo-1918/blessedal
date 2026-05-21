@@ -71,13 +71,8 @@ function FactoryDashboard() {
               const done = stages.reduce((a, s) => a + s.completed_quantity, 0);
               const active = stages.filter((s) => s.status === "in_progress" || s.status === "partial").length;
               const pct = planned > 0 ? Math.round((done / planned) * 100) : 0;
-              return (
-                <Link
-                  key={dept}
-                  to={dept === "sewing" ? "/topshiriqlar" : dept === "stretching" ? "/tortuvchilar" : "/factory/dept/$dept"}
-                  params={{ dept }}
-                  className="group rounded-lg border bg-card p-4 transition-colors hover:border-primary"
-                >
+              const inner = (
+                <>
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-semibold">{DEPT_LABEL[dept]}</div>
                     <div className="text-xs text-muted-foreground">{active} faol</div>
@@ -88,8 +83,12 @@ function FactoryDashboard() {
                   <div className="mt-2 text-xs text-muted-foreground">
                     {done.toLocaleString()} / {planned.toLocaleString()} ({pct}%)
                   </div>
-                </Link>
+                </>
               );
+              const cls = "group rounded-lg border bg-card p-4 transition-colors hover:border-primary block";
+              if (dept === "sewing") return <Link key={dept} to="/topshiriqlar" className={cls}>{inner}</Link>;
+              if (dept === "stretching") return <Link key={dept} to="/tortuvchilar" className={cls}>{inner}</Link>;
+              return <Link key={dept} to="/factory/dept/$dept" params={{ dept }} className={cls}>{inner}</Link>;
             })}
           </div>
         </CardContent>
