@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame, Warehouse, FlaskConical } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, Wallet, CalendarClock } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +15,11 @@ const factoryNav = [
   { to: "/factory/formulas", label: "Formulalar", icon: FlaskConical },
   { to: "/factory/dept/laser", label: "Laser", icon: Flame },
   { to: "/factory/dept/packaging", label: "Qadoq", icon: Boxes },
+  { to: "/factory/finished", label: "Tayyor ombor", icon: PackageCheck },
   { to: "/factory/dept/warehouse", label: "Ombor", icon: Archive },
   { to: "/factory/dept/delivery", label: "Yetkazib berish", icon: Truck },
+  { to: "/factory/salary", label: "Oylik (donaboy)", icon: Wallet },
+  { to: "/factory/payroll", label: "Oylik davrlar", icon: CalendarClock },
   { to: "/factory/workers", label: "Hodimlar", icon: Users },
 ] as const;
 
