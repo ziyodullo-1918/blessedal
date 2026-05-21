@@ -11,8 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/factory/order-flow";
-import { AlertTriangle, Send } from "lucide-react";
+import { AlertTriangle, Send, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
+import { finalizePackaging } from "@/lib/factory/salary";
 
 const VALID_DEPTS: FactoryDept[] = ["laser", "packaging", "warehouse", "delivery"];
 
