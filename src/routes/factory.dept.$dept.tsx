@@ -15,7 +15,7 @@ import { AlertTriangle, Send, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 import { finalizePackaging } from "@/lib/factory/salary";
 
-const VALID_DEPTS: FactoryDept[] = ["laser", "packaging", "warehouse", "delivery"];
+const VALID_DEPTS: FactoryDept[] = ["laser", "packaging", "warehouse"];
 
 export const Route = createFileRoute("/factory/dept/$dept")({
   component: () => <RequireAuth><DeptPage /></RequireAuth>,

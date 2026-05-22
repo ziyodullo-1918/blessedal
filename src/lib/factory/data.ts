@@ -9,7 +9,7 @@ export type StageStatus =
 export type OrderStatus = StageStatus;
 
 export const DEPT_FLOW: FactoryDept[] = [
-  "laser", "sewing", "stretching", "packaging", "warehouse", "delivery",
+  "laser", "sewing", "stretching", "packaging", "warehouse",
 ];
 
 export const DEPT_LABEL: Record<FactoryDept, string> = {

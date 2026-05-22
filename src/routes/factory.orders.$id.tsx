@@ -1,18 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  DEPT_LABEL, STATUS_LABEL, getOrder, listStagesByOrder, reportProgress, setStageStatus,
-  type FactoryOrder, type FactoryStage, type StageStatus,
+  DEPT_LABEL, deleteOrder, getOrder, listStagesByOrder,
+  type FactoryOrder, type FactoryStage,
 } from "@/lib/factory/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { OrderFlow, StatusBadge } from "@/components/factory/order-flow";
 import { MaterialRequirements } from "@/components/factory/material-requirements";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/factory/orders/$id")({
@@ -21,6 +19,7 @@ export const Route = createFileRoute("/factory/orders/$id")({
 
 function OrderDetail() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState<FactoryOrder | null>(null);
   const [stages, setStages] = useState<FactoryStage[]>([]);
 
@@ -40,6 +39,15 @@ function OrderDetail() {
 
   if (!order) return <div className="p-6 text-muted-foreground">Yuklanmoqda…</div>;
 
+  const cancel = async () => {
+    if (!confirm(`"${order.order_number}" buyurtmasi bekor qilinsinmi? Bu amal qaytmaydi.`)) return;
+    try {
+      await deleteOrder(order.id);
+      toast.success("Buyurtma bekor qilindi");
+      navigate({ to: "/factory/orders" });
+    } catch (e) { toast.error((e as Error).message); }
+  };
+
   return (
     <div className="space-y-6">
       <Link to="/factory/orders" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
@@ -52,11 +60,21 @@ function OrderDetail() {
           <h1 className="text-3xl font-display tracking-tight">{order.product_name}</h1>
           <p className="text-sm text-muted-foreground">
             {order.customer_name} · {order.total_quantity} dona
-            {order.color ? ` · ${order.color}` : ""}{order.size ? ` · ${order.size}` : ""}
+            {order.color ? ` · ${order.color}` : ""}
             {order.due_date ? ` · Muddat: ${order.due_date}` : ""}
           </p>
         </div>
-        <StatusBadge status={order.status} />
+        <div className="flex items-center gap-2">
+          <StatusBadge status={order.status} />
+          <Button size="sm" variant="outline" className="text-red-500 hover:text-red-600" onClick={cancel}>
+            <Trash2 className="size-4 mr-1" />Bekor qilish
+          </Button>
+        </div>
+      </div>
+
+      <div className="rounded-md border border-dashed bg-muted/30 px-4 py-3 text-xs text-muted-foreground flex items-center gap-2">
+        <Eye className="size-4" />
+        Buyurtmalar bo'limi faqat kuzatish uchun — barcha amallar tegishli bo'limlar tomonidan bajariladi.
       </div>
 
       <Card>
@@ -64,10 +82,10 @@ function OrderDetail() {
         <CardContent><OrderFlow stages={stages} /></CardContent>
       </Card>
 
-      <MaterialRequirements orderId={order.id} onConsumed={refresh} />
+      <MaterialRequirements orderId={order.id} />
 
       <div className="grid gap-3 lg:grid-cols-2">
-        {stages.map((s) => <StageCard key={s.id} stage={s} />)}
+        {stages.map((s) => <StageView key={s.id} stage={s} />)}
       </div>
 
       {order.notes && (
@@ -80,33 +98,10 @@ function OrderDetail() {
   );
 }
 
-function StageCard({ stage }: { stage: FactoryStage }) {
-  const [done, setDone] = useState("");
-  const [rej, setRej] = useState("");
-  const [busy, setBusy] = useState(false);
+function StageView({ stage }: { stage: FactoryStage }) {
   const remaining = stage.planned_quantity - stage.completed_quantity - stage.rejected_quantity;
   const pct = stage.planned_quantity > 0
     ? Math.round((stage.completed_quantity / stage.planned_quantity) * 100) : 0;
-
-  const submit = async () => {
-    const d = Number(done) || 0; const r = Number(rej) || 0;
-    if (d <= 0 && r <= 0) return;
-    setBusy(true);
-    try {
-      await reportProgress(stage.id, d, r);
-      setDone(""); setRej("");
-      toast.success("Yangilandi");
-    } catch (e) { toast.error((e as Error).message); }
-    finally { setBusy(false); }
-  };
-
-  const changeStatus = async (status: StageStatus) => {
-    try {
-      await setStageStatus(stage.id, status);
-      toast.success("Holat o'zgartirildi");
-    } catch (e) { toast.error((e as Error).message); }
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -117,7 +112,7 @@ function StageCard({ stage }: { stage: FactoryStage }) {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="h-2 overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
+          <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
         </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div><div className="text-xs text-muted-foreground">Reja</div><div className="font-medium">{stage.planned_quantity}</div></div>
@@ -125,23 +120,6 @@ function StageCard({ stage }: { stage: FactoryStage }) {
           <div><div className="text-xs text-muted-foreground">Brak</div><div className="font-medium text-red-400">{stage.rejected_quantity}</div></div>
         </div>
         <div className="text-xs text-muted-foreground">Qoldi: {remaining}</div>
-
-        {stage.status !== "completed" && (
-          <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-            <Input type="number" min={0} placeholder="+Bajarildi" value={done} onChange={(e) => setDone(e.target.value)} />
-            <Input type="number" min={0} placeholder="+Brak" value={rej} onChange={(e) => setRej(e.target.value)} />
-            <Button size="sm" disabled={busy} onClick={submit}>Saqlash</Button>
-          </div>
-        )}
-
-        <Select value={stage.status} onValueChange={(v) => changeStatus(v as StageStatus)}>
-          <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {(Object.keys(STATUS_LABEL) as StageStatus[]).map((s) => (
-              <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </CardContent>
     </Card>
   );
