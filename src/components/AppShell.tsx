@@ -4,23 +4,30 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Truck, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, Wallet, CalendarClock } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, CalendarClock } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-const factoryNav = [
-  { to: "/factory", label: "Boshqaruv paneli", icon: LayoutDashboard },
+const dashboardItem = { to: "/factory", label: "Boshqaruv paneli", icon: LayoutDashboard } as const;
+
+const zavodNav = [
   { to: "/factory/orders", label: "Buyurtmalar", icon: ClipboardList },
-  { to: "/factory/inventory", label: "Xom ashyo ombori", icon: Warehouse },
-  { to: "/factory/formulas", label: "Formulalar", icon: FlaskConical },
-  { to: "/factory/dept/laser", label: "Laser", icon: Flame },
-  { to: "/factory/dept/packaging", label: "Qadoq", icon: Boxes },
-  { to: "/factory/finished", label: "Tayyor ombor", icon: PackageCheck },
-  { to: "/factory/dept/warehouse", label: "Ombor", icon: Archive },
-  { to: "/factory/dept/delivery", label: "Yetkazib berish", icon: Truck },
-  { to: "/factory/salary", label: "Oylik (donaboy)", icon: Wallet },
-  { to: "/factory/payroll", label: "Oylik davrlar", icon: CalendarClock },
+  { to: "/factory/formulas", label: "Mahsulotlar", icon: FlaskConical },
   { to: "/factory/workers", label: "Hodimlar", icon: Users },
+  { to: "/factory/payroll", label: "Oylik davrlar", icon: CalendarClock },
+] as const;
+
+const omborNav = [
+  { to: "/factory/inventory", label: "Xom ashyo", icon: Warehouse },
+  { to: "/factory/finished", label: "Tayyor ombor", icon: PackageCheck },
+] as const;
+
+const laserNav = [
+  { to: "/factory/dept/laser", label: "Vazifalar", icon: Flame },
+] as const;
+
+const qadoqNav = [
+  { to: "/factory/dept/packaging", label: "Vazifalar", icon: Boxes },
 ] as const;
 
 const tikuvchilarNav = [
@@ -53,23 +60,34 @@ export function AppShell({ children }: { children: ReactNode }) {
   const loc = useLocation();
   const [open, setOpen] = useState(false);
 
-  const groups: NavGroup[] = role === "founder"
+  const isFounder = role === "founder";
+  const groups: NavGroup[] = isFounder
     ? [{ key: "founder", label: "Topshiriqlar", icon: ClipboardList, items: founderNav }]
     : [
-        { key: "factory", label: "Zavod (umumiy)", icon: Factory, items: factoryNav },
+        { key: "zavod", label: "Zavod (umumiy)", icon: Factory, items: zavodNav },
+        { key: "ombor", label: "Ombor", icon: Archive, items: omborNav },
+        { key: "laser", label: "Lazer bo'limi", icon: Flame, items: laserNav },
+        { key: "qadoq", label: "Qadoq bo'limi", icon: Boxes, items: qadoqNav },
         { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
         { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
   const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
-    if (g.key === "factory") return loc.pathname.startsWith("/factory");
+    if (g.key === "zavod") {
+      return ["/factory/orders", "/factory/formulas", "/factory/workers", "/factory/payroll"]
+        .some((p) => loc.pathname === p || loc.pathname.startsWith(p + "/"));
+    }
+    if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
+    if (g.key === "laser") return loc.pathname.startsWith("/factory/dept/laser");
+    if (g.key === "qadoq") return loc.pathname.startsWith("/factory/dept/packaging");
     if (g.key === "tikuvchilar") {
       return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
     }
     if (g.key === "tortuvchilar") return loc.pathname.startsWith("/tortuvchilar");
     return true;
   };
+
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {};
@@ -119,6 +137,23 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         >
           <nav className="flex flex-col gap-1">
+            {!isFounder && (() => {
+              const DIcon = dashboardItem.icon;
+              const active = loc.pathname === dashboardItem.to;
+              return (
+                <Link
+                  to={dashboardItem.to}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "mb-1 flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors",
+                    active ? "bg-primary text-primary-foreground shadow-sm" : "text-foreground hover:bg-accent",
+                  )}
+                >
+                  <DIcon className="size-4" />
+                  {dashboardItem.label}
+                </Link>
+              );
+            })()}
             {groups.map((g) => {
               const GIcon = g.icon;
               const isOpen = openGroups[g.key];

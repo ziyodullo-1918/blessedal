@@ -125,7 +125,7 @@ function FactoryDashboard() {
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold flex items-center gap-2"><Wallet className="size-4 text-emerald-400" />Oylik (joriy oy)</CardTitle></CardHeader>
           <CardContent>
-            <Link to="/factory/salary" className="block">
+            <Link to="/factory/payroll" className="block">
               <div className="text-2xl font-semibold">{monthSalary.toLocaleString()}</div>
               <div className="text-xs text-muted-foreground">so'm · barcha bo'limlar</div>
             </Link>
