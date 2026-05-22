@@ -137,6 +137,23 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
         >
           <nav className="flex flex-col gap-1">
+            {!isFounder && (() => {
+              const DIcon = dashboardItem.icon;
+              const active = loc.pathname === dashboardItem.to;
+              return (
+                <Link
+                  to={dashboardItem.to}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "mb-1 flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold transition-colors",
+                    active ? "bg-primary text-primary-foreground shadow-sm" : "text-foreground hover:bg-accent",
+                  )}
+                >
+                  <DIcon className="size-4" />
+                  {dashboardItem.label}
+                </Link>
+              );
+            })()}
             {groups.map((g) => {
               const GIcon = g.icon;
               const isOpen = openGroups[g.key];
