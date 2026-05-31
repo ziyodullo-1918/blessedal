@@ -1132,6 +1132,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      laser_cut_summary: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          color: string
+          order_id: string
+          order_number: string
+          product_name: string
+          total_quantity: number
+          total_rejected: number
+        }[]
+      }
       laser_record_attendance: {
         Args: {
           _note?: string
