@@ -1,12 +1,33 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type ProductCategory = "qish" | "bahor" | "kuz_yoz";
+export type ProductCategory = "qish" | "bahor_kuz" | "yoz";
 
 export const CATEGORY_LABEL: Record<ProductCategory, string> = {
   qish: "Qish",
-  bahor: "Bahor",
-  kuz_yoz: "Kuz / Yoz",
+  bahor_kuz: "Bahor va Kuz",
+  yoz: "Yoz",
 };
+
+// Color entry stored as "hex|name" or just "hex". Helpers parse/format.
+export type ColorEntry = { hex: string; name: string };
+
+export function parseColor(c: string): ColorEntry {
+  if (!c) return { hex: "#000000", name: "" };
+  const i = c.indexOf("|");
+  if (i === -1) return { hex: c, name: "" };
+  return { hex: c.slice(0, i) || "#000000", name: c.slice(i + 1) };
+}
+
+export function formatColor(hex: string, name: string): string {
+  const h = hex || "#000000";
+  const n = (name || "").trim();
+  return n ? `${h}|${n}` : h;
+}
+
+export function colorLabel(c: string): string {
+  const p = parseColor(c);
+  return p.name || p.hex;
+}
 
 export type FactoryProduct = {
   id: string;

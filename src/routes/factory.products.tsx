@@ -16,6 +16,7 @@ import {
   listProducts, upsertProduct, deleteProduct, uploadProductImage,
   listProductRates, saveProductRate,
   CATEGORY_LABEL, RATE_DEPT_LABEL,
+  parseColor, formatColor, colorLabel,
   type FactoryProduct, type ProductCategory, type RateDept, type ProductRate,
 } from "@/lib/factory/products";
 
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/factory/products")({
   component: () => <RequireAuth><ProductsPage /></RequireAuth>,
 });
 
-const CATEGORIES: ProductCategory[] = ["qish", "bahor", "kuz_yoz"];
+const CATEGORIES: ProductCategory[] = ["qish", "bahor_kuz", "yoz"];
 const DEPTS: RateDept[] = ["laser", "sewing", "stretching", "packaging"];
 
 function ProductsPage() {
@@ -130,9 +131,15 @@ function ProductsPage() {
                 </div>
                 {p.colors.length > 0 && (
                   <div className="flex flex-wrap gap-1">
-                    {p.colors.slice(0, 6).map((c) => (
-                      <span key={c} className="inline-block size-4 rounded-full border border-border" style={{ background: c }} title={c} />
-                    ))}
+                    {p.colors.slice(0, 6).map((c) => {
+                      const pc = parseColor(c);
+                      return (
+                        <span key={c} className="inline-flex items-center gap-1 rounded-full border bg-muted/30 py-0.5 pl-0.5 pr-1.5 text-[10px]">
+                          <span className="inline-block size-3 rounded-full border" style={{ background: pc.hex }} />
+                          {colorLabel(c)}
+                        </span>
+                      );
+                    })}
                     {p.colors.length > 6 && (
                       <span className="text-xs text-muted-foreground">+{p.colors.length - 6}</span>
                     )}
@@ -165,9 +172,10 @@ function ProductsPage() {
 
 function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDone: () => void }) {
   const [name, setName] = useState(editing?.name ?? "");
-  const [category, setCategory] = useState<ProductCategory>(editing?.category ?? "kuz_yoz");
+  const [category, setCategory] = useState<ProductCategory>(editing?.category ?? "yoz");
   const [colors, setColors] = useState<string[]>(editing?.colors ?? []);
-  const [newColor, setNewColor] = useState("#000000");
+  const [newHex, setNewHex] = useState("#000000");
+  const [newName, setNewName] = useState("");
   const [notes, setNotes] = useState(editing?.notes ?? "");
   const [active, setActive] = useState(editing?.active ?? true);
   const [imageUrl, setImageUrl] = useState<string | null>(editing?.image_url ?? null);
@@ -209,8 +217,10 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
   }
 
   function addColor() {
-    if (!newColor || colors.includes(newColor)) return;
-    setColors([...colors, newColor]);
+    const entry = formatColor(newHex, newName);
+    if (!entry || colors.includes(entry)) return;
+    setColors([...colors, entry]);
+    setNewName("");
   }
 
   return (
@@ -238,7 +248,14 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
           }
           toast.success("Saqlandi");
           onDone();
-        } catch (err) { toast.error((err as Error).message); }
+        } catch (err) {
+          const msg = (err as Error).message || "";
+          if (/duplicate key|unique constraint/i.test(msg)) {
+            toast.error("Bu nomli mahsulot allaqachon mavjud. Boshqa nom kiriting.");
+          } else {
+            toast.error(msg);
+          }
+        }
         finally { setBusy(false); }
       }}
     >
@@ -285,25 +302,29 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
               {colors.length === 0 && (
                 <span className="text-xs text-muted-foreground">Hali ranglar qo'shilmagan</span>
               )}
-              {colors.map((c) => (
-                <span key={c} className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 py-1 pl-1 pr-2 text-xs">
-                  <span className="inline-block size-4 rounded-full border" style={{ background: c }} />
-                  {c}
-                  <button type="button" onClick={() => setColors(colors.filter((x) => x !== c))}
-                    className="rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive">
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
+              {colors.map((c) => {
+                const p = parseColor(c);
+                return (
+                  <span key={c} className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 py-1 pl-1 pr-2 text-xs">
+                    <span className="inline-block size-4 rounded-full border" style={{ background: p.hex }} />
+                    {colorLabel(c)}
+                    <button type="button" onClick={() => setColors(colors.filter((x) => x !== c))}
+                      className="rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive">
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                );
+              })}
             </div>
             <div className="flex gap-2">
-              <input type="color" value={newColor} onChange={(e) => setNewColor(e.target.value)}
-                className="h-9 w-12 rounded border bg-background" />
-              <Input value={newColor} onChange={(e) => setNewColor(e.target.value)} placeholder="#000000" className="flex-1" />
+              <input type="color" value={newHex} onChange={(e) => setNewHex(e.target.value)}
+                className="h-9 w-12 rounded border bg-background shrink-0" />
+              <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Rang nomi (masalan: Oq)" className="flex-1" />
               <Button type="button" variant="outline" onClick={addColor}>
                 <Plus className="size-4" />
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">Chap tomondagi maydondan rangni tanlang, o'ng tomonga shu rangning nomini yozing.</p>
           </div>
         </div>
       </div>
