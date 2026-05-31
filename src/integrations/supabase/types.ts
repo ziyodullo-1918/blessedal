@@ -563,6 +563,108 @@ export type Database = {
           },
         ]
       }
+      laser_daily_attendance: {
+        Row: {
+          created_at: string
+          daily_rate: number
+          id: string
+          note: string | null
+          work_date: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_rate?: number
+          id?: string
+          note?: string | null
+          work_date?: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_rate?: number
+          id?: string
+          note?: string | null
+          work_date?: string
+          worker_id?: string
+        }
+        Relationships: []
+      }
+      laser_daily_rates: {
+        Row: {
+          active: boolean
+          created_at: string
+          effective_from: string
+          id: string
+          rate_per_day: number
+          worker_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          effective_from?: string
+          id?: string
+          rate_per_day?: number
+          worker_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          effective_from?: string
+          id?: string
+          rate_per_day?: number
+          worker_id?: string | null
+        }
+        Relationships: []
+      }
+      packaging_piece_rates: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          product_name: string | null
+          rate_per_unit: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          product_name?: string | null
+          rate_per_unit?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          product_name?: string | null
+          rate_per_unit?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      packaging_worker_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          token: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          token?: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          token?: string
+          worker_id?: string
+        }
+        Relationships: []
+      }
       payroll_periods: {
         Row: {
           closed_at: string | null
@@ -1029,6 +1131,79 @@ export type Database = {
           _reason: string
         }
         Returns: undefined
+      }
+      laser_record_attendance: {
+        Args: {
+          _note?: string
+          _rate: number
+          _work_date: string
+          _worker_id: string
+        }
+        Returns: string
+      }
+      laser_salary_report: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          total_amount: number
+          total_days: number
+          worker_id: string
+          worker_name: string
+        }[]
+      }
+      packaging_salary_report: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          total_amount: number
+          total_units: number
+          worker_id: string
+          worker_name: string
+        }[]
+      }
+      packaging_worker_login: {
+        Args: { _code: string; _pin_hash: string }
+        Returns: {
+          expires_at: string
+          full_name: string
+          id: string
+          session_token: string
+          worker_code: string
+        }[]
+      }
+      packaging_worker_logout: { Args: { _token: string }; Returns: undefined }
+      packaging_worker_pack: {
+        Args: {
+          _damaged?: number
+          _note?: string
+          _quantity: number
+          _stage_id: string
+          _token: string
+        }
+        Returns: string
+      }
+      packaging_worker_session_check: {
+        Args: { _token: string }
+        Returns: string
+      }
+      packaging_worker_tasks: {
+        Args: { _token: string }
+        Returns: {
+          color: string
+          completed: number
+          order_id: string
+          order_number: string
+          planned: number
+          product_name: string
+          rejected: number
+          stage_id: string
+          status: Database["public"]["Enums"]["factory_stage_status"]
+        }[]
+      }
+      packaging_worker_today: {
+        Args: { _token: string }
+        Returns: {
+          total_amount: number
+          total_units: number
+        }[]
       }
       pullers_admin_update_entry: {
         Args: {
