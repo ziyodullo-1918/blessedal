@@ -3,7 +3,7 @@ import { RequireAuth } from "@/components/RequireAuth";
 import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { listWorkers, type FactoryWorker } from "@/lib/factory/data";
 import {
