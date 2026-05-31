@@ -248,6 +248,42 @@ export type Database = {
           },
         ]
       }
+      factory_products: {
+        Row: {
+          active: boolean
+          category: Database["public"]["Enums"]["factory_product_category"]
+          colors: string[]
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category: Database["public"]["Enums"]["factory_product_category"]
+          colors?: string[]
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["factory_product_category"]
+          colors?: string[]
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       factory_stage_events: {
         Row: {
           created_at: string
@@ -1332,6 +1368,7 @@ export type Database = {
         | "completed"
         | "waiting_material"
         | "rejected"
+      factory_product_category: "qish" | "bahor" | "kuz_yoz"
       factory_stage_status:
         | "pending"
         | "in_progress"
@@ -1484,6 +1521,7 @@ export const Constants = {
         "waiting_material",
         "rejected",
       ],
+      factory_product_category: ["qish", "bahor", "kuz_yoz"],
       factory_stage_status: [
         "pending",
         "in_progress",
