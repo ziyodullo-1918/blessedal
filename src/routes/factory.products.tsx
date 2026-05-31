@@ -289,25 +289,29 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
               {colors.length === 0 && (
                 <span className="text-xs text-muted-foreground">Hali ranglar qo'shilmagan</span>
               )}
-              {colors.map((c) => (
-                <span key={c} className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 py-1 pl-1 pr-2 text-xs">
-                  <span className="inline-block size-4 rounded-full border" style={{ background: c }} />
-                  {c}
-                  <button type="button" onClick={() => setColors(colors.filter((x) => x !== c))}
-                    className="rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive">
-                    <X className="size-3" />
-                  </button>
-                </span>
-              ))}
+              {colors.map((c) => {
+                const p = parseColor(c);
+                return (
+                  <span key={c} className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 py-1 pl-1 pr-2 text-xs">
+                    <span className="inline-block size-4 rounded-full border" style={{ background: p.hex }} />
+                    {colorLabel(c)}
+                    <button type="button" onClick={() => setColors(colors.filter((x) => x !== c))}
+                      className="rounded-full p-0.5 hover:bg-destructive/20 hover:text-destructive">
+                      <X className="size-3" />
+                    </button>
+                  </span>
+                );
+              })}
             </div>
             <div className="flex gap-2">
-              <input type="color" value={newColor} onChange={(e) => setNewColor(e.target.value)}
-                className="h-9 w-12 rounded border bg-background" />
-              <Input value={newColor} onChange={(e) => setNewColor(e.target.value)} placeholder="#000000" className="flex-1" />
+              <input type="color" value={newHex} onChange={(e) => setNewHex(e.target.value)}
+                className="h-9 w-12 rounded border bg-background shrink-0" />
+              <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Rang nomi (masalan: Oq)" className="flex-1" />
               <Button type="button" variant="outline" onClick={addColor}>
                 <Plus className="size-4" />
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">Chap tomondagi maydondan rangni tanlang, o'ng tomonga shu rangning nomini yozing.</p>
           </div>
         </div>
       </div>
