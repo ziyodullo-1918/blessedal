@@ -248,7 +248,14 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
           }
           toast.success("Saqlandi");
           onDone();
-        } catch (err) { toast.error((err as Error).message); }
+        } catch (err) {
+          const msg = (err as Error).message || "";
+          if (/duplicate key|unique constraint/i.test(msg)) {
+            toast.error("Bu nomli mahsulot allaqachon mavjud. Boshqa nom kiriting.");
+          } else {
+            toast.error(msg);
+          }
+        }
         finally { setBusy(false); }
       }}
     >
