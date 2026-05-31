@@ -27,13 +27,28 @@ import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
 import { Route as FactoryFinishedRouteImport } from './routes/factory.finished'
 import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
 import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
+import { Route as FactoryPackagingIndexRouteImport } from './routes/factory.packaging.index'
 import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
+import { Route as FactoryLaserIndexRouteImport } from './routes/factory.laser.index'
 import { Route as TortuvchilarWorkerNewRouteImport } from './routes/tortuvchilar.worker.new'
 import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchilar._admin.workers'
 import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
 import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
 import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
+import { Route as FactoryPackagingWorkersRouteImport } from './routes/factory.packaging.workers'
+import { Route as FactoryPackagingWorkerLoginRouteImport } from './routes/factory.packaging.worker-login'
+import { Route as FactoryPackagingWorkerRouteImport } from './routes/factory.packaging.worker'
+import { Route as FactoryPackagingTasksRouteImport } from './routes/factory.packaging.tasks'
+import { Route as FactoryPackagingSettingsRouteImport } from './routes/factory.packaging.settings'
+import { Route as FactoryPackagingReportRouteImport } from './routes/factory.packaging.report'
+import { Route as FactoryPackagingRatesRouteImport } from './routes/factory.packaging.rates'
 import { Route as FactoryOrdersIdRouteImport } from './routes/factory.orders.$id'
+import { Route as FactoryLaserWorkersRouteImport } from './routes/factory.laser.workers'
+import { Route as FactoryLaserTasksRouteImport } from './routes/factory.laser.tasks'
+import { Route as FactoryLaserSettingsRouteImport } from './routes/factory.laser.settings'
+import { Route as FactoryLaserReportRouteImport } from './routes/factory.laser.report'
+import { Route as FactoryLaserRatesRouteImport } from './routes/factory.laser.rates'
+import { Route as FactoryLaserAttendanceRouteImport } from './routes/factory.laser.attendance'
 import { Route as FactoryDeptDeptRouteImport } from './routes/factory.dept.$dept'
 
 const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
@@ -126,9 +141,19 @@ const TortuvchilarAdminIndexRoute = TortuvchilarAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TortuvchilarAdminRoute,
 } as any)
+const FactoryPackagingIndexRoute = FactoryPackagingIndexRouteImport.update({
+  id: '/factory/packaging/',
+  path: '/factory/packaging/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FactoryOrdersIndexRoute = FactoryOrdersIndexRouteImport.update({
   id: '/factory/orders/',
   path: '/factory/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserIndexRoute = FactoryLaserIndexRouteImport.update({
+  id: '/factory/laser/',
+  path: '/factory/laser/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TortuvchilarWorkerNewRoute = TortuvchilarWorkerNewRouteImport.update({
@@ -160,9 +185,76 @@ const TortuvchilarAdminProductsRoute =
     path: '/products',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
+const FactoryPackagingWorkersRoute = FactoryPackagingWorkersRouteImport.update({
+  id: '/factory/packaging/workers',
+  path: '/factory/packaging/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingWorkerLoginRoute =
+  FactoryPackagingWorkerLoginRouteImport.update({
+    id: '/factory/packaging/worker-login',
+    path: '/factory/packaging/worker-login',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FactoryPackagingWorkerRoute = FactoryPackagingWorkerRouteImport.update({
+  id: '/factory/packaging/worker',
+  path: '/factory/packaging/worker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingTasksRoute = FactoryPackagingTasksRouteImport.update({
+  id: '/factory/packaging/tasks',
+  path: '/factory/packaging/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingSettingsRoute =
+  FactoryPackagingSettingsRouteImport.update({
+    id: '/factory/packaging/settings',
+    path: '/factory/packaging/settings',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const FactoryPackagingReportRoute = FactoryPackagingReportRouteImport.update({
+  id: '/factory/packaging/report',
+  path: '/factory/packaging/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingRatesRoute = FactoryPackagingRatesRouteImport.update({
+  id: '/factory/packaging/rates',
+  path: '/factory/packaging/rates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FactoryOrdersIdRoute = FactoryOrdersIdRouteImport.update({
   id: '/factory/orders/$id',
   path: '/factory/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserWorkersRoute = FactoryLaserWorkersRouteImport.update({
+  id: '/factory/laser/workers',
+  path: '/factory/laser/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserTasksRoute = FactoryLaserTasksRouteImport.update({
+  id: '/factory/laser/tasks',
+  path: '/factory/laser/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserSettingsRoute = FactoryLaserSettingsRouteImport.update({
+  id: '/factory/laser/settings',
+  path: '/factory/laser/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserReportRoute = FactoryLaserReportRouteImport.update({
+  id: '/factory/laser/report',
+  path: '/factory/laser/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserRatesRoute = FactoryLaserRatesRouteImport.update({
+  id: '/factory/laser/rates',
+  path: '/factory/laser/rates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserAttendanceRoute = FactoryLaserAttendanceRouteImport.update({
+  id: '/factory/laser/attendance',
+  path: '/factory/laser/attendance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryDeptDeptRoute = FactoryDeptDeptRouteImport.update({
@@ -189,13 +281,28 @@ export interface FileRoutesByFullPath {
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
   '/factory/': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
+  '/factory/laser/rates': typeof FactoryLaserRatesRoute
+  '/factory/laser/report': typeof FactoryLaserReportRoute
+  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
+  '/factory/laser/tasks': typeof FactoryLaserTasksRoute
+  '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
+  '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
+  '/factory/packaging/report': typeof FactoryPackagingReportRoute
+  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
+  '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
+  '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
+  '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
+  '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/laser/': typeof FactoryLaserIndexRoute
   '/factory/orders/': typeof FactoryOrdersIndexRoute
+  '/factory/packaging/': typeof FactoryPackagingIndexRoute
   '/tortuvchilar/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -215,13 +322,28 @@ export interface FileRoutesByTo {
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
   '/factory': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
+  '/factory/laser/rates': typeof FactoryLaserRatesRoute
+  '/factory/laser/report': typeof FactoryLaserReportRoute
+  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
+  '/factory/laser/tasks': typeof FactoryLaserTasksRoute
+  '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
+  '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
+  '/factory/packaging/report': typeof FactoryPackagingReportRoute
+  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
+  '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
+  '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
+  '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
+  '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/laser': typeof FactoryLaserIndexRoute
   '/factory/orders': typeof FactoryOrdersIndexRoute
+  '/factory/packaging': typeof FactoryPackagingIndexRoute
   '/tortuvchilar': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker': typeof TortuvchilarWorkerIndexRoute
 }
@@ -244,13 +366,28 @@ export interface FileRoutesById {
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
   '/factory/': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
+  '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
+  '/factory/laser/rates': typeof FactoryLaserRatesRoute
+  '/factory/laser/report': typeof FactoryLaserReportRoute
+  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
+  '/factory/laser/tasks': typeof FactoryLaserTasksRoute
+  '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
+  '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
+  '/factory/packaging/report': typeof FactoryPackagingReportRoute
+  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
+  '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
+  '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
+  '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
+  '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
   '/tortuvchilar/_admin/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/_admin/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/_admin/settings': typeof TortuvchilarAdminSettingsRoute
   '/tortuvchilar/_admin/workers': typeof TortuvchilarAdminWorkersRoute
   '/tortuvchilar/worker/new': typeof TortuvchilarWorkerNewRoute
+  '/factory/laser/': typeof FactoryLaserIndexRoute
   '/factory/orders/': typeof FactoryOrdersIndexRoute
+  '/factory/packaging/': typeof FactoryPackagingIndexRoute
   '/tortuvchilar/_admin/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -274,13 +411,28 @@ export interface FileRouteTypes {
     | '/tortuvchilar/worker-login'
     | '/factory/'
     | '/factory/dept/$dept'
+    | '/factory/laser/attendance'
+    | '/factory/laser/rates'
+    | '/factory/laser/report'
+    | '/factory/laser/settings'
+    | '/factory/laser/tasks'
+    | '/factory/laser/workers'
     | '/factory/orders/$id'
+    | '/factory/packaging/rates'
+    | '/factory/packaging/report'
+    | '/factory/packaging/settings'
+    | '/factory/packaging/tasks'
+    | '/factory/packaging/worker'
+    | '/factory/packaging/worker-login'
+    | '/factory/packaging/workers'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
     | '/tortuvchilar/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/laser/'
     | '/factory/orders/'
+    | '/factory/packaging/'
     | '/tortuvchilar/'
     | '/tortuvchilar/worker/'
   fileRoutesByTo: FileRoutesByTo
@@ -300,13 +452,28 @@ export interface FileRouteTypes {
     | '/tortuvchilar/worker-login'
     | '/factory'
     | '/factory/dept/$dept'
+    | '/factory/laser/attendance'
+    | '/factory/laser/rates'
+    | '/factory/laser/report'
+    | '/factory/laser/settings'
+    | '/factory/laser/tasks'
+    | '/factory/laser/workers'
     | '/factory/orders/$id'
+    | '/factory/packaging/rates'
+    | '/factory/packaging/report'
+    | '/factory/packaging/settings'
+    | '/factory/packaging/tasks'
+    | '/factory/packaging/worker'
+    | '/factory/packaging/worker-login'
+    | '/factory/packaging/workers'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
     | '/tortuvchilar/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/laser'
     | '/factory/orders'
+    | '/factory/packaging'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
   id:
@@ -328,13 +495,28 @@ export interface FileRouteTypes {
     | '/tortuvchilar/worker-login'
     | '/factory/'
     | '/factory/dept/$dept'
+    | '/factory/laser/attendance'
+    | '/factory/laser/rates'
+    | '/factory/laser/report'
+    | '/factory/laser/settings'
+    | '/factory/laser/tasks'
+    | '/factory/laser/workers'
     | '/factory/orders/$id'
+    | '/factory/packaging/rates'
+    | '/factory/packaging/report'
+    | '/factory/packaging/settings'
+    | '/factory/packaging/tasks'
+    | '/factory/packaging/worker'
+    | '/factory/packaging/worker-login'
+    | '/factory/packaging/workers'
     | '/tortuvchilar/_admin/products'
     | '/tortuvchilar/_admin/reports'
     | '/tortuvchilar/_admin/settings'
     | '/tortuvchilar/_admin/workers'
     | '/tortuvchilar/worker/new'
+    | '/factory/laser/'
     | '/factory/orders/'
+    | '/factory/packaging/'
     | '/tortuvchilar/_admin/'
     | '/tortuvchilar/worker/'
   fileRoutesById: FileRoutesById
@@ -357,8 +539,23 @@ export interface RootRouteChildren {
   TortuvchilarWorkerLoginRoute: typeof TortuvchilarWorkerLoginRoute
   FactoryIndexRoute: typeof FactoryIndexRoute
   FactoryDeptDeptRoute: typeof FactoryDeptDeptRoute
+  FactoryLaserAttendanceRoute: typeof FactoryLaserAttendanceRoute
+  FactoryLaserRatesRoute: typeof FactoryLaserRatesRoute
+  FactoryLaserReportRoute: typeof FactoryLaserReportRoute
+  FactoryLaserSettingsRoute: typeof FactoryLaserSettingsRoute
+  FactoryLaserTasksRoute: typeof FactoryLaserTasksRoute
+  FactoryLaserWorkersRoute: typeof FactoryLaserWorkersRoute
   FactoryOrdersIdRoute: typeof FactoryOrdersIdRoute
+  FactoryPackagingRatesRoute: typeof FactoryPackagingRatesRoute
+  FactoryPackagingReportRoute: typeof FactoryPackagingReportRoute
+  FactoryPackagingSettingsRoute: typeof FactoryPackagingSettingsRoute
+  FactoryPackagingTasksRoute: typeof FactoryPackagingTasksRoute
+  FactoryPackagingWorkerRoute: typeof FactoryPackagingWorkerRoute
+  FactoryPackagingWorkerLoginRoute: typeof FactoryPackagingWorkerLoginRoute
+  FactoryPackagingWorkersRoute: typeof FactoryPackagingWorkersRoute
+  FactoryLaserIndexRoute: typeof FactoryLaserIndexRoute
   FactoryOrdersIndexRoute: typeof FactoryOrdersIndexRoute
+  FactoryPackagingIndexRoute: typeof FactoryPackagingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -489,11 +686,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TortuvchilarAdminIndexRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
     }
+    '/factory/packaging/': {
+      id: '/factory/packaging/'
+      path: '/factory/packaging'
+      fullPath: '/factory/packaging/'
+      preLoaderRoute: typeof FactoryPackagingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/factory/orders/': {
       id: '/factory/orders/'
       path: '/factory/orders'
       fullPath: '/factory/orders/'
       preLoaderRoute: typeof FactoryOrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/': {
+      id: '/factory/laser/'
+      path: '/factory/laser'
+      fullPath: '/factory/laser/'
+      preLoaderRoute: typeof FactoryLaserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tortuvchilar/worker/new': {
@@ -531,11 +742,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
     }
+    '/factory/packaging/workers': {
+      id: '/factory/packaging/workers'
+      path: '/factory/packaging/workers'
+      fullPath: '/factory/packaging/workers'
+      preLoaderRoute: typeof FactoryPackagingWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/worker-login': {
+      id: '/factory/packaging/worker-login'
+      path: '/factory/packaging/worker-login'
+      fullPath: '/factory/packaging/worker-login'
+      preLoaderRoute: typeof FactoryPackagingWorkerLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/worker': {
+      id: '/factory/packaging/worker'
+      path: '/factory/packaging/worker'
+      fullPath: '/factory/packaging/worker'
+      preLoaderRoute: typeof FactoryPackagingWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/tasks': {
+      id: '/factory/packaging/tasks'
+      path: '/factory/packaging/tasks'
+      fullPath: '/factory/packaging/tasks'
+      preLoaderRoute: typeof FactoryPackagingTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/settings': {
+      id: '/factory/packaging/settings'
+      path: '/factory/packaging/settings'
+      fullPath: '/factory/packaging/settings'
+      preLoaderRoute: typeof FactoryPackagingSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/report': {
+      id: '/factory/packaging/report'
+      path: '/factory/packaging/report'
+      fullPath: '/factory/packaging/report'
+      preLoaderRoute: typeof FactoryPackagingReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/rates': {
+      id: '/factory/packaging/rates'
+      path: '/factory/packaging/rates'
+      fullPath: '/factory/packaging/rates'
+      preLoaderRoute: typeof FactoryPackagingRatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/factory/orders/$id': {
       id: '/factory/orders/$id'
       path: '/factory/orders/$id'
       fullPath: '/factory/orders/$id'
       preLoaderRoute: typeof FactoryOrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/workers': {
+      id: '/factory/laser/workers'
+      path: '/factory/laser/workers'
+      fullPath: '/factory/laser/workers'
+      preLoaderRoute: typeof FactoryLaserWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/tasks': {
+      id: '/factory/laser/tasks'
+      path: '/factory/laser/tasks'
+      fullPath: '/factory/laser/tasks'
+      preLoaderRoute: typeof FactoryLaserTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/settings': {
+      id: '/factory/laser/settings'
+      path: '/factory/laser/settings'
+      fullPath: '/factory/laser/settings'
+      preLoaderRoute: typeof FactoryLaserSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/report': {
+      id: '/factory/laser/report'
+      path: '/factory/laser/report'
+      fullPath: '/factory/laser/report'
+      preLoaderRoute: typeof FactoryLaserReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/rates': {
+      id: '/factory/laser/rates'
+      path: '/factory/laser/rates'
+      fullPath: '/factory/laser/rates'
+      preLoaderRoute: typeof FactoryLaserRatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/laser/attendance': {
+      id: '/factory/laser/attendance'
+      path: '/factory/laser/attendance'
+      fullPath: '/factory/laser/attendance'
+      preLoaderRoute: typeof FactoryLaserAttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/dept/$dept': {
@@ -598,18 +900,24 @@ const rootRouteChildren: RootRouteChildren = {
   TortuvchilarWorkerLoginRoute: TortuvchilarWorkerLoginRoute,
   FactoryIndexRoute: FactoryIndexRoute,
   FactoryDeptDeptRoute: FactoryDeptDeptRoute,
+  FactoryLaserAttendanceRoute: FactoryLaserAttendanceRoute,
+  FactoryLaserRatesRoute: FactoryLaserRatesRoute,
+  FactoryLaserReportRoute: FactoryLaserReportRoute,
+  FactoryLaserSettingsRoute: FactoryLaserSettingsRoute,
+  FactoryLaserTasksRoute: FactoryLaserTasksRoute,
+  FactoryLaserWorkersRoute: FactoryLaserWorkersRoute,
   FactoryOrdersIdRoute: FactoryOrdersIdRoute,
+  FactoryPackagingRatesRoute: FactoryPackagingRatesRoute,
+  FactoryPackagingReportRoute: FactoryPackagingReportRoute,
+  FactoryPackagingSettingsRoute: FactoryPackagingSettingsRoute,
+  FactoryPackagingTasksRoute: FactoryPackagingTasksRoute,
+  FactoryPackagingWorkerRoute: FactoryPackagingWorkerRoute,
+  FactoryPackagingWorkerLoginRoute: FactoryPackagingWorkerLoginRoute,
+  FactoryPackagingWorkersRoute: FactoryPackagingWorkersRoute,
+  FactoryLaserIndexRoute: FactoryLaserIndexRoute,
   FactoryOrdersIndexRoute: FactoryOrdersIndexRoute,
+  FactoryPackagingIndexRoute: FactoryPackagingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

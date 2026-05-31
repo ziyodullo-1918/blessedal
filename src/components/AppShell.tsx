@@ -23,11 +23,23 @@ const omborNav = [
 ] as const;
 
 const laserNav = [
-  { to: "/factory/dept/laser", label: "Vazifalar", icon: Flame },
+  { to: "/factory/laser", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/laser/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/laser/rates", label: "Kunlik stavka", icon: Package },
+  { to: "/factory/laser/tasks", label: "Topshiriqlar", icon: ClipboardList },
+  { to: "/factory/laser/attendance", label: "Davomat", icon: CalendarClock },
+  { to: "/factory/laser/report", label: "Oylik hisobot", icon: BarChart3 },
+  { to: "/factory/laser/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 const qadoqNav = [
-  { to: "/factory/dept/packaging", label: "Vazifalar", icon: Boxes },
+  { to: "/factory/packaging", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/packaging/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/packaging/rates", label: "Tariflar", icon: Package },
+  { to: "/factory/packaging/tasks", label: "Topshiriqlar", icon: ClipboardList },
+  { to: "/factory/packaging/report", label: "Oylik hisobot", icon: BarChart3 },
+  { to: "/factory/packaging/worker-login", label: "Ishchi kabineti", icon: Boxes },
+  { to: "/factory/packaging/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 const tikuvchilarNav = [
@@ -79,8 +91,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         .some((p) => loc.pathname === p || loc.pathname.startsWith(p + "/"));
     }
     if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
-    if (g.key === "laser") return loc.pathname.startsWith("/factory/dept/laser");
-    if (g.key === "qadoq") return loc.pathname.startsWith("/factory/dept/packaging");
+    if (g.key === "laser") return loc.pathname.startsWith("/factory/laser") || loc.pathname === "/factory/dept/laser";
+    if (g.key === "qadoq") return loc.pathname.startsWith("/factory/packaging") || loc.pathname === "/factory/dept/packaging";
     if (g.key === "tikuvchilar") {
       return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
     }
