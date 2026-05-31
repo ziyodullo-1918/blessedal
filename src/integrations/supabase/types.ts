@@ -251,7 +251,7 @@ export type Database = {
       factory_products: {
         Row: {
           active: boolean
-          category: Database["public"]["Enums"]["factory_product_category"]
+          category: string
           colors: string[]
           created_at: string
           id: string
@@ -262,7 +262,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          category: Database["public"]["Enums"]["factory_product_category"]
+          category?: string
           colors?: string[]
           created_at?: string
           id?: string
@@ -273,7 +273,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          category?: Database["public"]["Enums"]["factory_product_category"]
+          category?: string
           colors?: string[]
           created_at?: string
           id?: string
