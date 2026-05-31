@@ -12,7 +12,8 @@ const dashboardItem = { to: "/factory", label: "Boshqaruv paneli", icon: LayoutD
 
 const zavodNav = [
   { to: "/factory/orders", label: "Buyurtmalar", icon: ClipboardList },
-  { to: "/factory/formulas", label: "Mahsulotlar", icon: FlaskConical },
+  { to: "/factory/products", label: "Mahsulotlar", icon: Package },
+  { to: "/factory/formulas", label: "Formulalar", icon: FlaskConical },
   { to: "/factory/workers", label: "Hodimlar", icon: Users },
   { to: "/factory/payroll", label: "Oylik davrlar", icon: CalendarClock },
 ] as const;
