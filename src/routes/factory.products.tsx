@@ -131,9 +131,15 @@ function ProductsPage() {
                 </div>
                 {p.colors.length > 0 && (
                   <div className="flex flex-wrap gap-1">
-                    {p.colors.slice(0, 6).map((c) => (
-                      <span key={c} className="inline-block size-4 rounded-full border border-border" style={{ background: c }} title={c} />
-                    ))}
+                    {p.colors.slice(0, 6).map((c) => {
+                      const pc = parseColor(c);
+                      return (
+                        <span key={c} className="inline-flex items-center gap-1 rounded-full border bg-muted/30 py-0.5 pl-0.5 pr-1.5 text-[10px]">
+                          <span className="inline-block size-3 rounded-full border" style={{ background: pc.hex }} />
+                          {colorLabel(c)}
+                        </span>
+                      );
+                    })}
                     {p.colors.length > 6 && (
                       <span className="text-xs text-muted-foreground">+{p.colors.length - 6}</span>
                     )}
