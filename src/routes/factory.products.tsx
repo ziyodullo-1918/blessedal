@@ -211,8 +211,10 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
   }
 
   function addColor() {
-    if (!newColor || colors.includes(newColor)) return;
-    setColors([...colors, newColor]);
+    const entry = formatColor(newHex, newName);
+    if (!entry || colors.includes(entry)) return;
+    setColors([...colors, entry]);
+    setNewName("");
   }
 
   return (
