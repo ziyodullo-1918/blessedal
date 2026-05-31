@@ -47,12 +47,12 @@ function Page() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <NavCard to="/factory/laser/workers" icon={<Users className="size-5" />} title="Ishchilar" desc="Bo'lim ishchilarini boshqarish" />
-        <NavCard to="/factory/laser/rates" icon={<Coins className="size-5" />} title="Kunlik stavka" desc="Default va shaxsiy stavkalar" />
-        <NavCard to="/factory/laser/attendance" icon={<CalendarCheck className="size-5" />} title="Davomat" desc="Kunlik ish belgilash" />
+        <NavCard to="/factory/laser/workers" icon={<Users className="size-5" />} title="Ishchilar" desc="Ishchilar va kunlik stavka" />
+        <NavCard to="/factory/laser/attendance" icon={<CalendarCheck className="size-5" />} title="Davomat" desc="Bugungi davomatni belgilash" />
         <NavCard to="/factory/laser/tasks" icon={<ClipboardList className="size-5" />} title="Topshiriqlar" desc="Faol vazifalar" />
-        <NavCard to="/factory/laser/report" icon={<BarChart3 className="size-5" />} title="Oylik hisobot" desc="Har ishchi bo'yicha" />
+        <NavCard to="/factory/laser/report" icon={<BarChart3 className="size-5" />} title="Oylik hisobot" desc="Maosh, davomat, kesilgan ishlar" />
       </div>
+
     </div>
   );
 }

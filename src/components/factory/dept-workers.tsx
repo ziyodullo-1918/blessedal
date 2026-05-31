@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
-export function DeptWorkers({ department, title }: { department: FactoryDept; title: string }) {
+export function DeptWorkers({ department, title, hidePin = false }: { department: FactoryDept; title: string; hidePin?: boolean }) {
   const [list, setList] = useState<FactoryWorker[]>([]);
   const [form, setForm] = useState({ full_name: "", worker_code: "", pin: "", phone: "" });
 
@@ -15,12 +15,13 @@ export function DeptWorkers({ department, title }: { department: FactoryDept; ti
   useEffect(() => { refresh(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [department]);
 
   const add = async () => {
-    if (!form.full_name || !form.worker_code || !form.pin) return toast.error("F.I.Sh, kod va PIN majburiy");
+    if (!form.full_name || !form.worker_code) return toast.error("F.I.Sh va kod majburiy");
+    if (!hidePin && !form.pin) return toast.error("PIN majburiy");
     try {
       await createWorker({
         full_name: form.full_name.trim(),
         worker_code: form.worker_code.trim(),
-        pin: form.pin.trim(),
+        pin: hidePin ? "0000" : form.pin.trim(),
         department,
         phone: form.phone.trim() || null,
       });
@@ -38,14 +39,15 @@ export function DeptWorkers({ department, title }: { department: FactoryDept; ti
 
       <Card>
         <CardHeader><CardTitle>Yangi ishchi</CardTitle></CardHeader>
-        <CardContent className="grid gap-2 md:grid-cols-[1fr_140px_120px_140px_auto]">
+        <CardContent className={hidePin ? "grid gap-2 md:grid-cols-[1fr_140px_140px_auto]" : "grid gap-2 md:grid-cols-[1fr_140px_120px_140px_auto]"}>
           <Input placeholder="F.I.Sh" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
           <Input placeholder="Kod" value={form.worker_code} onChange={(e) => setForm({ ...form, worker_code: e.target.value })} />
-          <Input placeholder="PIN" value={form.pin} onChange={(e) => setForm({ ...form, pin: e.target.value })} />
+          {!hidePin && <Input placeholder="PIN" value={form.pin} onChange={(e) => setForm({ ...form, pin: e.target.value })} />}
           <Input placeholder="Telefon" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           <Button onClick={add}><UserPlus className="size-4 mr-1" />Qo'shish</Button>
         </CardContent>
       </Card>
+
 
       <Card>
         <CardHeader><CardTitle>Ishchilar ({list.length})</CardTitle></CardHeader>
