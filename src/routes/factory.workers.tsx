@@ -44,10 +44,7 @@ function WorkersPage() {
   };
 
   const visible = filter === "all" ? workers : workers.filter((w) => w.department === filter);
-  const counts: Record<FactoryDept | "all", number> = {
-    all: workers.length,
-    laser: 0, sewing: 0, stretching: 0, packaging: 0,
-  };
+  const counts: Record<string, number> = { all: workers.length };
   workers.forEach((w) => { counts[w.department] = (counts[w.department] ?? 0) + 1; });
 
   // Group by department for the list
