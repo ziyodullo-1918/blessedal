@@ -25,11 +25,9 @@ const omborNav = [
 const laserNav = [
   { to: "/factory/laser", label: "Boshqaruv", icon: LayoutDashboard },
   { to: "/factory/laser/workers", label: "Ishchilar", icon: Users },
-  { to: "/factory/laser/rates", label: "Kunlik stavka", icon: Package },
   { to: "/factory/laser/tasks", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/factory/laser/attendance", label: "Davomat", icon: CalendarClock },
   { to: "/factory/laser/report", label: "Oylik hisobot", icon: BarChart3 },
-  { to: "/factory/laser/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
 
 const qadoqNav = [
@@ -39,8 +37,8 @@ const qadoqNav = [
   { to: "/factory/packaging/tasks", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/factory/packaging/report", label: "Oylik hisobot", icon: BarChart3 },
   { to: "/factory/packaging/worker-login", label: "Ishchi kabineti", icon: Boxes },
-  { to: "/factory/packaging/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
+
 
 const tikuvchilarNav = [
   { to: "/", label: "Boshqaruv", icon: LayoutDashboard },

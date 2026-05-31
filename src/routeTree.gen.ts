@@ -39,15 +39,12 @@ import { Route as FactoryPackagingWorkersRouteImport } from './routes/factory.pa
 import { Route as FactoryPackagingWorkerLoginRouteImport } from './routes/factory.packaging.worker-login'
 import { Route as FactoryPackagingWorkerRouteImport } from './routes/factory.packaging.worker'
 import { Route as FactoryPackagingTasksRouteImport } from './routes/factory.packaging.tasks'
-import { Route as FactoryPackagingSettingsRouteImport } from './routes/factory.packaging.settings'
 import { Route as FactoryPackagingReportRouteImport } from './routes/factory.packaging.report'
 import { Route as FactoryPackagingRatesRouteImport } from './routes/factory.packaging.rates'
 import { Route as FactoryOrdersIdRouteImport } from './routes/factory.orders.$id'
 import { Route as FactoryLaserWorkersRouteImport } from './routes/factory.laser.workers'
 import { Route as FactoryLaserTasksRouteImport } from './routes/factory.laser.tasks'
-import { Route as FactoryLaserSettingsRouteImport } from './routes/factory.laser.settings'
 import { Route as FactoryLaserReportRouteImport } from './routes/factory.laser.report'
-import { Route as FactoryLaserRatesRouteImport } from './routes/factory.laser.rates'
 import { Route as FactoryLaserAttendanceRouteImport } from './routes/factory.laser.attendance'
 import { Route as FactoryDeptDeptRouteImport } from './routes/factory.dept.$dept'
 
@@ -206,12 +203,6 @@ const FactoryPackagingTasksRoute = FactoryPackagingTasksRouteImport.update({
   path: '/factory/packaging/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FactoryPackagingSettingsRoute =
-  FactoryPackagingSettingsRouteImport.update({
-    id: '/factory/packaging/settings',
-    path: '/factory/packaging/settings',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const FactoryPackagingReportRoute = FactoryPackagingReportRouteImport.update({
   id: '/factory/packaging/report',
   path: '/factory/packaging/report',
@@ -237,19 +228,9 @@ const FactoryLaserTasksRoute = FactoryLaserTasksRouteImport.update({
   path: '/factory/laser/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FactoryLaserSettingsRoute = FactoryLaserSettingsRouteImport.update({
-  id: '/factory/laser/settings',
-  path: '/factory/laser/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FactoryLaserReportRoute = FactoryLaserReportRouteImport.update({
   id: '/factory/laser/report',
   path: '/factory/laser/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryLaserRatesRoute = FactoryLaserRatesRouteImport.update({
-  id: '/factory/laser/rates',
-  path: '/factory/laser/rates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryLaserAttendanceRoute = FactoryLaserAttendanceRouteImport.update({
@@ -282,15 +263,12 @@ export interface FileRoutesByFullPath {
   '/factory/': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
   '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
-  '/factory/laser/rates': typeof FactoryLaserRatesRoute
   '/factory/laser/report': typeof FactoryLaserReportRoute
-  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
   '/factory/laser/tasks': typeof FactoryLaserTasksRoute
   '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
-  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
   '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
@@ -323,15 +301,12 @@ export interface FileRoutesByTo {
   '/factory': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
   '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
-  '/factory/laser/rates': typeof FactoryLaserRatesRoute
   '/factory/laser/report': typeof FactoryLaserReportRoute
-  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
   '/factory/laser/tasks': typeof FactoryLaserTasksRoute
   '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
-  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
   '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
@@ -367,15 +342,12 @@ export interface FileRoutesById {
   '/factory/': typeof FactoryIndexRoute
   '/factory/dept/$dept': typeof FactoryDeptDeptRoute
   '/factory/laser/attendance': typeof FactoryLaserAttendanceRoute
-  '/factory/laser/rates': typeof FactoryLaserRatesRoute
   '/factory/laser/report': typeof FactoryLaserReportRoute
-  '/factory/laser/settings': typeof FactoryLaserSettingsRoute
   '/factory/laser/tasks': typeof FactoryLaserTasksRoute
   '/factory/laser/workers': typeof FactoryLaserWorkersRoute
   '/factory/orders/$id': typeof FactoryOrdersIdRoute
   '/factory/packaging/rates': typeof FactoryPackagingRatesRoute
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
-  '/factory/packaging/settings': typeof FactoryPackagingSettingsRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/worker': typeof FactoryPackagingWorkerRoute
   '/factory/packaging/worker-login': typeof FactoryPackagingWorkerLoginRoute
@@ -412,15 +384,12 @@ export interface FileRouteTypes {
     | '/factory/'
     | '/factory/dept/$dept'
     | '/factory/laser/attendance'
-    | '/factory/laser/rates'
     | '/factory/laser/report'
-    | '/factory/laser/settings'
     | '/factory/laser/tasks'
     | '/factory/laser/workers'
     | '/factory/orders/$id'
     | '/factory/packaging/rates'
     | '/factory/packaging/report'
-    | '/factory/packaging/settings'
     | '/factory/packaging/tasks'
     | '/factory/packaging/worker'
     | '/factory/packaging/worker-login'
@@ -453,15 +422,12 @@ export interface FileRouteTypes {
     | '/factory'
     | '/factory/dept/$dept'
     | '/factory/laser/attendance'
-    | '/factory/laser/rates'
     | '/factory/laser/report'
-    | '/factory/laser/settings'
     | '/factory/laser/tasks'
     | '/factory/laser/workers'
     | '/factory/orders/$id'
     | '/factory/packaging/rates'
     | '/factory/packaging/report'
-    | '/factory/packaging/settings'
     | '/factory/packaging/tasks'
     | '/factory/packaging/worker'
     | '/factory/packaging/worker-login'
@@ -496,15 +462,12 @@ export interface FileRouteTypes {
     | '/factory/'
     | '/factory/dept/$dept'
     | '/factory/laser/attendance'
-    | '/factory/laser/rates'
     | '/factory/laser/report'
-    | '/factory/laser/settings'
     | '/factory/laser/tasks'
     | '/factory/laser/workers'
     | '/factory/orders/$id'
     | '/factory/packaging/rates'
     | '/factory/packaging/report'
-    | '/factory/packaging/settings'
     | '/factory/packaging/tasks'
     | '/factory/packaging/worker'
     | '/factory/packaging/worker-login'
@@ -540,15 +503,12 @@ export interface RootRouteChildren {
   FactoryIndexRoute: typeof FactoryIndexRoute
   FactoryDeptDeptRoute: typeof FactoryDeptDeptRoute
   FactoryLaserAttendanceRoute: typeof FactoryLaserAttendanceRoute
-  FactoryLaserRatesRoute: typeof FactoryLaserRatesRoute
   FactoryLaserReportRoute: typeof FactoryLaserReportRoute
-  FactoryLaserSettingsRoute: typeof FactoryLaserSettingsRoute
   FactoryLaserTasksRoute: typeof FactoryLaserTasksRoute
   FactoryLaserWorkersRoute: typeof FactoryLaserWorkersRoute
   FactoryOrdersIdRoute: typeof FactoryOrdersIdRoute
   FactoryPackagingRatesRoute: typeof FactoryPackagingRatesRoute
   FactoryPackagingReportRoute: typeof FactoryPackagingReportRoute
-  FactoryPackagingSettingsRoute: typeof FactoryPackagingSettingsRoute
   FactoryPackagingTasksRoute: typeof FactoryPackagingTasksRoute
   FactoryPackagingWorkerRoute: typeof FactoryPackagingWorkerRoute
   FactoryPackagingWorkerLoginRoute: typeof FactoryPackagingWorkerLoginRoute
@@ -770,13 +730,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryPackagingTasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/packaging/settings': {
-      id: '/factory/packaging/settings'
-      path: '/factory/packaging/settings'
-      fullPath: '/factory/packaging/settings'
-      preLoaderRoute: typeof FactoryPackagingSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/factory/packaging/report': {
       id: '/factory/packaging/report'
       path: '/factory/packaging/report'
@@ -812,25 +765,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryLaserTasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/laser/settings': {
-      id: '/factory/laser/settings'
-      path: '/factory/laser/settings'
-      fullPath: '/factory/laser/settings'
-      preLoaderRoute: typeof FactoryLaserSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/factory/laser/report': {
       id: '/factory/laser/report'
       path: '/factory/laser/report'
       fullPath: '/factory/laser/report'
       preLoaderRoute: typeof FactoryLaserReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/laser/rates': {
-      id: '/factory/laser/rates'
-      path: '/factory/laser/rates'
-      fullPath: '/factory/laser/rates'
-      preLoaderRoute: typeof FactoryLaserRatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/laser/attendance': {
@@ -901,15 +840,12 @@ const rootRouteChildren: RootRouteChildren = {
   FactoryIndexRoute: FactoryIndexRoute,
   FactoryDeptDeptRoute: FactoryDeptDeptRoute,
   FactoryLaserAttendanceRoute: FactoryLaserAttendanceRoute,
-  FactoryLaserRatesRoute: FactoryLaserRatesRoute,
   FactoryLaserReportRoute: FactoryLaserReportRoute,
-  FactoryLaserSettingsRoute: FactoryLaserSettingsRoute,
   FactoryLaserTasksRoute: FactoryLaserTasksRoute,
   FactoryLaserWorkersRoute: FactoryLaserWorkersRoute,
   FactoryOrdersIdRoute: FactoryOrdersIdRoute,
   FactoryPackagingRatesRoute: FactoryPackagingRatesRoute,
   FactoryPackagingReportRoute: FactoryPackagingReportRoute,
-  FactoryPackagingSettingsRoute: FactoryPackagingSettingsRoute,
   FactoryPackagingTasksRoute: FactoryPackagingTasksRoute,
   FactoryPackagingWorkerRoute: FactoryPackagingWorkerRoute,
   FactoryPackagingWorkerLoginRoute: FactoryPackagingWorkerLoginRoute,
@@ -921,3 +857,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
