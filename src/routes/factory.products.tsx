@@ -16,6 +16,7 @@ import {
   listProducts, upsertProduct, deleteProduct, uploadProductImage,
   listProductRates, saveProductRate,
   CATEGORY_LABEL, RATE_DEPT_LABEL,
+  parseColor, formatColor, colorLabel,
   type FactoryProduct, type ProductCategory, type RateDept, type ProductRate,
 } from "@/lib/factory/products";
 
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/factory/products")({
   component: () => <RequireAuth><ProductsPage /></RequireAuth>,
 });
 
-const CATEGORIES: ProductCategory[] = ["qish", "bahor", "kuz_yoz"];
+const CATEGORIES: ProductCategory[] = ["qish", "bahor_kuz", "yoz"];
 const DEPTS: RateDept[] = ["laser", "sewing", "stretching", "packaging"];
 
 function ProductsPage() {
