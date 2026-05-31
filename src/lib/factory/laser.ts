@@ -84,3 +84,32 @@ export async function laserSalaryReport(from: string, to: string): Promise<Laser
   if (error) throw error;
   return (data ?? []) as LaserSalaryRow[];
 }
+
+export type LaserCutRow = {
+  order_id: string; order_number: string; product_name: string;
+  color: string | null; total_quantity: number; total_rejected: number;
+};
+
+export async function laserCutSummary(from: string, to: string): Promise<LaserCutRow[]> {
+  const { data, error } = await supabase.rpc("laser_cut_summary", { _from: from, _to: to } as never);
+  if (error) throw error;
+  return (data ?? []) as LaserCutRow[];
+}
+
+export async function getDefaultLaserRate(): Promise<{ id: string | null; rate: number }> {
+  const { data } = await supabase.from("laser_daily_rates").select("id, rate_per_day")
+    .is("worker_id", null).eq("active", true)
+    .order("created_at", { ascending: false }).limit(1);
+  const row = (data?.[0] as { id?: string; rate_per_day?: number } | undefined);
+  return { id: row?.id ?? null, rate: Number(row?.rate_per_day ?? 0) };
+}
+
+export async function setDefaultLaserRate(rate: number) {
+  // deactivate previous defaults; insert a new one
+  await supabase.from("laser_daily_rates").update({ active: false } as never).is("worker_id", null);
+  const { error } = await supabase.from("laser_daily_rates").insert({
+    worker_id: null, rate_per_day: rate, active: true,
+  } as never);
+  if (error) throw error;
+}
+
