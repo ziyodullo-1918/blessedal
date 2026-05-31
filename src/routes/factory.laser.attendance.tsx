@@ -89,16 +89,31 @@ function Page() {
                 const a = byWorker.get(w.id);
                 const checked = !!a;
                 return (
-                  <label key={w.id} className="flex items-center gap-3 px-4 py-3 text-sm cursor-pointer hover:bg-accent/30">
-                    <Checkbox checked={checked} disabled={busy === w.id} onCheckedChange={(v) => toggle(w, !!v)} />
+                  <div key={w.id} className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-accent/30">
                     <div className="flex-1">
                       <div className="font-medium">{w.full_name}</div>
                       <div className="text-xs text-muted-foreground">Kod: {w.worker_code}</div>
                     </div>
-                    <div className={checked ? "text-sm font-semibold text-emerald-400" : "text-xs text-muted-foreground"}>
+                    <div className={checked ? "text-sm font-semibold text-emerald-500 mr-2" : "text-xs text-muted-foreground mr-2"}>
                       {checked ? `${Number(a!.daily_rate).toLocaleString()} so'm` : "belgilanmagan"}
                     </div>
-                  </label>
+                    <Button
+                      size="sm"
+                      disabled={busy === w.id}
+                      onClick={() => toggle(w, true)}
+                      className={checked ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-700 dark:text-emerald-300"}
+                    >
+                      Keldi
+                    </Button>
+                    <Button
+                      size="sm"
+                      disabled={busy === w.id}
+                      onClick={() => toggle(w, false)}
+                      className={!checked ? "bg-red-600 hover:bg-red-700 text-white" : "bg-red-600/20 hover:bg-red-600/40 text-red-700 dark:text-red-300"}
+                    >
+                      Kelmadi
+                    </Button>
+                  </div>
                 );
               })}
             </div>
