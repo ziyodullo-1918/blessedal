@@ -166,9 +166,10 @@ function ProductsPage() {
 
 function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDone: () => void }) {
   const [name, setName] = useState(editing?.name ?? "");
-  const [category, setCategory] = useState<ProductCategory>(editing?.category ?? "kuz_yoz");
+  const [category, setCategory] = useState<ProductCategory>(editing?.category ?? "yoz");
   const [colors, setColors] = useState<string[]>(editing?.colors ?? []);
-  const [newColor, setNewColor] = useState("#000000");
+  const [newHex, setNewHex] = useState("#000000");
+  const [newName, setNewName] = useState("");
   const [notes, setNotes] = useState(editing?.notes ?? "");
   const [active, setActive] = useState(editing?.active ?? true);
   const [imageUrl, setImageUrl] = useState<string | null>(editing?.image_url ?? null);
