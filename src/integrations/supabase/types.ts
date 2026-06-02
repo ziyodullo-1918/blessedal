@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       assignments: {
         Row: {
           color: string | null
@@ -126,6 +144,39 @@ export type Database = {
           id?: string
           name?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      factory_department_heads: {
+        Row: {
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"]
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department: Database["public"]["Enums"]["factory_department"]
+          email?: string | null
+          full_name: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"]
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -258,6 +309,7 @@ export type Database = {
           image_url: string | null
           name: string
           notes: string | null
+          pack_box_size: number
           updated_at: string
         }
         Insert: {
@@ -269,6 +321,7 @@ export type Database = {
           image_url?: string | null
           name: string
           notes?: string | null
+          pack_box_size?: number
           updated_at?: string
         }
         Update: {
@@ -280,6 +333,7 @@ export type Database = {
           image_url?: string | null
           name?: string
           notes?: string | null
+          pack_box_size?: number
           updated_at?: string
         }
         Relationships: []
@@ -345,6 +399,7 @@ export type Database = {
       factory_stages: {
         Row: {
           assigned_worker_id: string | null
+          aux_completed: Json
           completed_at: string | null
           completed_quantity: number
           created_at: string
@@ -361,6 +416,7 @@ export type Database = {
         }
         Insert: {
           assigned_worker_id?: string | null
+          aux_completed?: Json
           completed_at?: string | null
           completed_quantity?: number
           created_at?: string
@@ -377,6 +433,7 @@ export type Database = {
         }
         Update: {
           assigned_worker_id?: string | null
+          aux_completed?: Json
           completed_at?: string | null
           completed_quantity?: number
           created_at?: string
@@ -650,6 +707,54 @@ export type Database = {
           id?: string
           rate_per_day?: number
           worker_id?: string | null
+        }
+        Relationships: []
+      }
+      packaging_box_entries: {
+        Row: {
+          boxes: number
+          color: string | null
+          created_at: string
+          id: string
+          note: string | null
+          pairs_per_box: number
+          product_id: string | null
+          product_name: string
+          total: number
+          unit_price: number
+          units: number
+          work_date: string
+          worker_id: string
+        }
+        Insert: {
+          boxes: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          pairs_per_box?: number
+          product_id?: string | null
+          product_name: string
+          total?: number
+          unit_price?: number
+          units: number
+          work_date?: string
+          worker_id: string
+        }
+        Update: {
+          boxes?: number
+          color?: string | null
+          created_at?: string
+          id?: string
+          note?: string | null
+          pairs_per_box?: number
+          product_id?: string | null
+          product_name?: string
+          total?: number
+          unit_price?: number
+          units?: number
+          work_date?: string
+          worker_id?: string
         }
         Relationships: []
       }
@@ -1038,6 +1143,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          department: Database["public"]["Enums"]["factory_department"] | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"] | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          department?: Database["public"]["Enums"]["factory_department"] | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       workers: {
         Row: {
           created_at: string
@@ -1159,6 +1288,13 @@ export type Database = {
           worker_name: string
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       inventory_adjust_stock: {
         Args: {
           _delta: number
@@ -1188,6 +1324,16 @@ export type Database = {
         }
         Returns: string
       }
+      laser_report_aux: {
+        Args: {
+          _delta: number
+          _note?: string
+          _part: string
+          _stage_id: string
+          _worker_id?: string
+        }
+        Returns: undefined
+      }
       laser_salary_report: {
         Args: { _from: string; _to: string }
         Returns: {
@@ -1196,6 +1342,21 @@ export type Database = {
           worker_id: string
           worker_name: string
         }[]
+      }
+      packaging_delete_box_entry: {
+        Args: { _entry_id: string }
+        Returns: undefined
+      }
+      packaging_record_box: {
+        Args: {
+          _boxes: number
+          _color: string
+          _note?: string
+          _product_id: string
+          _work_date?: string
+          _worker_id: string
+        }
+        Returns: string
       }
       packaging_salary_report: {
         Args: { _from: string; _to: string }
@@ -1352,6 +1513,7 @@ export type Database = {
       }
     }
     Enums: {
+      app_role: "admin" | "head" | "worker"
       assignment_status: "in_progress" | "completed"
       factory_department:
         | "laser"
@@ -1503,6 +1665,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "head", "worker"],
       assignment_status: ["in_progress", "completed"],
       factory_department: [
         "laser",
