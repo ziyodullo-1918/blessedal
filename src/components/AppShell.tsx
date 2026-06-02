@@ -72,8 +72,6 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
     if (g.key === "laser") return loc.pathname.startsWith("/factory/laser") || loc.pathname === "/factory/dept/laser";
     if (g.key === "qadoq") return loc.pathname.startsWith("/factory/packaging") || loc.pathname === "/factory/dept/packaging";
-    if (g.key === "tikuvchilar") return loc.pathname.startsWith("/factory/sewing");
-    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/factory/stretching");
     return true;
   };
 
