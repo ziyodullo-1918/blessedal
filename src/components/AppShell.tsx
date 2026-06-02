@@ -41,19 +41,6 @@ const qadoqNav = [
 ] as const;
 
 
-
-const tikuvchilarNav = [
-  { to: "/factory/sewing", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/factory/sewing/workers", label: "Ishchilar", icon: Users },
-  { to: "/factory/sewing/tasks", label: "Topshiriqlar", icon: ClipboardList },
-] as const;
-
-const tortuvchilarNav = [
-  { to: "/factory/stretching", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/factory/stretching/workers", label: "Ishchilar", icon: Users },
-  { to: "/factory/stretching/tasks", label: "Topshiriqlar", icon: ClipboardList },
-] as const;
-
 const founderNav = [
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
