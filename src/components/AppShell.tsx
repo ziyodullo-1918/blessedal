@@ -43,20 +43,15 @@ const qadoqNav = [
 
 
 const tikuvchilarNav = [
-  { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/ishchilar", label: "Ishchilar", icon: Users },
-  { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
-  { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
-  { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
-  { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
+  { to: "/factory/sewing", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/sewing/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/sewing/tasks", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
 
 const tortuvchilarNav = [
-  { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/tortuvchilar/workers", label: "Ishchilar", icon: Users },
-  { to: "/tortuvchilar/products", label: "Mahsulotlar", icon: Package },
-  { to: "/tortuvchilar/reports", label: "Hisobot", icon: BarChart3 },
-  { to: "/tortuvchilar/settings", label: "Sozlamalar", icon: Settings },
+  { to: "/factory/stretching", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/stretching/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/stretching/tasks", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
 
 const founderNav = [
