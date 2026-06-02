@@ -91,8 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     if (g.key === "tortuvchilar") return loc.pathname.startsWith("/factory/stretching");
     return true;
   };
-    return true;
-  };
+
 
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
