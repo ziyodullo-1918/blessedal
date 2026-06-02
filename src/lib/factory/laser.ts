@@ -113,3 +113,16 @@ export async function setDefaultLaserRate(rate: number) {
   if (error) throw error;
 }
 
+// Report cutting progress on aux parts (astar / hakandoz) for a laser stage
+export async function reportLaserAux(stageId: string, part: "astar" | "hakandoz", delta: number, note?: string) {
+  const { error } = await supabase.rpc("laser_report_aux", {
+    _stage_id: stageId,
+    _part: part,
+    _delta: delta,
+    _worker_id: null,
+    _note: note ?? null,
+  } as never);
+  if (error) throw error;
+}
+
+
