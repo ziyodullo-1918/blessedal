@@ -43,20 +43,15 @@ const qadoqNav = [
 
 
 const tikuvchilarNav = [
-  { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/ishchilar", label: "Ishchilar", icon: Users },
-  { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
-  { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
-  { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
-  { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
+  { to: "/factory/sewing", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/sewing/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/sewing/tasks", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
 
 const tortuvchilarNav = [
-  { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
-  { to: "/tortuvchilar/workers", label: "Ishchilar", icon: Users },
-  { to: "/tortuvchilar/products", label: "Mahsulotlar", icon: Package },
-  { to: "/tortuvchilar/reports", label: "Hisobot", icon: BarChart3 },
-  { to: "/tortuvchilar/settings", label: "Sozlamalar", icon: Settings },
+  { to: "/factory/stretching", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/factory/stretching/workers", label: "Ishchilar", icon: Users },
+  { to: "/factory/stretching/tasks", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
 
 const founderNav = [
@@ -84,21 +79,19 @@ export function AppShell({ children }: { children: ReactNode }) {
         { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
-  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
     if (g.key === "zavod") {
-      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll"]
+      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll", "/factory/settings"]
         .some((p) => loc.pathname === p || loc.pathname.startsWith(p + "/"));
     }
     if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
     if (g.key === "laser") return loc.pathname.startsWith("/factory/laser") || loc.pathname === "/factory/dept/laser";
     if (g.key === "qadoq") return loc.pathname.startsWith("/factory/packaging") || loc.pathname === "/factory/dept/packaging";
-    if (g.key === "tikuvchilar") {
-      return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
-    }
-    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/tortuvchilar");
+    if (g.key === "tikuvchilar") return loc.pathname.startsWith("/factory/sewing");
+    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/factory/stretching");
     return true;
   };
+
 
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
