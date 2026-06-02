@@ -29,8 +29,6 @@ import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
 import { Route as FactoryFinishedRouteImport } from './routes/factory.finished'
 import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
 import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
-import { Route as FactoryStretchingIndexRouteImport } from './routes/factory.stretching.index'
-import { Route as FactorySewingIndexRouteImport } from './routes/factory.sewing.index'
 import { Route as FactoryPackagingIndexRouteImport } from './routes/factory.packaging.index'
 import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
 import { Route as FactoryLaserIndexRouteImport } from './routes/factory.laser.index'
@@ -39,10 +37,6 @@ import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchi
 import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
 import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
 import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
-import { Route as FactoryStretchingWorkersRouteImport } from './routes/factory.stretching.workers'
-import { Route as FactoryStretchingTasksRouteImport } from './routes/factory.stretching.tasks'
-import { Route as FactorySewingWorkersRouteImport } from './routes/factory.sewing.workers'
-import { Route as FactorySewingTasksRouteImport } from './routes/factory.sewing.tasks'
 import { Route as FactoryPackagingWorkersRouteImport } from './routes/factory.packaging.workers'
 import { Route as FactoryPackagingTasksRouteImport } from './routes/factory.packaging.tasks'
 import { Route as FactoryPackagingReportRouteImport } from './routes/factory.packaging.report'
@@ -153,16 +147,6 @@ const TortuvchilarAdminIndexRoute = TortuvchilarAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TortuvchilarAdminRoute,
 } as any)
-const FactoryStretchingIndexRoute = FactoryStretchingIndexRouteImport.update({
-  id: '/factory/stretching/',
-  path: '/factory/stretching/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactorySewingIndexRoute = FactorySewingIndexRouteImport.update({
-  id: '/factory/sewing/',
-  path: '/factory/sewing/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FactoryPackagingIndexRoute = FactoryPackagingIndexRouteImport.update({
   id: '/factory/packaging/',
   path: '/factory/packaging/',
@@ -207,27 +191,6 @@ const TortuvchilarAdminProductsRoute =
     path: '/products',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
-const FactoryStretchingWorkersRoute =
-  FactoryStretchingWorkersRouteImport.update({
-    id: '/factory/stretching/workers',
-    path: '/factory/stretching/workers',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const FactoryStretchingTasksRoute = FactoryStretchingTasksRouteImport.update({
-  id: '/factory/stretching/tasks',
-  path: '/factory/stretching/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactorySewingWorkersRoute = FactorySewingWorkersRouteImport.update({
-  id: '/factory/sewing/workers',
-  path: '/factory/sewing/workers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactorySewingTasksRoute = FactorySewingTasksRouteImport.update({
-  id: '/factory/sewing/tasks',
-  path: '/factory/sewing/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FactoryPackagingWorkersRoute = FactoryPackagingWorkersRouteImport.update({
   id: '/factory/packaging/workers',
   path: '/factory/packaging/workers',
@@ -302,10 +265,6 @@ export interface FileRoutesByFullPath {
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
-  '/factory/sewing/tasks': typeof FactorySewingTasksRoute
-  '/factory/sewing/workers': typeof FactorySewingWorkersRoute
-  '/factory/stretching/tasks': typeof FactoryStretchingTasksRoute
-  '/factory/stretching/workers': typeof FactoryStretchingWorkersRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
@@ -314,8 +273,6 @@ export interface FileRoutesByFullPath {
   '/factory/laser/': typeof FactoryLaserIndexRoute
   '/factory/orders/': typeof FactoryOrdersIndexRoute
   '/factory/packaging/': typeof FactoryPackagingIndexRoute
-  '/factory/sewing/': typeof FactorySewingIndexRoute
-  '/factory/stretching/': typeof FactoryStretchingIndexRoute
   '/tortuvchilar/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -345,10 +302,6 @@ export interface FileRoutesByTo {
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
-  '/factory/sewing/tasks': typeof FactorySewingTasksRoute
-  '/factory/sewing/workers': typeof FactorySewingWorkersRoute
-  '/factory/stretching/tasks': typeof FactoryStretchingTasksRoute
-  '/factory/stretching/workers': typeof FactoryStretchingWorkersRoute
   '/tortuvchilar/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/settings': typeof TortuvchilarAdminSettingsRoute
@@ -357,8 +310,6 @@ export interface FileRoutesByTo {
   '/factory/laser': typeof FactoryLaserIndexRoute
   '/factory/orders': typeof FactoryOrdersIndexRoute
   '/factory/packaging': typeof FactoryPackagingIndexRoute
-  '/factory/sewing': typeof FactorySewingIndexRoute
-  '/factory/stretching': typeof FactoryStretchingIndexRoute
   '/tortuvchilar': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker': typeof TortuvchilarWorkerIndexRoute
 }
@@ -391,10 +342,6 @@ export interface FileRoutesById {
   '/factory/packaging/report': typeof FactoryPackagingReportRoute
   '/factory/packaging/tasks': typeof FactoryPackagingTasksRoute
   '/factory/packaging/workers': typeof FactoryPackagingWorkersRoute
-  '/factory/sewing/tasks': typeof FactorySewingTasksRoute
-  '/factory/sewing/workers': typeof FactorySewingWorkersRoute
-  '/factory/stretching/tasks': typeof FactoryStretchingTasksRoute
-  '/factory/stretching/workers': typeof FactoryStretchingWorkersRoute
   '/tortuvchilar/_admin/products': typeof TortuvchilarAdminProductsRoute
   '/tortuvchilar/_admin/reports': typeof TortuvchilarAdminReportsRoute
   '/tortuvchilar/_admin/settings': typeof TortuvchilarAdminSettingsRoute
@@ -403,8 +350,6 @@ export interface FileRoutesById {
   '/factory/laser/': typeof FactoryLaserIndexRoute
   '/factory/orders/': typeof FactoryOrdersIndexRoute
   '/factory/packaging/': typeof FactoryPackagingIndexRoute
-  '/factory/sewing/': typeof FactorySewingIndexRoute
-  '/factory/stretching/': typeof FactoryStretchingIndexRoute
   '/tortuvchilar/_admin/': typeof TortuvchilarAdminIndexRoute
   '/tortuvchilar/worker/': typeof TortuvchilarWorkerIndexRoute
 }
@@ -438,10 +383,6 @@ export interface FileRouteTypes {
     | '/factory/packaging/report'
     | '/factory/packaging/tasks'
     | '/factory/packaging/workers'
-    | '/factory/sewing/tasks'
-    | '/factory/sewing/workers'
-    | '/factory/stretching/tasks'
-    | '/factory/stretching/workers'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
@@ -450,8 +391,6 @@ export interface FileRouteTypes {
     | '/factory/laser/'
     | '/factory/orders/'
     | '/factory/packaging/'
-    | '/factory/sewing/'
-    | '/factory/stretching/'
     | '/tortuvchilar/'
     | '/tortuvchilar/worker/'
   fileRoutesByTo: FileRoutesByTo
@@ -481,10 +420,6 @@ export interface FileRouteTypes {
     | '/factory/packaging/report'
     | '/factory/packaging/tasks'
     | '/factory/packaging/workers'
-    | '/factory/sewing/tasks'
-    | '/factory/sewing/workers'
-    | '/factory/stretching/tasks'
-    | '/factory/stretching/workers'
     | '/tortuvchilar/products'
     | '/tortuvchilar/reports'
     | '/tortuvchilar/settings'
@@ -493,8 +428,6 @@ export interface FileRouteTypes {
     | '/factory/laser'
     | '/factory/orders'
     | '/factory/packaging'
-    | '/factory/sewing'
-    | '/factory/stretching'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
   id:
@@ -526,10 +459,6 @@ export interface FileRouteTypes {
     | '/factory/packaging/report'
     | '/factory/packaging/tasks'
     | '/factory/packaging/workers'
-    | '/factory/sewing/tasks'
-    | '/factory/sewing/workers'
-    | '/factory/stretching/tasks'
-    | '/factory/stretching/workers'
     | '/tortuvchilar/_admin/products'
     | '/tortuvchilar/_admin/reports'
     | '/tortuvchilar/_admin/settings'
@@ -538,8 +467,6 @@ export interface FileRouteTypes {
     | '/factory/laser/'
     | '/factory/orders/'
     | '/factory/packaging/'
-    | '/factory/sewing/'
-    | '/factory/stretching/'
     | '/tortuvchilar/_admin/'
     | '/tortuvchilar/worker/'
   fileRoutesById: FileRoutesById
@@ -572,15 +499,9 @@ export interface RootRouteChildren {
   FactoryPackagingReportRoute: typeof FactoryPackagingReportRoute
   FactoryPackagingTasksRoute: typeof FactoryPackagingTasksRoute
   FactoryPackagingWorkersRoute: typeof FactoryPackagingWorkersRoute
-  FactorySewingTasksRoute: typeof FactorySewingTasksRoute
-  FactorySewingWorkersRoute: typeof FactorySewingWorkersRoute
-  FactoryStretchingTasksRoute: typeof FactoryStretchingTasksRoute
-  FactoryStretchingWorkersRoute: typeof FactoryStretchingWorkersRoute
   FactoryLaserIndexRoute: typeof FactoryLaserIndexRoute
   FactoryOrdersIndexRoute: typeof FactoryOrdersIndexRoute
   FactoryPackagingIndexRoute: typeof FactoryPackagingIndexRoute
-  FactorySewingIndexRoute: typeof FactorySewingIndexRoute
-  FactoryStretchingIndexRoute: typeof FactoryStretchingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -725,20 +646,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TortuvchilarAdminIndexRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
     }
-    '/factory/stretching/': {
-      id: '/factory/stretching/'
-      path: '/factory/stretching'
-      fullPath: '/factory/stretching/'
-      preLoaderRoute: typeof FactoryStretchingIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/sewing/': {
-      id: '/factory/sewing/'
-      path: '/factory/sewing'
-      fullPath: '/factory/sewing/'
-      preLoaderRoute: typeof FactorySewingIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/factory/packaging/': {
       id: '/factory/packaging/'
       path: '/factory/packaging'
@@ -794,34 +701,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/tortuvchilar/products'
       preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
       parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/factory/stretching/workers': {
-      id: '/factory/stretching/workers'
-      path: '/factory/stretching/workers'
-      fullPath: '/factory/stretching/workers'
-      preLoaderRoute: typeof FactoryStretchingWorkersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/stretching/tasks': {
-      id: '/factory/stretching/tasks'
-      path: '/factory/stretching/tasks'
-      fullPath: '/factory/stretching/tasks'
-      preLoaderRoute: typeof FactoryStretchingTasksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/sewing/workers': {
-      id: '/factory/sewing/workers'
-      path: '/factory/sewing/workers'
-      fullPath: '/factory/sewing/workers'
-      preLoaderRoute: typeof FactorySewingWorkersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/sewing/tasks': {
-      id: '/factory/sewing/tasks'
-      path: '/factory/sewing/tasks'
-      fullPath: '/factory/sewing/tasks'
-      preLoaderRoute: typeof FactorySewingTasksRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/factory/packaging/workers': {
       id: '/factory/packaging/workers'
@@ -949,15 +828,9 @@ const rootRouteChildren: RootRouteChildren = {
   FactoryPackagingReportRoute: FactoryPackagingReportRoute,
   FactoryPackagingTasksRoute: FactoryPackagingTasksRoute,
   FactoryPackagingWorkersRoute: FactoryPackagingWorkersRoute,
-  FactorySewingTasksRoute: FactorySewingTasksRoute,
-  FactorySewingWorkersRoute: FactorySewingWorkersRoute,
-  FactoryStretchingTasksRoute: FactoryStretchingTasksRoute,
-  FactoryStretchingWorkersRoute: FactoryStretchingWorkersRoute,
   FactoryLaserIndexRoute: FactoryLaserIndexRoute,
   FactoryOrdersIndexRoute: FactoryOrdersIndexRoute,
   FactoryPackagingIndexRoute: FactoryPackagingIndexRoute,
-  FactorySewingIndexRoute: FactorySewingIndexRoute,
-  FactoryStretchingIndexRoute: FactoryStretchingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
