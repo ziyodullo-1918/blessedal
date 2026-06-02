@@ -21,6 +21,7 @@ import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchil
 import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
 import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
 import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
+import { Route as FactorySettingsRouteImport } from './routes/factory.settings'
 import { Route as FactoryProductsRouteImport } from './routes/factory.products'
 import { Route as FactoryPayrollRouteImport } from './routes/factory.payroll'
 import { Route as FactoryInventoryRouteImport } from './routes/factory.inventory'
@@ -104,6 +105,11 @@ const TortuvchilarAdminRoute = TortuvchilarAdminRouteImport.update({
 const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
   id: '/factory/workers',
   path: '/factory/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactorySettingsRoute = FactorySettingsRouteImport.update({
+  id: '/factory/settings',
+  path: '/factory/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryProductsRoute = FactoryProductsRouteImport.update({
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/products': typeof FactoryProductsRoute
+  '/factory/settings': typeof FactorySettingsRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/products': typeof FactoryProductsRoute
+  '/factory/settings': typeof FactorySettingsRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/worker-login': typeof TortuvchilarWorkerLoginRoute
   '/factory': typeof FactoryIndexRoute
@@ -319,6 +327,7 @@ export interface FileRoutesById {
   '/factory/inventory': typeof FactoryInventoryRoute
   '/factory/payroll': typeof FactoryPayrollRoute
   '/factory/products': typeof FactoryProductsRoute
+  '/factory/settings': typeof FactorySettingsRoute
   '/factory/workers': typeof FactoryWorkersRoute
   '/tortuvchilar/_admin': typeof TortuvchilarAdminRouteWithChildren
   '/tortuvchilar/worker': typeof TortuvchilarWorkerRouteWithChildren
@@ -359,6 +368,7 @@ export interface FileRouteTypes {
     | '/factory/inventory'
     | '/factory/payroll'
     | '/factory/products'
+    | '/factory/settings'
     | '/factory/workers'
     | '/tortuvchilar'
     | '/tortuvchilar/worker'
@@ -397,6 +407,7 @@ export interface FileRouteTypes {
     | '/factory/inventory'
     | '/factory/payroll'
     | '/factory/products'
+    | '/factory/settings'
     | '/factory/workers'
     | '/tortuvchilar/worker-login'
     | '/factory'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/factory/inventory'
     | '/factory/payroll'
     | '/factory/products'
+    | '/factory/settings'
     | '/factory/workers'
     | '/tortuvchilar/_admin'
     | '/tortuvchilar/worker'
@@ -472,6 +484,7 @@ export interface RootRouteChildren {
   FactoryInventoryRoute: typeof FactoryInventoryRoute
   FactoryPayrollRoute: typeof FactoryPayrollRoute
   FactoryProductsRoute: typeof FactoryProductsRoute
+  FactorySettingsRoute: typeof FactorySettingsRoute
   FactoryWorkersRoute: typeof FactoryWorkersRoute
   TortuvchilarAdminRoute: typeof TortuvchilarAdminRouteWithChildren
   TortuvchilarWorkerRoute: typeof TortuvchilarWorkerRouteWithChildren
@@ -575,6 +588,13 @@ declare module '@tanstack/react-router' {
       path: '/factory/workers'
       fullPath: '/factory/workers'
       preLoaderRoute: typeof FactoryWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/settings': {
+      id: '/factory/settings'
+      path: '/factory/settings'
+      fullPath: '/factory/settings'
+      preLoaderRoute: typeof FactorySettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/products': {
@@ -793,6 +813,7 @@ const rootRouteChildren: RootRouteChildren = {
   FactoryInventoryRoute: FactoryInventoryRoute,
   FactoryPayrollRoute: FactoryPayrollRoute,
   FactoryProductsRoute: FactoryProductsRoute,
+  FactorySettingsRoute: FactorySettingsRoute,
   FactoryWorkersRoute: FactoryWorkersRoute,
   TortuvchilarAdminRoute: TortuvchilarAdminRouteWithChildren,
   TortuvchilarWorkerRoute: TortuvchilarWorkerRouteWithChildren,
@@ -814,3 +835,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

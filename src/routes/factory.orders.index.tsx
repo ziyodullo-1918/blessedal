@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { RequireAuth } from "@/components/RequireAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { createOrder, deleteOrder, listOrders, type FactoryOrder } from "@/lib/factory/data";
+import { listProducts, parseColor, colorLabel, type FactoryProduct } from "@/lib/factory/products";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/factory/order-flow";
 import { Plus, Trash2 } from "lucide-react";
@@ -102,28 +104,35 @@ function OrdersPage() {
 }
 
 function NewOrderForm({ onDone }: { onDone: () => void }) {
+  const [products, setProducts] = useState<FactoryProduct[]>([]);
   const [form, setForm] = useState({
-    customer_name: "", product_name: "", color: "",
-    total_quantity: 1, due_date: "", priority: 0, notes: "",
+    customer_name: "", product_id: "", color: "",
+    total_quantity: 1, due_date: "", notes: "",
   });
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => { listProducts().then(setProducts).catch(() => {}); }, []);
+  const selected = useMemo(() => products.find((p) => p.id === form.product_id) ?? null, [products, form.product_id]);
 
   return (
     <form
       className="space-y-3"
       onSubmit={async (e) => {
         e.preventDefault();
-        if (!form.customer_name || !form.product_name || form.total_quantity < 1) return;
+        if (!form.customer_name || !selected || form.total_quantity < 1) {
+          toast.error("Mijoz va mahsulotni tanlang");
+          return;
+        }
         setBusy(true);
         try {
           await createOrder({
             customer_name: form.customer_name,
-            product_name: form.product_name,
-            color: form.color || null,
+            product_name: selected.name,
+            color: form.color ? colorLabel(form.color) : null,
             size: null,
             total_quantity: form.total_quantity,
             due_date: form.due_date || null,
-            priority: form.priority,
+            priority: 0,
             notes: form.notes || null,
           });
           toast.success("Buyurtma yaratildi — Laser bo'limiga yuborildi");
@@ -140,15 +149,35 @@ function NewOrderForm({ onDone }: { onDone: () => void }) {
         </div>
         <div className="col-span-2">
           <Label>Mahsulot turi</Label>
-          <Input value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })} required placeholder="masalan: Oq Basanoshka" />
+          <Select value={form.product_id} onValueChange={(v) => setForm({ ...form, product_id: v, color: "" })}>
+            <SelectTrigger><SelectValue placeholder="Ro'yhatdan tanlang" /></SelectTrigger>
+            <SelectContent>
+              {products.length === 0 && <div className="px-3 py-2 text-xs text-muted-foreground">Avval Mahsulotlar bo'limida qo'shing</div>}
+              {products.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
-        <div><Label>Rang</Label><Input value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} /></div>
+        <div className="col-span-2">
+          <Label>Rang</Label>
+          <Select value={form.color} onValueChange={(v) => setForm({ ...form, color: v })} disabled={!selected}>
+            <SelectTrigger><SelectValue placeholder={selected ? "Rangni tanlang" : "Avval mahsulotni tanlang"} /></SelectTrigger>
+            <SelectContent>
+              {(selected?.colors ?? []).map((c) => {
+                const p = parseColor(c);
+                return (
+                  <SelectItem key={c} value={c}>
+                    <span className="inline-flex items-center gap-2">
+                      <span className="inline-block size-3 rounded-full border" style={{ background: p.hex }} />
+                      {colorLabel(c)}
+                    </span>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
         <div><Label>Jami soni (juft/dona)</Label><Input type="number" min={1} value={form.total_quantity} onChange={(e) => setForm({ ...form, total_quantity: Number(e.target.value) })} required /></div>
         <div><Label>Muddat</Label><Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} /></div>
-        <div>
-          <Label>Muhimlik (0–10)</Label>
-          <Input type="number" min={0} max={10} value={form.priority} onChange={(e) => setForm({ ...form, priority: Number(e.target.value) })} />
-        </div>
         <div className="col-span-2"><Label>Izoh</Label><Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
       </div>
       <Button type="submit" disabled={busy} className="w-full">{busy ? "Yaratilmoqda…" : "Yaratish"}</Button>
