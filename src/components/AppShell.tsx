@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Factory, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, CalendarClock } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, CalendarClock } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +41,24 @@ const qadoqNav = [
 ] as const;
 
 
+
+const tikuvchilarNav = [
+  { to: "/", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/ishchilar", label: "Ishchilar", icon: Users },
+  { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
+  { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
+  { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
+  { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
+] as const;
+
+const tortuvchilarNav = [
+  { to: "/tortuvchilar", label: "Boshqaruv", icon: LayoutDashboard },
+  { to: "/tortuvchilar/workers", label: "Ishchilar", icon: Users },
+  { to: "/tortuvchilar/products", label: "Mahsulotlar", icon: Package },
+  { to: "/tortuvchilar/reports", label: "Hisobot", icon: BarChart3 },
+  { to: "/tortuvchilar/settings", label: "Sozlamalar", icon: Settings },
+] as const;
+
 const founderNav = [
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
 ] as const;
@@ -62,19 +80,25 @@ export function AppShell({ children }: { children: ReactNode }) {
         { key: "ombor", label: "Ombor", icon: Archive, items: omborNav },
         { key: "laser", label: "Lazer bo'limi", icon: Flame, items: laserNav },
         { key: "qadoq", label: "Qadoq bo'limi", icon: Boxes, items: qadoqNav },
+        { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
+        { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
+  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
     if (g.key === "zavod") {
-      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll", "/factory/settings"]
+      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll"]
         .some((p) => loc.pathname === p || loc.pathname.startsWith(p + "/"));
     }
     if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
     if (g.key === "laser") return loc.pathname.startsWith("/factory/laser") || loc.pathname === "/factory/dept/laser";
     if (g.key === "qadoq") return loc.pathname.startsWith("/factory/packaging") || loc.pathname === "/factory/dept/packaging";
+    if (g.key === "tikuvchilar") {
+      return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
+    }
+    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/tortuvchilar");
     return true;
   };
-
 
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
