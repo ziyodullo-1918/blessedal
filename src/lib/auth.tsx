@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     signInAsFounder: async (login_id, pin) => {
       try {
-        const { founderLogin } = await import("@/server/founder");
+        const { founderLogin } = await import("@/lib/founder.functions");
         const res = await founderLogin({ data: { login_id, pin } });
         // Verify the email OTP token to establish a session as the admin user
         const { error } = await supabase.auth.verifyOtp({
