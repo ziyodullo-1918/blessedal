@@ -1,91 +1,78 @@
-## Maqsad
 
-Lazer va Qadoq bo'limlarini Tikuv (Tikuvchilar) bo'limi singari to'liq mustaqil modulga aylantirish: Boshqaruv, Ishchilar, Tariflar (Mahsulotlar), Topshiriqlar, Oylik hisobot, Sozlamalar.
+## 1. Lazer — Astar/Hakandoz progress
 
-## Asosiy farqlar (bo'lim turi bo'yicha)
+Maqsad: lazerda kesishda chalkashlikni oldini olish. "Brak" o'rniga 3 ta hisoblagich: **Asosiy**, **Astar**, **Hakandoz/Stirka**.
 
-- **Lazer** — kunbay ish (har bir ish kuni uchun belgilangan stavka). Ishchi ish kunini belgilaydi, miqdor emas. Mahsulot bo'yicha tarif emas, kunlik stavka.
-- **Qadoq** — ish bay (piece-rate): har bir qadoqlangan mahsulot uchun belgilangan mablag'. Mahsulot bo'yicha tarif (Tortuv kabi).
-- **Qadoq** — Tortuv kabi worker-login (PIN/code orqali kirish) bilan ham mavjud bo'ladi.
+- Migratsiya: `factory_stages` ga `aux_completed jsonb default '{}'::jsonb` qo'shiladi (`{"main": n, "astar": n, "hakandoz": n}` lazer uchun ishlatiladi).
+- Yangi RPC `laser_report_progress(_stage_id, _part, _delta, _worker_id, _note)` — `_part` qiymati: `main` | `astar` | `hakandoz`. `main` topshilganda hozirgi `factory_report_stage_progress` chaqiriladi (Tikuvga oqim eski tarzda). `astar`/`hakandoz` faqat `aux_completed` ni yangilaydi va event yozadi.
+- Faqat **lazer** topshiriqlar kartochkasida 3 ta input/OK ko'rinadi. Boshqa bo'limlarda **Brak butunlay olib tashlanadi** — faqat "Bajarildi" + OK qoladi.
+- `dept-tasks.tsx` lazer/non-lazer ko'rinishlari ajratiladi. Lazer kartochkasida har bir qism uchun progress: `Asosiy 0/100 · Astar 0/100 · Hakandoz 0/100`.
 
-## Ma'lumotlar bazasi (migratsiya)
+## 2. Qadoq — yangi oqim (Tortuvchilar uslubida)
 
-1. `laser_daily_attendance` — kunbay ish kunlari:
-   - `worker_id` (factory_workers.id), `work_date`, `daily_rate`, `note`, `created_at`
-   - unique(worker_id, work_date)
-2. `laser_daily_rates` — kunbay stavkalar tarixi:
-   - `worker_id` nullable (null = umumiy), `rate_per_day`, `active`, `effective_from`
-3. `packaging_piece_rates` — qadoqlash uchun mahsulot bo'yicha narx (salary_rates dan ajratilgan, mustaqil boshqariladi):
-   - `product_name` nullable (null = default), `rate_per_unit`, `active`
-4. `packaging_worker_sessions` — Tortuv kabi worker login session:
-   - `worker_id`, `token`, `expires_at`
-5. RPC: `packaging_worker_login(code, pin)` → session token qaytaradi.
-6. RPC: `laser_record_attendance(worker_id, date, rate)` — bir kunda bir marta.
+Maqsad: qadoqda alohida "ishchi kabineti" va "tariflar" sahifalari kerakmas. Qadoq ishchisi standart auth bilan kiradi va ish yozadi.
 
-Eski `salary_rates` jadvaliga tegmaymiz — u Tikuv/Tortuv uchun mavjud holida qoladi. Lazer kunbay alohida, Qadoq ham alohida `packaging_piece_rates` da boshqariladi.
+- O'chiriladi: `factory.packaging.worker-login.tsx`, `factory.packaging.worker.tsx`, `factory.packaging.rates.tsx`, navigatsiyadan ham olinadi.
+- Migratsiya: `packaging_box_entries` jadvali (`worker_id`, `product_id`, `color`, `pairs_per_box` default 5, `boxes`, `unit_price`, `total`, `work_date`).
+  - Mahsulotga `pack_box_size int default 5` ustun (har mahsulot uchun karobka sig'imi).
+  - Mahsulot saqlanganda forma'da `Qadoq karobka sig'imi` maydoni.
+- "Topshiriqlar" sahifasi qadoqda yangi UI: ishchi (dropdown) → mahsulot → rang → karobka soni → OK.
+  - Har karobka = `pairs_per_box` juft. Donalar = `boxes * pairs_per_box`.
+  - Avtomatik `finished_inventory` ga insert va `factory_stage_events` (`progress`) yoziladi.
+- Oylik hisobot bo'limi qoladi va `packaging_salary_report` qadoqdagi yangi entrylarni hisobga oladi (RPC yangilanadi).
 
-## Marshrutlar (yangi)
+## 3. Mahsulotlar → barcha bo'limlarda avtomatik
 
-### Lazer bo'limi (admin)
-- `/factory/laser` — Boshqaruv paneli (faol topshiriqlar, bugungi davomat, oylik xulosa)
-- `/factory/laser/workers` — Ishchilar (faqat department='laser')
-- `/factory/laser/rates` — Kunlik stavka (umumiy yoki ishchi bo'yicha)
-- `/factory/laser/tasks` — `factory.dept.$dept.tsx` ning lazer ko'rinishi (avval mavjud edi — saqlanadi)
-- `/factory/laser/attendance` — Davomat kiritish (kun + ishchi + stavka)
-- `/factory/laser/report` — Oylik hisobot (har ishchi × ish kunlari × stavka)
-- `/factory/laser/settings` — Sozlamalar (default stavka, eksport)
+- Mahsulot saqlanganda **har 4 bo'lim uchun rate = 0** bo'lsa ham `salary_rates` (laser/sewing/stretching) va `packaging_piece_rates` ga upsert qilinadi → shu bilan "ro'yhatda paydo bo'lish" ta'minlanadi.
+- Bo'lim ichidagi formula sahifasida ham `factory_products` dan dropdown.
 
-### Qadoq bo'limi (admin)
-- `/factory/packaging` — Boshqaruv paneli
-- `/factory/packaging/workers` — Ishchilar (department='packaging')
-- `/factory/packaging/rates` — Mahsulot bo'yicha donaboshi narx
-- `/factory/packaging/tasks` — `factory.dept.$dept.tsx` qadoq ko'rinishi (saqlanadi)
-- `/factory/packaging/report` — Oylik hisobot (qadoqlangan mahsulot × narx)
-- `/factory/packaging/settings` — Sozlamalar
-- `/factory/packaging/worker-login` — Ishchi PIN login (Tortuv kabi)
-- `/factory/packaging/worker` — Ishchi ichki ekrani (mening topshiriqlarim, qadoqlash, kunlik daromad)
+## 4. Buyurtma yaratishda mahsulot ro'yhati
 
-## Sidebar tuzilishi
+- `factory.orders.index.tsx` formani yangilaymiz:
+  - "Mahsulot turi" — `factory_products` dan **Select** dropdown.
+  - "Rang" — tanlangan mahsulotning `colors` massividan Select.
+  - "Muhimlik" maydoni olib tashlanadi.
 
-`AppShell.tsx` da Lazer va Qadoq guruhlari to'liq qayta tuziladi (Tikuvchilar/Tortuvchilar kabi 6 element):
-- **Lazer bo'limi**: Boshqaruv, Ishchilar, Stavkalar, Topshiriqlar, Davomat, Oylik hisobot, Sozlamalar
-- **Qadoq bo'limi**: Boshqaruv, Ishchilar, Tariflar, Topshiriqlar, Oylik hisobot, Sozlamalar
+## 5. Umumiy Sozlamalar bo'limi
 
-## Texnik tafsilotlar
+- Yangi route: `src/routes/sozlamalar.tsx` (allaqachon bor — kontentni yangilaymiz) yoki `factory.settings.tsx`. Bittasini ishlatib, AppShellda link.
+- 4 ta tab/karta:
+  1. **Bo'lim boshliqlari** — har bo'lim uchun foydalanuvchi tayinlash (admin tomonidan). Yangi jadval: `factory_department_heads(department, user_id, full_name)`.
+  2. **Foydalanuvchilar va rollar** — `user_roles` jadvali (`app_role` enum: `admin`, `head`, `worker`). `has_role` SECURITY DEFINER funktsiya. Admin foydalanuvchiga rol bera oladi.
+  3. **Qadoq qoidalari** — global default karobka sig'imi (`app_settings` jadval, key/value).
+  4. **Zavod profili** — nom, manzil, telefon (`app_settings`).
 
-- Ishchilar boshqaruvi `factory_workers` jadvalidan foydalanadi, `department` filtri bilan. Mavjud `listWorkers/createWorker/deleteWorker/toggleWorker` qayta ishlatiladi.
-- Qadoq worker login Tortuv namunasi (`src/lib/tortuvchilar/*`) bo'yicha qilingan kichik kutubxona: `src/lib/factory/packaging-auth.ts` + sha256 PIN tekshiruvi server tomonda RPC orqali.
-- Oylik hisobot: Lazer — `laser_daily_attendance` ni davr ichida yig'ish; Qadoq — `factory_stage_events` dan `department='packaging'`, `event_type='progress'` bo'yicha quantity × packaging_piece_rate.
-- Realtime: stavka/davomat/event jadvallari uchun supabase realtime kanallari.
+## 6. Umumiy test (demo data)
 
-## Fayllar
+- Migratsiyalardan keyin `supabase--insert` orqali:
+  - 2 demo mahsulot (`Model-024`, `Model-015`) ranglari va karobka sig'imi bilan.
+  - Bo'limga ishchilar (laser/sewing/stretching/packaging) — agar yo'q bo'lsa.
+  - 1 demo buyurtma (`ORD-DEMO`) — 100 dona.
+- Keyin runtime tekshirish: dev server xato bermaydi, har sahifa ochiladi, demo oqim ishlaydi.
 
-**Yangi**:
-- `src/lib/factory/laser.ts` (attendance, rates, report helpers)
-- `src/lib/factory/packaging.ts` (rates, report, worker auth)
-- `src/routes/factory.laser.index.tsx` (Boshqaruv)
-- `src/routes/factory.laser.workers.tsx`
-- `src/routes/factory.laser.rates.tsx`
-- `src/routes/factory.laser.attendance.tsx`
-- `src/routes/factory.laser.report.tsx`
-- `src/routes/factory.laser.settings.tsx`
-- `src/routes/factory.packaging.index.tsx`
-- `src/routes/factory.packaging.workers.tsx`
-- `src/routes/factory.packaging.rates.tsx`
-- `src/routes/factory.packaging.report.tsx`
-- `src/routes/factory.packaging.settings.tsx`
-- `src/routes/factory.packaging.worker-login.tsx`
-- `src/routes/factory.packaging.worker.tsx` (worker layout) + `.index.tsx`
-- migration: jadval + RPC
+## Texnik bosqichlar (tartib)
 
-**Tahrir**:
-- `src/components/AppShell.tsx` — Lazer/Qadoq guruhlari yangilanadi
-- Eski `/factory/dept/laser` va `/factory/dept/packaging` `/factory/laser/tasks` va `/factory/packaging/tasks` ga redirect qilinadi (yoki shu nom ostida saqlanadi).
+```text
+1) Migratsiya A: aux_completed + pack_box_size + packaging_box_entries
+                + laser_report_progress RPC + packaging_salary_report yangilash
+                + finished_inventory ga avto-insert (box entries)
+2) Migratsiya B: app_settings, factory_department_heads, user_roles + has_role
+3) Frontend:
+   - dept-tasks.tsx → lazer/qadoq/boshqa variantlarini ajratish
+   - products.tsx → pack_box_size input
+   - orders form → mahsulot/rang dropdown
+   - factory.packaging.* tozalash (worker-login, worker, rates olib tashlash)
+   - AppShell navigatsiyasini yangilash
+   - sozlamalar sahifasi (4 ta blok)
+4) lib/factory/laser.ts va packaging.ts yangi RPC chaqiruvlari
+5) Demo seed (insert tool)
+6) Smoke test
+```
 
-## Eslatmalar
+## Eslatma
 
-- Eski Tikuv (`/`, `/ishchilar`, ...) va Tortuv tegmaydi.
-- Hozir mavjud `factory.dept.$dept.tsx` ish logikasi qayta ishlatiladi (ichki komponent), faqat URL tuzilmasi yangilanadi.
-- Bu katta ko'lamli ish — taxminan 15+ yangi fayl va 1 migratsiya.
+- Tortuv (`tortuvchilar/pullers_*`) bo'limiga tegmaymiz — u alohida ishlaydi.
+- Eski PIN-asosli qadoq ishchi sessiyalari (`packaging_worker_sessions`) DB da qoladi (zarar yo'q), faqat UI dan olib tashlanadi.
+- PDF: `factory.payroll.tsx` allaqachon PDF chiqaradi — yangi qadoq formati ham unga ulanadi.
 
-Tasdiqlasangiz, bosqichma-bosqich amalga oshiraman: avval migratsiya, keyin lib/helper, keyin marshrutlar, oxirida AppShell yangilanadi.
+Bu reja juda katta. Tasdiqlasangiz boshlayman; xohlasangiz biror qismni kichikroq qilamiz yoki bo'lib bajaramiz.
