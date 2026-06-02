@@ -79,19 +79,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
-  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
     if (g.key === "zavod") {
-      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll"]
+      return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll", "/factory/settings"]
         .some((p) => loc.pathname === p || loc.pathname.startsWith(p + "/"));
     }
     if (g.key === "ombor") return loc.pathname.startsWith("/factory/inventory") || loc.pathname.startsWith("/factory/finished");
     if (g.key === "laser") return loc.pathname.startsWith("/factory/laser") || loc.pathname === "/factory/dept/laser";
     if (g.key === "qadoq") return loc.pathname.startsWith("/factory/packaging") || loc.pathname === "/factory/dept/packaging";
-    if (g.key === "tikuvchilar") {
-      return tikuvchilarPaths.some((p) => loc.pathname === p || (p !== "/" && loc.pathname.startsWith(p + "/")));
-    }
-    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/tortuvchilar");
+    if (g.key === "tikuvchilar") return loc.pathname.startsWith("/factory/sewing");
+    if (g.key === "tortuvchilar") return loc.pathname.startsWith("/factory/stretching");
+    return true;
+  };
     return true;
   };
 
