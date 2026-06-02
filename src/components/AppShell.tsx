@@ -16,7 +16,9 @@ const zavodNav = [
   { to: "/factory/formulas", label: "Formulalar", icon: FlaskConical },
   { to: "/factory/workers", label: "Hodimlar", icon: Users },
   { to: "/factory/payroll", label: "Oylik davrlar", icon: CalendarClock },
+  { to: "/factory/settings", label: "Sozlamalar", icon: Settings },
 ] as const;
+
 
 const omborNav = [
   { to: "/factory/inventory", label: "Xom ashyo", icon: Warehouse },
@@ -34,11 +36,10 @@ const laserNav = [
 const qadoqNav = [
   { to: "/factory/packaging", label: "Boshqaruv", icon: LayoutDashboard },
   { to: "/factory/packaging/workers", label: "Ishchilar", icon: Users },
-  { to: "/factory/packaging/rates", label: "Tariflar", icon: Package },
   { to: "/factory/packaging/tasks", label: "Topshiriqlar", icon: ClipboardList },
   { to: "/factory/packaging/report", label: "Oylik hisobot", icon: BarChart3 },
-  { to: "/factory/packaging/worker-login", label: "Ishchi kabineti", icon: Boxes },
 ] as const;
+
 
 
 const tikuvchilarNav = [

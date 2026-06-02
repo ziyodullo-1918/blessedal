@@ -8,7 +8,6 @@ export const CATEGORY_LABEL: Record<ProductCategory, string> = {
   yoz: "Yoz",
 };
 
-// Color entry stored as "hex|name" or just "hex". Helpers parse/format.
 export type ColorEntry = { hex: string; name: string };
 
 export function parseColor(c: string): ColorEntry {
@@ -36,6 +35,7 @@ export type FactoryProduct = {
   colors: string[];
   image_url: string | null;
   notes: string | null;
+  pack_box_size: number;
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -66,6 +66,7 @@ export async function upsertProduct(p: {
   colors: string[];
   image_url?: string | null;
   notes?: string | null;
+  pack_box_size?: number;
   active?: boolean;
 }) {
   const payload = {
@@ -74,6 +75,7 @@ export async function upsertProduct(p: {
     colors: p.colors,
     image_url: p.image_url ?? null,
     notes: p.notes ?? null,
+    pack_box_size: p.pack_box_size ?? 5,
     active: p.active ?? true,
   };
   if (p.id) {
@@ -111,7 +113,6 @@ export async function uploadProductImage(file: File): Promise<string> {
   return data.publicUrl;
 }
 
-// Per-department rates. Packaging uses its own table; others use salary_rates.
 export type ProductRate = { department: RateDept; rate_per_unit: number };
 
 export async function listProductRates(productName: string): Promise<ProductRate[]> {
@@ -141,7 +142,6 @@ export async function listProductRates(productName: string): Promise<ProductRate
 
 export async function saveProductRate(productName: string, department: RateDept, rate: number) {
   if (department === "packaging") {
-    // upsert into packaging_piece_rates by product_name
     const { data: existing } = await supabase
       .from("packaging_piece_rates" as never)
       .select("id")
@@ -162,7 +162,6 @@ export async function saveProductRate(productName: string, department: RateDept,
     }
     return;
   }
-  // salary_rates has unique (department, product_name) → upsert
   const { error } = await supabase
     .from("salary_rates")
     .upsert(

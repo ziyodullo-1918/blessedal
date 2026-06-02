@@ -69,8 +69,10 @@ export type FactoryStage = {
   started_at: string | null;
   completed_at: string | null;
   notes: string | null;
+  aux_completed: Record<string, number> | null;
   updated_at: string;
 };
+
 
 export type FactoryWorker = {
   id: string;

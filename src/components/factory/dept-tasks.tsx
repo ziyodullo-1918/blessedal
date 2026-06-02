@@ -5,14 +5,14 @@ import {
   DEPT_LABEL, listStagesByDept, reportProgress, setStageStatus,
   type FactoryDept, type FactoryOrder, type FactoryStage,
 } from "@/lib/factory/data";
+import { reportLaserAux } from "@/lib/factory/laser";
 import { MaterialRequirements } from "@/components/factory/material-requirements";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/factory/order-flow";
-import { AlertTriangle, Send, PackageCheck } from "lucide-react";
+import { AlertTriangle, Send } from "lucide-react";
 import { toast } from "sonner";
-import { finalizePackaging } from "@/lib/factory/salary";
 
 export function DeptTasks({ department }: { department: FactoryDept }) {
   const [rows, setRows] = useState<(FactoryStage & { order: FactoryOrder })[]>([]);
@@ -73,25 +73,42 @@ export function DeptTasks({ department }: { department: FactoryDept }) {
 }
 
 function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: FactoryOrder }; onChanged: () => void }) {
-  const [done, setDone] = useState("");
-  const [rej, setRej] = useState("");
+  const [main, setMain] = useState("");
+  const [astar, setAstar] = useState("");
+  const [hak, setHak] = useState("");
   const [reason, setReason] = useState("");
   const [showIssue, setShowIssue] = useState(false);
   const [busy, setBusy] = useState(false);
-  const pct = stage.planned_quantity > 0 ? Math.round((stage.completed_quantity / stage.planned_quantity) * 100) : 0;
-  const remaining = stage.planned_quantity - stage.completed_quantity - stage.rejected_quantity;
-  const isLaser = stage.department === "laser";
-  const isPackaging = stage.department === "packaging";
 
-  const submit = async () => {
-    const d = Number(done) || 0; const r = Number(rej) || 0;
-    if (d <= 0 && r <= 0) return;
+  const isLaser = stage.department === "laser";
+  const planned = stage.planned_quantity;
+  const mainDone = stage.completed_quantity;
+  const astarDone = Number(stage.aux_completed?.astar ?? 0);
+  const hakDone = Number(stage.aux_completed?.hakandoz ?? 0);
+  const pct = planned > 0 ? Math.round((mainDone / planned) * 100) : 0;
+  const remaining = planned - mainDone;
+
+  const submitMain = async () => {
+    const d = Number(main) || 0;
+    if (d <= 0) return;
     setBusy(true);
     try {
-      if (isPackaging && d > 0) await finalizePackaging(stage.id, d, r);
-      else await reportProgress(stage.id, d, r);
-      setDone(""); setRej("");
-      toast.success(isPackaging ? "Qadoqlandi va tayyor omborga qo'shildi" : "Yangilandi");
+      await reportProgress(stage.id, d, 0);
+      setMain("");
+      toast.success("Asosiy qism qo'shildi");
+      onChanged();
+    } catch (e) { toast.error((e as Error).message); }
+    finally { setBusy(false); }
+  };
+
+  const submitAux = async (part: "astar" | "hakandoz", val: string, setter: (s: string) => void) => {
+    const d = Number(val) || 0;
+    if (d <= 0) return;
+    setBusy(true);
+    try {
+      await reportLaserAux(stage.id, part, d);
+      setter("");
+      toast.success(part === "astar" ? "Astar qo'shildi" : "Hakandoz qo'shildi");
       onChanged();
     } catch (e) { toast.error((e as Error).message); }
     finally { setBusy(false); }
@@ -140,24 +157,33 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
         <div className="h-2 overflow-hidden rounded-full bg-muted">
           <div className="h-full bg-primary" style={{ width: `${pct}%` }} />
         </div>
-        <div className="text-xs text-muted-foreground">
-          {stage.completed_quantity} / {stage.planned_quantity} · Brak: {stage.rejected_quantity} · Qoldi: {remaining}
-        </div>
+
+        {isLaser ? (
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">
+              Asosiy: <b className="text-foreground">{mainDone}</b>/{planned} · Astar: <b className="text-foreground">{astarDone}</b>/{planned} · Hakandoz: <b className="text-foreground">{hakDone}</b>/{planned}
+            </div>
+            <PartRow label="Asosiy (kesildi)" value={main} setValue={setMain} onSubmit={submitMain} busy={busy} />
+            <PartRow label="Astar" value={astar} setValue={setAstar} onSubmit={() => submitAux("astar", astar, setAstar)} busy={busy} />
+            <PartRow label="Hakandoz / Stirka" value={hak} setValue={setHak} onSubmit={() => submitAux("hakandoz", hak, setHak)} busy={busy} />
+          </div>
+        ) : (
+          <>
+            <div className="text-xs text-muted-foreground">
+              {mainDone} / {planned} · Qoldi: {remaining}
+            </div>
+            <PartRow label="+Bajarildi" value={main} setValue={setMain} onSubmit={submitMain} busy={busy} />
+          </>
+        )}
 
         {isLaser && stage.status === "waiting_material" && (
           <MaterialRequirements orderId={stage.order_id} onConsumed={onChanged} />
         )}
 
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-          <Input type="number" min={0} placeholder="+Bajarildi" value={done} onChange={(e) => setDone(e.target.value)} />
-          <Input type="number" min={0} placeholder="+Brak" value={rej} onChange={(e) => setRej(e.target.value)} />
-          <Button size="sm" disabled={busy} onClick={submit}>OK</Button>
-        </div>
-
         <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="default" disabled={busy || stage.completed_quantity === 0} onClick={sendNext}>
-            {isPackaging ? <PackageCheck className="size-3 mr-1" /> : <Send className="size-3 mr-1" />}
-            {isLaser ? "Tikuvga yuborish" : isPackaging ? "Omborga yopish" : "Keyingi bo'limga"}
+            <Send className="size-3 mr-1" />
+            {isLaser ? "Tikuvga yuborish" : "Keyingi bo'limga"}
           </Button>
           <Button size="sm" variant="outline" onClick={() => setShowIssue((v) => !v)}>
             <AlertTriangle className="size-3 mr-1" />Muammo
@@ -172,5 +198,15 @@ function TaskCard({ stage, onChanged }: { stage: FactoryStage & { order: Factory
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function PartRow({ label, value, setValue, onSubmit, busy }: { label: string; value: string; setValue: (s: string) => void; onSubmit: () => void; busy: boolean }) {
+  return (
+    <div className="grid grid-cols-[120px_1fr_auto] items-center gap-2">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <Input type="number" min={0} placeholder="+" value={value} onChange={(e) => setValue(e.target.value)} />
+      <Button size="sm" disabled={busy} onClick={onSubmit}>OK</Button>
+    </div>
   );
 }
