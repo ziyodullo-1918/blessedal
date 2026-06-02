@@ -62,8 +62,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         { key: "ombor", label: "Ombor", icon: Archive, items: omborNav },
         { key: "laser", label: "Lazer bo'limi", icon: Flame, items: laserNav },
         { key: "qadoq", label: "Qadoq bo'limi", icon: Boxes, items: qadoqNav },
-        { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
-        { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
       ];
 
   const isInGroup = (g: NavGroup) => {
