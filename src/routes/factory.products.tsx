@@ -178,6 +178,7 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
   const [newName, setNewName] = useState("");
   const [notes, setNotes] = useState(editing?.notes ?? "");
   const [active, setActive] = useState(editing?.active ?? true);
+  const [packBoxSize, setPackBoxSize] = useState<string>(String(editing?.pack_box_size ?? 5));
   const [imageUrl, setImageUrl] = useState<string | null>(editing?.image_url ?? null);
   const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -187,6 +188,7 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
   const [origRates, setOrigRates] = useState<Record<RateDept, number>>({
     laser: 0, sewing: 0, stretching: 0, packaging: 0,
   });
+
 
   useEffect(() => {
     if (!editing) return;
@@ -237,15 +239,18 @@ function ProductForm({ editing, onDone }: { editing: FactoryProduct | null; onDo
             category, colors,
             image_url: imageUrl,
             notes: notes.trim() || null,
+            pack_box_size: Math.max(1, Number(packBoxSize) || 5),
             active,
           });
-          // Save dept rates
+          // Save dept rates (zero values still get persisted so the product
+          // appears in every department's rate list)
           for (const d of DEPTS) {
             const v = Number(rates[d]) || 0;
             if (v !== origRates[d]) {
               await saveProductRate(name.trim(), d, v);
             }
           }
+
           toast.success("Saqlandi");
           onDone();
         } catch (err) {
