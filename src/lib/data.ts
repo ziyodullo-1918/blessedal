@@ -88,7 +88,16 @@ export async function updateProduct(
 ) {
   const { error } = await supabase.from("products").update(p as never).eq("id", id);
   if (error) throw error;
+  // Propagate price change to ALL existing assignments (including closed periods)
+  if (p.price_per_unit !== undefined) {
+    const { error: aErr } = await supabase
+      .from("assignments")
+      .update({ unit_price: p.price_per_unit } as never)
+      .eq("product_id", id);
+    if (aErr) throw aErr;
+  }
 }
+
 export async function deleteProduct(id: string) {
   const { error } = await supabase.from("products").delete().eq("id", id);
   if (error) throw error;
