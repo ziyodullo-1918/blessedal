@@ -72,17 +72,22 @@ export function AppShell({ children }: { children: ReactNode }) {
   const loc = useLocation();
   const [open, setOpen] = useState(false);
 
+  // Vaqtinchalik: faqat Tikuvchilar bo'limi ko'rinadi
+  const showOnlyTikuvchilar = true;
+
   const isFounder = role === "founder";
   const groups: NavGroup[] = isFounder
     ? [{ key: "founder", label: "Topshiriqlar", icon: ClipboardList, items: founderNav }]
-    : [
-        { key: "zavod", label: "Zavod (umumiy)", icon: Factory, items: zavodNav },
-        { key: "ombor", label: "Ombor", icon: Archive, items: omborNav },
-        { key: "laser", label: "Lazer bo'limi", icon: Flame, items: laserNav },
-        { key: "qadoq", label: "Qadoq bo'limi", icon: Boxes, items: qadoqNav },
-        { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
-        { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
-      ];
+    : showOnlyTikuvchilar
+      ? [{ key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav }]
+      : [
+          { key: "zavod", label: "Zavod (umumiy)", icon: Factory, items: zavodNav },
+          { key: "ombor", label: "Ombor", icon: Archive, items: omborNav },
+          { key: "laser", label: "Lazer bo'limi", icon: Flame, items: laserNav },
+          { key: "qadoq", label: "Qadoq bo'limi", icon: Boxes, items: qadoqNav },
+          { key: "tikuvchilar", label: "Tikuvchilar bo'limi", icon: Scissors, items: tikuvchilarNav },
+          { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
+        ];
 
   const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
