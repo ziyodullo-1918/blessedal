@@ -261,18 +261,30 @@ function Page() {
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <Label>Davrni tanlang</Label>
-                <Select value={selectedHistoryId || undefined} onValueChange={loadHistoryItems}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Yopilgan davrlardan birini tanlang" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {closedPeriods.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        🔒 {p.label} · {p.start_date} → {p.end_date}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Select value={selectedHistoryId || undefined} onValueChange={loadHistoryItems}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Yopilgan davrlardan birini tanlang" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {closedPeriods.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          🔒 {p.label} · {p.start_date} → {p.end_date}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {isAdmin && selectedHistoryId && (
+                    <Button variant="outline" onClick={reopenSelectedPeriod} className="shrink-0">
+                      <Unlock className="size-4" /> Davrni ochish
+                    </Button>
+                  )}
+                </div>
+                {isAdmin && (
+                  <p className="text-xs text-muted-foreground">
+                    Yopilgan davr topshiriqlarini shu yerda tahrirlashingiz mumkin.
+                  </p>
+                )}
               </div>
               <div className="max-h-[55vh] overflow-y-auto rounded-md border">
                 {historyLoading ? (
@@ -292,10 +304,61 @@ function Page() {
                         <th className="px-3 py-2 text-right">Miqdor</th>
                         <th className="px-3 py-2 text-right">Maosh</th>
                         <th className="px-3 py-2">Holat</th>
+                        {isAdmin && <th className="px-3 py-2 text-right"></th>}
                       </tr>
                     </thead>
                     <tbody>
                       {historyItems.map((it) => (
+                        hEditId === it.id ? (
+                          <tr key={it.id} className="border-b last:border-0 bg-muted/40">
+                            <td className="px-3 py-2">
+                              <Select value={hWorkerId || undefined} onValueChange={setHWorkerId}>
+                                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {workers.map((w) => (
+                                    <SelectItem key={w.id} value={w.id}>{w.full_name}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="px-3 py-2">
+                              <Select value={hProductId || undefined} onValueChange={(v) => { setHProductId(v); setHColor(""); }}>
+                                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {products.map((p) => (
+                                    <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                            <td className="px-3 py-2">
+                              <Input
+                                className="h-9 w-20 text-right"
+                                type="number"
+                                min={1}
+                                value={hQty}
+                                onChange={(e) => setHQty(e.target.value)}
+                              />
+                            </td>
+                            <td className="px-3 py-2 text-right font-mono text-xs text-muted-foreground">
+                              {fmtMoney(
+                                (Number(hQty) || 0) *
+                                  Number(products.find((p) => p.id === hProductId)?.price_per_unit ?? 0),
+                              )}
+                            </td>
+                            <td className="px-3 py-2 text-xs text-muted-foreground">
+                              {it.status === "completed" ? "Bajarildi" : "Jarayonda"}
+                            </td>
+                            <td className="px-3 py-2 text-right whitespace-nowrap">
+                              <Button size="icon" variant="ghost" onClick={() => saveHistoryEdit(it.id)}>
+                                <Check className="size-4 text-success" />
+                              </Button>
+                              <Button size="icon" variant="ghost" onClick={() => setHEditId(null)}>
+                                <X className="size-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ) : (
                         <tr key={it.id} className="border-b last:border-0">
                           <td className="px-3 py-2 font-medium">{it.worker?.full_name ?? "—"}</td>
                           <td className="px-3 py-2">
@@ -319,7 +382,23 @@ function Page() {
                               </Badge>
                             )}
                           </td>
+                          {isAdmin && (
+                            <td className="px-3 py-2 text-right whitespace-nowrap">
+                              {it.status !== "completed" && (
+                                <Button size="icon" variant="ghost" onClick={() => completeHistoryItem(it.id)}>
+                                  <CheckCircle2 className="size-4 text-success" />
+                                </Button>
+                              )}
+                              <Button size="icon" variant="ghost" onClick={() => startHistoryEdit(it)}>
+                                <Pencil className="size-4" />
+                              </Button>
+                              <Button size="icon" variant="ghost" onClick={() => removeHistoryItem(it.id)}>
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </td>
+                          )}
                         </tr>
+                        )
                       ))}
                     </tbody>
                   </table>
