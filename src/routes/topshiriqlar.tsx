@@ -9,6 +9,7 @@ import {
   listAssignments,
   listAssignmentsByPeriod,
   listPayrollPeriods,
+  reopenPayrollPeriod,
   listProducts,
   listWorkers,
   updateAssignment,
@@ -29,7 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { CheckCircle2, History, Plus, Trash2, Pencil, Check, X } from "lucide-react";
+import { CheckCircle2, History, Plus, Trash2, Pencil, Check, X, Unlock } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate, fmtMoney } from "@/lib/format";
 import { useConfirm } from "@/components/ConfirmDialog";
