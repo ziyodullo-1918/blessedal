@@ -222,6 +222,94 @@ function Page() {
 
   const closedPeriods = useMemo(() => periods.filter((p) => p.closed_at), [periods]);
 
+  // ---- History (closed period) editing ----
+  const [hEditId, setHEditId] = useState<string | null>(null);
+  const [hWorkerId, setHWorkerId] = useState("");
+  const [hProductId, setHProductId] = useState("");
+  const [hQty, setHQty] = useState("");
+  const [hColor, setHColor] = useState("");
+
+  function startHistoryEdit(a: Assignment) {
+    setHEditId(a.id);
+    setHWorkerId(a.worker_id);
+    setHProductId(a.product_id);
+    setHQty(String(a.quantity));
+    setHColor(a.color ?? "");
+  }
+
+  async function refreshHistory() {
+    if (selectedHistoryId) setHistoryItems(await listAssignmentsByPeriod(selectedHistoryId));
+  }
+
+  async function saveHistoryEdit(id: string) {
+    const q = parseInt(hQty);
+    if (!hWorkerId || !hProductId || isNaN(q) || q <= 0) {
+      toast.error("Ma'lumotlarni to'g'ri kiriting");
+      return;
+    }
+    try {
+      await updateAssignment(id, {
+        worker_id: hWorkerId,
+        product_id: hProductId,
+        quantity: q,
+        color: hColor || null,
+      });
+      setHEditId(null);
+      await refreshHistory();
+      await load();
+      toast.success("Saqlandi");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
+  async function completeHistoryItem(id: string) {
+    try {
+      await completeAssignment(id);
+      await refreshHistory();
+      toast.success("Bajarildi deb belgilandi");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
+  async function removeHistoryItem(id: string) {
+    const ok = await confirm({
+      title: "Topshiriqni o'chirasizmi?",
+      description: "Bu amalni qaytarib bo'lmaydi.",
+      confirmText: "O'chirish",
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteAssignment(id);
+      await refreshHistory();
+      toast.success("O'chirildi");
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
+  async function reopenSelectedPeriod() {
+    if (!selectedHistoryId) return;
+    const ok = await confirm({
+      title: "Davrni qayta ochasizmi?",
+      description: "Davr yopilmagan holatga qaytadi va unga topshiriq qo'shish mumkin bo'ladi.",
+      confirmText: "Ochish",
+    });
+    if (!ok) return;
+    try {
+      await reopenPayrollPeriod(selectedHistoryId);
+      toast.success("Davr qayta ochildi");
+      setHistoryOpen(false);
+      setSelectedHistoryId("");
+      setHistoryItems([]);
+      await load();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
+  }
+
   async function loadHistoryItems(periodId: string) {
     setSelectedHistoryId(periodId);
     if (!periodId) {
