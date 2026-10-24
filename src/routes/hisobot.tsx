@@ -225,6 +225,11 @@ function Page() {
     });
   }, [rows, workerFilter, search]);
 
+  const filteredFines = useMemo(() => {
+    if (workerFilter === "all") return fines;
+    return fines.filter((f) => f.worker_id === workerFilter);
+  }, [fines, workerFilter]);
+
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
     for (const a of filteredRows) {
@@ -235,8 +240,11 @@ function Page() {
         workerName: a.worker.full_name,
         totalQty: 0,
         totalSalary: 0,
+        totalFines: 0,
+        netSalary: 0,
         jobs: 0,
         items: [],
+        fines: [],
       };
       r.totalQty += a.quantity;
       r.totalSalary += salary;
@@ -244,8 +252,27 @@ function Page() {
       r.items.push(a);
       map.set(id, r);
     }
-    return [...map.values()].sort((a, b) => b.totalSalary - a.totalSalary);
-  }, [filteredRows]);
+    // Attach fines (also surfaces workers who have fines but no completed jobs)
+    for (const f of filteredFines) {
+      const id = f.worker_id;
+      const r = map.get(id) ?? {
+        workerId: id,
+        workerName: f.worker?.full_name ?? "—",
+        totalQty: 0,
+        totalSalary: 0,
+        totalFines: 0,
+        netSalary: 0,
+        jobs: 0,
+        items: [],
+        fines: [],
+      };
+      r.totalFines += Number(f.amount);
+      r.fines.push(f);
+      map.set(id, r);
+    }
+    for (const r of map.values()) r.netSalary = r.totalSalary - r.totalFines;
+    return [...map.values()].sort((a, b) => b.netSalary - a.netSalary);
+  }, [filteredRows, filteredFines]);
 
   const products = useMemo<ProductAgg[]>(() => {
     const map = new Map<string, ProductAgg>();
