@@ -11,8 +11,10 @@ import {
   deletePayrollPeriod,
   updatePayrollPeriod,
   autoPeriodLabel,
+  finesByRange,
   type ReportRow,
   type PayrollPeriod,
+  type Fine,
 } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -50,6 +52,7 @@ import {
   Users,
   Package,
   Pencil,
+  CircleAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
@@ -68,8 +71,11 @@ type WorkerAgg = {
   workerName: string;
   totalQty: number;
   totalSalary: number;
+  totalFines: number;
+  netSalary: number;
   jobs: number;
   items: ReportRow[];
+  fines: Fine[];
 };
 
 type ProductAgg = {
@@ -101,6 +107,7 @@ function Page() {
   const [search, setSearch] = useState("");
 
   const [rows, setRows] = useState<ReportRow[]>([]);
+  const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -196,6 +203,12 @@ function Page() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+    // Fines are date-based: load for the visible range (period or custom)
+    finesByRange(range.start, range.end)
+      .then((f) => {
+        if (!cancelled) setFines(f);
+      })
+      .catch(console.error);
     return () => {
       cancelled = true;
     };
@@ -213,6 +226,11 @@ function Page() {
     });
   }, [rows, workerFilter, search]);
 
+  const filteredFines = useMemo(() => {
+    if (workerFilter === "all") return fines;
+    return fines.filter((f) => f.worker_id === workerFilter);
+  }, [fines, workerFilter]);
+
   const workers = useMemo<WorkerAgg[]>(() => {
     const map = new Map<string, WorkerAgg>();
     for (const a of filteredRows) {
@@ -223,8 +241,11 @@ function Page() {
         workerName: a.worker.full_name,
         totalQty: 0,
         totalSalary: 0,
+        totalFines: 0,
+        netSalary: 0,
         jobs: 0,
         items: [],
+        fines: [],
       };
       r.totalQty += a.quantity;
       r.totalSalary += salary;
@@ -232,8 +253,27 @@ function Page() {
       r.items.push(a);
       map.set(id, r);
     }
-    return [...map.values()].sort((a, b) => b.totalSalary - a.totalSalary);
-  }, [filteredRows]);
+    // Attach fines (also surfaces workers who have fines but no completed jobs)
+    for (const f of filteredFines) {
+      const id = f.worker_id;
+      const r = map.get(id) ?? {
+        workerId: id,
+        workerName: f.worker?.full_name ?? "—",
+        totalQty: 0,
+        totalSalary: 0,
+        totalFines: 0,
+        netSalary: 0,
+        jobs: 0,
+        items: [],
+        fines: [],
+      };
+      r.totalFines += Number(f.amount);
+      r.fines.push(f);
+      map.set(id, r);
+    }
+    for (const r of map.values()) r.netSalary = r.totalSalary - r.totalFines;
+    return [...map.values()].sort((a, b) => b.netSalary - a.netSalary);
+  }, [filteredRows, filteredFines]);
 
   const products = useMemo<ProductAgg[]>(() => {
     const map = new Map<string, ProductAgg>();
@@ -258,6 +298,10 @@ function Page() {
   const grand = useMemo(
     () => filteredRows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0),
     [filteredRows],
+  );
+  const grandFines = useMemo(
+    () => filteredFines.reduce((s, f) => s + Number(f.amount), 0),
+    [filteredFines],
   );
   const totalQty = useMemo(() => filteredRows.reduce((s, r) => s + r.quantity, 0), [filteredRows]);
 
@@ -439,6 +483,25 @@ function Page() {
           )
           .join("");
 
+        const finesRows = w.fines
+          .map(
+            (f) => `<tr>
+              <td>${fmtDate(f.date)}</td>
+              <td>${escapeHtml(f.note || "—")}</td>
+              <td class="r" style="color:#dc2626"><b>-${fmtMoney(Number(f.amount))}</b></td>
+            </tr>`,
+          )
+          .join("");
+        const finesBlock =
+          w.fines.length > 0
+            ? `<div class="muted small">Jarimalar:</div>
+          <table class="t">
+            <thead><tr><th>Sana</th><th>Izoh</th><th class="r">Summa</th></tr></thead>
+            <tbody>${finesRows}</tbody>
+          </table>
+          <div class="net">Qo'lga tegadi: ${fmtMoney(w.netSalary)}</div>`
+            : "";
+
         return `
         <section class="half">
           <div class="hdr">
@@ -446,7 +509,7 @@ function Page() {
               <div class="title">Blessed Al — Oylik hisobot</div>
               <div class="muted">${escapeHtml(periodTitle)}</div>
             </div>
-            <div class="total">${fmtMoney(w.totalSalary)}</div>
+            <div class="total">${fmtMoney(w.netSalary)}</div>
           </div>
           <h3 class="wname">${escapeHtml(w.workerName)}</h3>
           <table class="t">
@@ -458,6 +521,7 @@ function Page() {
             <thead><tr><th>Berilgan</th><th>Bajarilgan</th><th>Mahsulot</th><th class="r">Mq</th><th class="r">Narx</th><th class="r">Summa</th></tr></thead>
             <tbody>${detailRows}</tbody>
           </table>
+          ${finesBlock}
         </section>`;
       })
       .join("");
@@ -492,6 +556,7 @@ function Page() {
       table.t td{border:1px solid #dcfce7;padding:0.6px 2px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.05}
       table.t .r{text-align:right}
       .dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:1px}
+      .net{margin-top:1mm;padding:1mm 2px;border-top:1.5px solid #15803d;color:#15803d;font-weight:700;font-size:8.5px;text-align:right}
       </style></head>
       <body>
         ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
@@ -882,7 +947,7 @@ function Page() {
       </Card>
 
       {/* Stat cards */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Umumiy summa"
           value={fmtMoney(grand)}
@@ -893,6 +958,12 @@ function Page() {
           value={`${totalQty} dona`}
           tone="primary"
           icon={<Package className="size-5 text-primary/70" />}
+        />
+        <StatCard
+          label="Jami jarimalar"
+          value={fmtMoney(grandFines)}
+          tone="warning"
+          icon={<CircleAlert className="size-5 text-warning/80" />}
         />
         <StatCard
           label="Ishchilar"
@@ -936,8 +1007,13 @@ function Page() {
                       <div className="hidden text-right font-mono text-xs text-muted-foreground sm:block">
                         {w.jobs} ta · {w.totalQty} dona
                       </div>
+                      {w.totalFines > 0 && (
+                        <div className="hidden w-28 text-right font-mono text-xs text-destructive sm:block">
+                          -{fmtMoney(w.totalFines)}
+                        </div>
+                      )}
                       <div className="w-32 text-right font-mono font-semibold text-primary">
-                        {fmtMoney(w.totalSalary)}
+                        {fmtMoney(w.netSalary)}
                       </div>
                     </button>
                     {expanded && (
@@ -983,6 +1059,42 @@ function Page() {
                             </tbody>
                           </table>
                         </div>
+                        {w.fines.length > 0 && (
+                          <div className="mt-3 overflow-x-auto rounded-md border border-destructive/30 bg-background">
+                            <table className="w-full text-sm">
+                              <thead className="bg-destructive/10 text-left text-xs uppercase tracking-wider text-destructive">
+                                <tr>
+                                  <th className="px-3 py-2">Jarima sanasi</th>
+                                  <th className="px-3 py-2">Izoh</th>
+                                  <th className="px-3 py-2 text-right">Summa</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {w.fines.map((f) => (
+                                  <tr key={f.id} className="border-b last:border-0">
+                                    <td className="px-3 py-2 font-mono text-xs">
+                                      {fmtDate(f.date)}
+                                    </td>
+                                    <td className="px-3 py-2 text-muted-foreground">
+                                      {f.note || "—"}
+                                    </td>
+                                    <td className="px-3 py-2 text-right font-mono font-semibold text-destructive">
+                                      -{fmtMoney(f.amount)}
+                                    </td>
+                                  </tr>
+                                ))}
+                                <tr className="bg-destructive/5">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
+                                    Qo'lga tegadi
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold text-primary">
+                                    {fmtMoney(w.netSalary)}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

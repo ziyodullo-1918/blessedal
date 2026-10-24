@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePin } from "@/lib/pin";
 import { Lock as LockIcon } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, CalendarClock } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, Package, ClipboardList, BarChart3, Menu, X, Settings, ChevronDown, Scissors, Wrench, Factory, Boxes, Archive, Flame, Warehouse, FlaskConical, PackageCheck, CalendarClock, CircleAlert } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +47,7 @@ const tikuvchilarNav = [
   { to: "/ishchilar", label: "Ishchilar", icon: Users },
   { to: "/mahsulotlar", label: "Mahsulotlar", icon: Package },
   { to: "/topshiriqlar", label: "Topshiriqlar", icon: ClipboardList },
+  { to: "/jarimalar", label: "Jarimalar", icon: CircleAlert },
   { to: "/hisobot", label: "Oylik hisobot", icon: BarChart3 },
   { to: "/sozlamalar", label: "Sozlamalar", icon: Settings },
 ] as const;
@@ -89,7 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           { key: "tortuvchilar", label: "Tortuvchilar bo'limi", icon: Wrench, items: tortuvchilarNav },
         ];
 
-  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/hisobot", "/sozlamalar"];
+  const tikuvchilarPaths = ["/", "/ishchilar", "/mahsulotlar", "/topshiriqlar", "/jarimalar", "/hisobot", "/sozlamalar"];
   const isInGroup = (g: NavGroup) => {
     if (g.key === "zavod") {
       return ["/factory/orders", "/factory/products", "/factory/formulas", "/factory/workers", "/factory/payroll"]

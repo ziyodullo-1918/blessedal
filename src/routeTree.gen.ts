@@ -9,67 +9,48 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
-import { Route as SozlamalarRouteImport } from './routes/sozlamalar'
-import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as IshchilarRouteImport } from './routes/ishchilar'
-import { Route as HisobotRouteImport } from './routes/hisobot'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HisobotRouteImport } from './routes/hisobot'
+import { Route as IshchilarRouteImport } from './routes/ishchilar'
+import { Route as JarimalarRouteImport } from './routes/jarimalar'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MahsulotlarRouteImport } from './routes/mahsulotlar'
+import { Route as SozlamalarRouteImport } from './routes/sozlamalar'
+import { Route as TopshiriqlarRouteImport } from './routes/topshiriqlar'
 import { Route as FactoryIndexRouteImport } from './routes/factory.index'
-import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchilar.worker-login'
-import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
-import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
-import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
-import { Route as FactorySettingsRouteImport } from './routes/factory.settings'
-import { Route as FactoryProductsRouteImport } from './routes/factory.products'
-import { Route as FactoryPayrollRouteImport } from './routes/factory.payroll'
-import { Route as FactoryInventoryRouteImport } from './routes/factory.inventory'
-import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
 import { Route as FactoryFinishedRouteImport } from './routes/factory.finished'
-import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
-import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
-import { Route as FactoryPackagingIndexRouteImport } from './routes/factory.packaging.index'
-import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
-import { Route as FactoryLaserIndexRouteImport } from './routes/factory.laser.index'
-import { Route as TortuvchilarWorkerNewRouteImport } from './routes/tortuvchilar.worker.new'
-import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchilar._admin.workers'
-import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
-import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
-import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
-import { Route as FactoryPackagingWorkersRouteImport } from './routes/factory.packaging.workers'
-import { Route as FactoryPackagingTasksRouteImport } from './routes/factory.packaging.tasks'
-import { Route as FactoryPackagingReportRouteImport } from './routes/factory.packaging.report'
-import { Route as FactoryOrdersIdRouteImport } from './routes/factory.orders.$id'
-import { Route as FactoryLaserWorkersRouteImport } from './routes/factory.laser.workers'
-import { Route as FactoryLaserTasksRouteImport } from './routes/factory.laser.tasks'
-import { Route as FactoryLaserReportRouteImport } from './routes/factory.laser.report'
-import { Route as FactoryLaserAttendanceRouteImport } from './routes/factory.laser.attendance'
+import { Route as FactoryFormulasRouteImport } from './routes/factory.formulas'
+import { Route as FactoryInventoryRouteImport } from './routes/factory.inventory'
+import { Route as FactoryPayrollRouteImport } from './routes/factory.payroll'
+import { Route as FactoryProductsRouteImport } from './routes/factory.products'
+import { Route as FactorySettingsRouteImport } from './routes/factory.settings'
+import { Route as FactoryWorkersRouteImport } from './routes/factory.workers'
+import { Route as TortuvchilarAdminRouteImport } from './routes/tortuvchilar._admin'
+import { Route as TortuvchilarWorkerRouteImport } from './routes/tortuvchilar.worker'
+import { Route as TortuvchilarWorkerLoginRouteImport } from './routes/tortuvchilar.worker-login'
 import { Route as FactoryDeptDeptRouteImport } from './routes/factory.dept.$dept'
+import { Route as FactoryLaserIndexRouteImport } from './routes/factory.laser.index'
+import { Route as FactoryLaserAttendanceRouteImport } from './routes/factory.laser.attendance'
+import { Route as FactoryLaserReportRouteImport } from './routes/factory.laser.report'
+import { Route as FactoryLaserTasksRouteImport } from './routes/factory.laser.tasks'
+import { Route as FactoryLaserWorkersRouteImport } from './routes/factory.laser.workers'
+import { Route as FactoryOrdersIndexRouteImport } from './routes/factory.orders.index'
+import { Route as FactoryOrdersIdRouteImport } from './routes/factory.orders.$id'
+import { Route as FactoryPackagingIndexRouteImport } from './routes/factory.packaging.index'
+import { Route as FactoryPackagingReportRouteImport } from './routes/factory.packaging.report'
+import { Route as FactoryPackagingTasksRouteImport } from './routes/factory.packaging.tasks'
+import { Route as FactoryPackagingWorkersRouteImport } from './routes/factory.packaging.workers'
+import { Route as TortuvchilarAdminIndexRouteImport } from './routes/tortuvchilar._admin.index'
+import { Route as TortuvchilarAdminProductsRouteImport } from './routes/tortuvchilar._admin.products'
+import { Route as TortuvchilarAdminReportsRouteImport } from './routes/tortuvchilar._admin.reports'
+import { Route as TortuvchilarAdminSettingsRouteImport } from './routes/tortuvchilar._admin.settings'
+import { Route as TortuvchilarAdminWorkersRouteImport } from './routes/tortuvchilar._admin.workers'
+import { Route as TortuvchilarWorkerIndexRouteImport } from './routes/tortuvchilar.worker.index'
+import { Route as TortuvchilarWorkerNewRouteImport } from './routes/tortuvchilar.worker.new'
 
-const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
-  id: '/topshiriqlar',
-  path: '/topshiriqlar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SozlamalarRoute = SozlamalarRouteImport.update({
-  id: '/sozlamalar',
-  path: '/sozlamalar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MahsulotlarRoute = MahsulotlarRouteImport.update({
-  id: '/mahsulotlar',
-  path: '/mahsulotlar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IshchilarRoute = IshchilarRouteImport.update({
-  id: '/ishchilar',
-  path: '/ishchilar',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HisobotRoute = HisobotRouteImport.update({
@@ -77,9 +58,34 @@ const HisobotRoute = HisobotRouteImport.update({
   path: '/hisobot',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const IshchilarRoute = IshchilarRouteImport.update({
+  id: '/ishchilar',
+  path: '/ishchilar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JarimalarRoute = JarimalarRouteImport.update({
+  id: '/jarimalar',
+  path: '/jarimalar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MahsulotlarRoute = MahsulotlarRouteImport.update({
+  id: '/mahsulotlar',
+  path: '/mahsulotlar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SozlamalarRoute = SozlamalarRouteImport.update({
+  id: '/sozlamalar',
+  path: '/sozlamalar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TopshiriqlarRoute = TopshiriqlarRouteImport.update({
+  id: '/topshiriqlar',
+  path: '/topshiriqlar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryIndexRoute = FactoryIndexRouteImport.update({
@@ -87,44 +93,9 @@ const FactoryIndexRoute = FactoryIndexRouteImport.update({
   path: '/factory/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TortuvchilarWorkerLoginRoute = TortuvchilarWorkerLoginRouteImport.update({
-  id: '/tortuvchilar/worker-login',
-  path: '/tortuvchilar/worker-login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TortuvchilarWorkerRoute = TortuvchilarWorkerRouteImport.update({
-  id: '/tortuvchilar/worker',
-  path: '/tortuvchilar/worker',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TortuvchilarAdminRoute = TortuvchilarAdminRouteImport.update({
-  id: '/tortuvchilar/_admin',
-  path: '/tortuvchilar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
-  id: '/factory/workers',
-  path: '/factory/workers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactorySettingsRoute = FactorySettingsRouteImport.update({
-  id: '/factory/settings',
-  path: '/factory/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryProductsRoute = FactoryProductsRouteImport.update({
-  id: '/factory/products',
-  path: '/factory/products',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryPayrollRoute = FactoryPayrollRouteImport.update({
-  id: '/factory/payroll',
-  path: '/factory/payroll',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryInventoryRoute = FactoryInventoryRouteImport.update({
-  id: '/factory/inventory',
-  path: '/factory/inventory',
+const FactoryFinishedRoute = FactoryFinishedRouteImport.update({
+  id: '/factory/finished',
+  path: '/factory/finished',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryFormulasRoute = FactoryFormulasRouteImport.update({
@@ -132,29 +103,49 @@ const FactoryFormulasRoute = FactoryFormulasRouteImport.update({
   path: '/factory/formulas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FactoryFinishedRoute = FactoryFinishedRouteImport.update({
-  id: '/factory/finished',
-  path: '/factory/finished',
+const FactoryInventoryRoute = FactoryInventoryRouteImport.update({
+  id: '/factory/inventory',
+  path: '/factory/inventory',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TortuvchilarWorkerIndexRoute = TortuvchilarWorkerIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TortuvchilarWorkerRoute,
-} as any)
-const TortuvchilarAdminIndexRoute = TortuvchilarAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TortuvchilarAdminRoute,
-} as any)
-const FactoryPackagingIndexRoute = FactoryPackagingIndexRouteImport.update({
-  id: '/factory/packaging/',
-  path: '/factory/packaging/',
+const FactoryPayrollRoute = FactoryPayrollRouteImport.update({
+  id: '/factory/payroll',
+  path: '/factory/payroll',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FactoryOrdersIndexRoute = FactoryOrdersIndexRouteImport.update({
-  id: '/factory/orders/',
-  path: '/factory/orders/',
+const FactoryProductsRoute = FactoryProductsRouteImport.update({
+  id: '/factory/products',
+  path: '/factory/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactorySettingsRoute = FactorySettingsRouteImport.update({
+  id: '/factory/settings',
+  path: '/factory/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryWorkersRoute = FactoryWorkersRouteImport.update({
+  id: '/factory/workers',
+  path: '/factory/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TortuvchilarAdminRoute = TortuvchilarAdminRouteImport.update({
+  id: '/tortuvchilar/_admin',
+  path: '/tortuvchilar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TortuvchilarWorkerRoute = TortuvchilarWorkerRouteImport.update({
+  id: '/tortuvchilar/worker',
+  path: '/tortuvchilar/worker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TortuvchilarWorkerLoginRoute = TortuvchilarWorkerLoginRouteImport.update({
+  id: '/tortuvchilar/worker-login',
+  path: '/tortuvchilar/worker-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryDeptDeptRoute = FactoryDeptDeptRouteImport.update({
+  id: '/factory/dept/$dept',
+  path: '/factory/dept/$dept',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FactoryLaserIndexRoute = FactoryLaserIndexRouteImport.update({
@@ -162,21 +153,65 @@ const FactoryLaserIndexRoute = FactoryLaserIndexRouteImport.update({
   path: '/factory/laser/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TortuvchilarWorkerNewRoute = TortuvchilarWorkerNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => TortuvchilarWorkerRoute,
+const FactoryLaserAttendanceRoute = FactoryLaserAttendanceRouteImport.update({
+  id: '/factory/laser/attendance',
+  path: '/factory/laser/attendance',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TortuvchilarAdminWorkersRoute =
-  TortuvchilarAdminWorkersRouteImport.update({
-    id: '/workers',
-    path: '/workers',
-    getParentRoute: () => TortuvchilarAdminRoute,
-  } as any)
-const TortuvchilarAdminSettingsRoute =
-  TortuvchilarAdminSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
+const FactoryLaserReportRoute = FactoryLaserReportRouteImport.update({
+  id: '/factory/laser/report',
+  path: '/factory/laser/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserTasksRoute = FactoryLaserTasksRouteImport.update({
+  id: '/factory/laser/tasks',
+  path: '/factory/laser/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryLaserWorkersRoute = FactoryLaserWorkersRouteImport.update({
+  id: '/factory/laser/workers',
+  path: '/factory/laser/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryOrdersIndexRoute = FactoryOrdersIndexRouteImport.update({
+  id: '/factory/orders/',
+  path: '/factory/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryOrdersIdRoute = FactoryOrdersIdRouteImport.update({
+  id: '/factory/orders/$id',
+  path: '/factory/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingIndexRoute = FactoryPackagingIndexRouteImport.update({
+  id: '/factory/packaging/',
+  path: '/factory/packaging/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingReportRoute = FactoryPackagingReportRouteImport.update({
+  id: '/factory/packaging/report',
+  path: '/factory/packaging/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingTasksRoute = FactoryPackagingTasksRouteImport.update({
+  id: '/factory/packaging/tasks',
+  path: '/factory/packaging/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FactoryPackagingWorkersRoute = FactoryPackagingWorkersRouteImport.update({
+  id: '/factory/packaging/workers',
+  path: '/factory/packaging/workers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TortuvchilarAdminIndexRoute = TortuvchilarAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TortuvchilarAdminRoute,
+} as any)
+const TortuvchilarAdminProductsRoute =
+  TortuvchilarAdminProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
 const TortuvchilarAdminReportsRoute =
@@ -185,62 +220,34 @@ const TortuvchilarAdminReportsRoute =
     path: '/reports',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
-const TortuvchilarAdminProductsRoute =
-  TortuvchilarAdminProductsRouteImport.update({
-    id: '/products',
-    path: '/products',
+const TortuvchilarAdminSettingsRoute =
+  TortuvchilarAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => TortuvchilarAdminRoute,
   } as any)
-const FactoryPackagingWorkersRoute = FactoryPackagingWorkersRouteImport.update({
-  id: '/factory/packaging/workers',
-  path: '/factory/packaging/workers',
-  getParentRoute: () => rootRouteImport,
+const TortuvchilarAdminWorkersRoute =
+  TortuvchilarAdminWorkersRouteImport.update({
+    id: '/workers',
+    path: '/workers',
+    getParentRoute: () => TortuvchilarAdminRoute,
+  } as any)
+const TortuvchilarWorkerIndexRoute = TortuvchilarWorkerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TortuvchilarWorkerRoute,
 } as any)
-const FactoryPackagingTasksRoute = FactoryPackagingTasksRouteImport.update({
-  id: '/factory/packaging/tasks',
-  path: '/factory/packaging/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryPackagingReportRoute = FactoryPackagingReportRouteImport.update({
-  id: '/factory/packaging/report',
-  path: '/factory/packaging/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryOrdersIdRoute = FactoryOrdersIdRouteImport.update({
-  id: '/factory/orders/$id',
-  path: '/factory/orders/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryLaserWorkersRoute = FactoryLaserWorkersRouteImport.update({
-  id: '/factory/laser/workers',
-  path: '/factory/laser/workers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryLaserTasksRoute = FactoryLaserTasksRouteImport.update({
-  id: '/factory/laser/tasks',
-  path: '/factory/laser/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryLaserReportRoute = FactoryLaserReportRouteImport.update({
-  id: '/factory/laser/report',
-  path: '/factory/laser/report',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryLaserAttendanceRoute = FactoryLaserAttendanceRouteImport.update({
-  id: '/factory/laser/attendance',
-  path: '/factory/laser/attendance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FactoryDeptDeptRoute = FactoryDeptDeptRouteImport.update({
-  id: '/factory/dept/$dept',
-  path: '/factory/dept/$dept',
-  getParentRoute: () => rootRouteImport,
+const TortuvchilarWorkerNewRoute = TortuvchilarWorkerNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => TortuvchilarWorkerRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
+  '/jarimalar': typeof JarimalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -280,6 +287,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
+  '/jarimalar': typeof JarimalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -318,6 +326,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/hisobot': typeof HisobotRoute
   '/ishchilar': typeof IshchilarRoute
+  '/jarimalar': typeof JarimalarRoute
   '/login': typeof LoginRoute
   '/mahsulotlar': typeof MahsulotlarRoute
   '/sozlamalar': typeof SozlamalarRoute
@@ -359,6 +368,7 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
+    | '/jarimalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
+    | '/jarimalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -435,6 +446,7 @@ export interface FileRouteTypes {
     | '/'
     | '/hisobot'
     | '/ishchilar'
+    | '/jarimalar'
     | '/login'
     | '/mahsulotlar'
     | '/sozlamalar'
@@ -475,6 +487,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HisobotRoute: typeof HisobotRoute
   IshchilarRoute: typeof IshchilarRoute
+  JarimalarRoute: typeof JarimalarRoute
   LoginRoute: typeof LoginRoute
   MahsulotlarRoute: typeof MahsulotlarRoute
   SozlamalarRoute: typeof SozlamalarRoute
@@ -506,39 +519,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/topshiriqlar': {
-      id: '/topshiriqlar'
-      path: '/topshiriqlar'
-      fullPath: '/topshiriqlar'
-      preLoaderRoute: typeof TopshiriqlarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sozlamalar': {
-      id: '/sozlamalar'
-      path: '/sozlamalar'
-      fullPath: '/sozlamalar'
-      preLoaderRoute: typeof SozlamalarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mahsulotlar': {
-      id: '/mahsulotlar'
-      path: '/mahsulotlar'
-      fullPath: '/mahsulotlar'
-      preLoaderRoute: typeof MahsulotlarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ishchilar': {
-      id: '/ishchilar'
-      path: '/ishchilar'
-      fullPath: '/ishchilar'
-      preLoaderRoute: typeof IshchilarRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hisobot': {
@@ -548,11 +533,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HisobotRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/ishchilar': {
+      id: '/ishchilar'
+      path: '/ishchilar'
+      fullPath: '/ishchilar'
+      preLoaderRoute: typeof IshchilarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jarimalar': {
+      id: '/jarimalar'
+      path: '/jarimalar'
+      fullPath: '/jarimalar'
+      preLoaderRoute: typeof JarimalarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mahsulotlar': {
+      id: '/mahsulotlar'
+      path: '/mahsulotlar'
+      fullPath: '/mahsulotlar'
+      preLoaderRoute: typeof MahsulotlarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sozlamalar': {
+      id: '/sozlamalar'
+      path: '/sozlamalar'
+      fullPath: '/sozlamalar'
+      preLoaderRoute: typeof SozlamalarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/topshiriqlar': {
+      id: '/topshiriqlar'
+      path: '/topshiriqlar'
+      fullPath: '/topshiriqlar'
+      preLoaderRoute: typeof TopshiriqlarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/': {
@@ -562,60 +582,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tortuvchilar/worker-login': {
-      id: '/tortuvchilar/worker-login'
-      path: '/tortuvchilar/worker-login'
-      fullPath: '/tortuvchilar/worker-login'
-      preLoaderRoute: typeof TortuvchilarWorkerLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tortuvchilar/worker': {
-      id: '/tortuvchilar/worker'
-      path: '/tortuvchilar/worker'
-      fullPath: '/tortuvchilar/worker'
-      preLoaderRoute: typeof TortuvchilarWorkerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tortuvchilar/_admin': {
-      id: '/tortuvchilar/_admin'
-      path: '/tortuvchilar'
-      fullPath: '/tortuvchilar'
-      preLoaderRoute: typeof TortuvchilarAdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/workers': {
-      id: '/factory/workers'
-      path: '/factory/workers'
-      fullPath: '/factory/workers'
-      preLoaderRoute: typeof FactoryWorkersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/settings': {
-      id: '/factory/settings'
-      path: '/factory/settings'
-      fullPath: '/factory/settings'
-      preLoaderRoute: typeof FactorySettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/products': {
-      id: '/factory/products'
-      path: '/factory/products'
-      fullPath: '/factory/products'
-      preLoaderRoute: typeof FactoryProductsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/payroll': {
-      id: '/factory/payroll'
-      path: '/factory/payroll'
-      fullPath: '/factory/payroll'
-      preLoaderRoute: typeof FactoryPayrollRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/inventory': {
-      id: '/factory/inventory'
-      path: '/factory/inventory'
-      fullPath: '/factory/inventory'
-      preLoaderRoute: typeof FactoryInventoryRouteImport
+    '/factory/finished': {
+      id: '/factory/finished'
+      path: '/factory/finished'
+      fullPath: '/factory/finished'
+      preLoaderRoute: typeof FactoryFinishedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/formulas': {
@@ -625,39 +596,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryFormulasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/finished': {
-      id: '/factory/finished'
-      path: '/factory/finished'
-      fullPath: '/factory/finished'
-      preLoaderRoute: typeof FactoryFinishedRouteImport
+    '/factory/inventory': {
+      id: '/factory/inventory'
+      path: '/factory/inventory'
+      fullPath: '/factory/inventory'
+      preLoaderRoute: typeof FactoryInventoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tortuvchilar/worker/': {
-      id: '/tortuvchilar/worker/'
-      path: '/'
-      fullPath: '/tortuvchilar/worker/'
-      preLoaderRoute: typeof TortuvchilarWorkerIndexRouteImport
-      parentRoute: typeof TortuvchilarWorkerRoute
-    }
-    '/tortuvchilar/_admin/': {
-      id: '/tortuvchilar/_admin/'
-      path: '/'
-      fullPath: '/tortuvchilar/'
-      preLoaderRoute: typeof TortuvchilarAdminIndexRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/factory/packaging/': {
-      id: '/factory/packaging/'
-      path: '/factory/packaging'
-      fullPath: '/factory/packaging/'
-      preLoaderRoute: typeof FactoryPackagingIndexRouteImport
+    '/factory/payroll': {
+      id: '/factory/payroll'
+      path: '/factory/payroll'
+      fullPath: '/factory/payroll'
+      preLoaderRoute: typeof FactoryPayrollRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/orders/': {
-      id: '/factory/orders/'
-      path: '/factory/orders'
-      fullPath: '/factory/orders/'
-      preLoaderRoute: typeof FactoryOrdersIndexRouteImport
+    '/factory/products': {
+      id: '/factory/products'
+      path: '/factory/products'
+      fullPath: '/factory/products'
+      preLoaderRoute: typeof FactoryProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/settings': {
+      id: '/factory/settings'
+      path: '/factory/settings'
+      fullPath: '/factory/settings'
+      preLoaderRoute: typeof FactorySettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/workers': {
+      id: '/factory/workers'
+      path: '/factory/workers'
+      fullPath: '/factory/workers'
+      preLoaderRoute: typeof FactoryWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tortuvchilar/_admin': {
+      id: '/tortuvchilar/_admin'
+      path: '/tortuvchilar'
+      fullPath: '/tortuvchilar'
+      preLoaderRoute: typeof TortuvchilarAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tortuvchilar/worker': {
+      id: '/tortuvchilar/worker'
+      path: '/tortuvchilar/worker'
+      fullPath: '/tortuvchilar/worker'
+      preLoaderRoute: typeof TortuvchilarWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tortuvchilar/worker-login': {
+      id: '/tortuvchilar/worker-login'
+      path: '/tortuvchilar/worker-login'
+      fullPath: '/tortuvchilar/worker-login'
+      preLoaderRoute: typeof TortuvchilarWorkerLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/dept/$dept': {
+      id: '/factory/dept/$dept'
+      path: '/factory/dept/$dept'
+      fullPath: '/factory/dept/$dept'
+      preLoaderRoute: typeof FactoryDeptDeptRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/laser/': {
@@ -667,81 +666,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryLaserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tortuvchilar/worker/new': {
-      id: '/tortuvchilar/worker/new'
-      path: '/new'
-      fullPath: '/tortuvchilar/worker/new'
-      preLoaderRoute: typeof TortuvchilarWorkerNewRouteImport
-      parentRoute: typeof TortuvchilarWorkerRoute
-    }
-    '/tortuvchilar/_admin/workers': {
-      id: '/tortuvchilar/_admin/workers'
-      path: '/workers'
-      fullPath: '/tortuvchilar/workers'
-      preLoaderRoute: typeof TortuvchilarAdminWorkersRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/tortuvchilar/_admin/settings': {
-      id: '/tortuvchilar/_admin/settings'
-      path: '/settings'
-      fullPath: '/tortuvchilar/settings'
-      preLoaderRoute: typeof TortuvchilarAdminSettingsRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/tortuvchilar/_admin/reports': {
-      id: '/tortuvchilar/_admin/reports'
-      path: '/reports'
-      fullPath: '/tortuvchilar/reports'
-      preLoaderRoute: typeof TortuvchilarAdminReportsRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/tortuvchilar/_admin/products': {
-      id: '/tortuvchilar/_admin/products'
-      path: '/products'
-      fullPath: '/tortuvchilar/products'
-      preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
-      parentRoute: typeof TortuvchilarAdminRoute
-    }
-    '/factory/packaging/workers': {
-      id: '/factory/packaging/workers'
-      path: '/factory/packaging/workers'
-      fullPath: '/factory/packaging/workers'
-      preLoaderRoute: typeof FactoryPackagingWorkersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/packaging/tasks': {
-      id: '/factory/packaging/tasks'
-      path: '/factory/packaging/tasks'
-      fullPath: '/factory/packaging/tasks'
-      preLoaderRoute: typeof FactoryPackagingTasksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/packaging/report': {
-      id: '/factory/packaging/report'
-      path: '/factory/packaging/report'
-      fullPath: '/factory/packaging/report'
-      preLoaderRoute: typeof FactoryPackagingReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/orders/$id': {
-      id: '/factory/orders/$id'
-      path: '/factory/orders/$id'
-      fullPath: '/factory/orders/$id'
-      preLoaderRoute: typeof FactoryOrdersIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/laser/workers': {
-      id: '/factory/laser/workers'
-      path: '/factory/laser/workers'
-      fullPath: '/factory/laser/workers'
-      preLoaderRoute: typeof FactoryLaserWorkersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/factory/laser/tasks': {
-      id: '/factory/laser/tasks'
-      path: '/factory/laser/tasks'
-      fullPath: '/factory/laser/tasks'
-      preLoaderRoute: typeof FactoryLaserTasksRouteImport
+    '/factory/laser/attendance': {
+      id: '/factory/laser/attendance'
+      path: '/factory/laser/attendance'
+      fullPath: '/factory/laser/attendance'
+      preLoaderRoute: typeof FactoryLaserAttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/factory/laser/report': {
@@ -751,19 +680,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FactoryLaserReportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/laser/attendance': {
-      id: '/factory/laser/attendance'
-      path: '/factory/laser/attendance'
-      fullPath: '/factory/laser/attendance'
-      preLoaderRoute: typeof FactoryLaserAttendanceRouteImport
+    '/factory/laser/tasks': {
+      id: '/factory/laser/tasks'
+      path: '/factory/laser/tasks'
+      fullPath: '/factory/laser/tasks'
+      preLoaderRoute: typeof FactoryLaserTasksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/factory/dept/$dept': {
-      id: '/factory/dept/$dept'
-      path: '/factory/dept/$dept'
-      fullPath: '/factory/dept/$dept'
-      preLoaderRoute: typeof FactoryDeptDeptRouteImport
+    '/factory/laser/workers': {
+      id: '/factory/laser/workers'
+      path: '/factory/laser/workers'
+      fullPath: '/factory/laser/workers'
+      preLoaderRoute: typeof FactoryLaserWorkersRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/factory/orders/': {
+      id: '/factory/orders/'
+      path: '/factory/orders'
+      fullPath: '/factory/orders/'
+      preLoaderRoute: typeof FactoryOrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/orders/$id': {
+      id: '/factory/orders/$id'
+      path: '/factory/orders/$id'
+      fullPath: '/factory/orders/$id'
+      preLoaderRoute: typeof FactoryOrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/': {
+      id: '/factory/packaging/'
+      path: '/factory/packaging'
+      fullPath: '/factory/packaging/'
+      preLoaderRoute: typeof FactoryPackagingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/report': {
+      id: '/factory/packaging/report'
+      path: '/factory/packaging/report'
+      fullPath: '/factory/packaging/report'
+      preLoaderRoute: typeof FactoryPackagingReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/tasks': {
+      id: '/factory/packaging/tasks'
+      path: '/factory/packaging/tasks'
+      fullPath: '/factory/packaging/tasks'
+      preLoaderRoute: typeof FactoryPackagingTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/factory/packaging/workers': {
+      id: '/factory/packaging/workers'
+      path: '/factory/packaging/workers'
+      fullPath: '/factory/packaging/workers'
+      preLoaderRoute: typeof FactoryPackagingWorkersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tortuvchilar/_admin/': {
+      id: '/tortuvchilar/_admin/'
+      path: '/'
+      fullPath: '/tortuvchilar/'
+      preLoaderRoute: typeof TortuvchilarAdminIndexRouteImport
+      parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/tortuvchilar/_admin/products': {
+      id: '/tortuvchilar/_admin/products'
+      path: '/products'
+      fullPath: '/tortuvchilar/products'
+      preLoaderRoute: typeof TortuvchilarAdminProductsRouteImport
+      parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/tortuvchilar/_admin/reports': {
+      id: '/tortuvchilar/_admin/reports'
+      path: '/reports'
+      fullPath: '/tortuvchilar/reports'
+      preLoaderRoute: typeof TortuvchilarAdminReportsRouteImport
+      parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/tortuvchilar/_admin/settings': {
+      id: '/tortuvchilar/_admin/settings'
+      path: '/settings'
+      fullPath: '/tortuvchilar/settings'
+      preLoaderRoute: typeof TortuvchilarAdminSettingsRouteImport
+      parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/tortuvchilar/_admin/workers': {
+      id: '/tortuvchilar/_admin/workers'
+      path: '/workers'
+      fullPath: '/tortuvchilar/workers'
+      preLoaderRoute: typeof TortuvchilarAdminWorkersRouteImport
+      parentRoute: typeof TortuvchilarAdminRoute
+    }
+    '/tortuvchilar/worker/': {
+      id: '/tortuvchilar/worker/'
+      path: '/'
+      fullPath: '/tortuvchilar/worker/'
+      preLoaderRoute: typeof TortuvchilarWorkerIndexRouteImport
+      parentRoute: typeof TortuvchilarWorkerRoute
+    }
+    '/tortuvchilar/worker/new': {
+      id: '/tortuvchilar/worker/new'
+      path: '/new'
+      fullPath: '/tortuvchilar/worker/new'
+      preLoaderRoute: typeof TortuvchilarWorkerNewRouteImport
+      parentRoute: typeof TortuvchilarWorkerRoute
     }
   }
 }
@@ -804,6 +824,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HisobotRoute: HisobotRoute,
   IshchilarRoute: IshchilarRoute,
+  JarimalarRoute: JarimalarRoute,
   LoginRoute: LoginRoute,
   MahsulotlarRoute: MahsulotlarRoute,
   SozlamalarRoute: SozlamalarRoute,
