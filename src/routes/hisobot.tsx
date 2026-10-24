@@ -482,6 +482,25 @@ function Page() {
           )
           .join("");
 
+        const finesRows = w.fines
+          .map(
+            (f) => `<tr>
+              <td>${fmtDate(f.date)}</td>
+              <td>${escapeHtml(f.note || "—")}</td>
+              <td class="r" style="color:#dc2626"><b>-${fmtMoney(Number(f.amount))}</b></td>
+            </tr>`,
+          )
+          .join("");
+        const finesBlock =
+          w.fines.length > 0
+            ? `<div class="muted small">Jarimalar:</div>
+          <table class="t">
+            <thead><tr><th>Sana</th><th>Izoh</th><th class="r">Summa</th></tr></thead>
+            <tbody>${finesRows}</tbody>
+          </table>
+          <div class="net">Qo'lga tegadi: ${fmtMoney(w.netSalary)}</div>`
+            : "";
+
         return `
         <section class="half">
           <div class="hdr">
@@ -489,7 +508,7 @@ function Page() {
               <div class="title">Blessed Al — Oylik hisobot</div>
               <div class="muted">${escapeHtml(periodTitle)}</div>
             </div>
-            <div class="total">${fmtMoney(w.totalSalary)}</div>
+            <div class="total">${fmtMoney(w.netSalary)}</div>
           </div>
           <h3 class="wname">${escapeHtml(w.workerName)}</h3>
           <table class="t">
@@ -501,6 +520,7 @@ function Page() {
             <thead><tr><th>Berilgan</th><th>Bajarilgan</th><th>Mahsulot</th><th class="r">Mq</th><th class="r">Narx</th><th class="r">Summa</th></tr></thead>
             <tbody>${detailRows}</tbody>
           </table>
+          ${finesBlock}
         </section>`;
       })
       .join("");
@@ -535,6 +555,7 @@ function Page() {
       table.t td{border:1px solid #dcfce7;padding:0.6px 2px;word-wrap:break-word;overflow-wrap:break-word;line-height:1.05}
       table.t .r{text-align:right}
       .dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:1px}
+      .net{margin-top:1mm;padding:1mm 2px;border-top:1.5px solid #15803d;color:#15803d;font-weight:700;font-size:8.5px;text-align:right}
       </style></head>
       <body>
         ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
