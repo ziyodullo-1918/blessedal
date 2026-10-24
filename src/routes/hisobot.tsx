@@ -11,8 +11,10 @@ import {
   deletePayrollPeriod,
   updatePayrollPeriod,
   autoPeriodLabel,
+  finesByRange,
   type ReportRow,
   type PayrollPeriod,
+  type Fine,
 } from "@/lib/data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -68,8 +70,11 @@ type WorkerAgg = {
   workerName: string;
   totalQty: number;
   totalSalary: number;
+  totalFines: number;
+  netSalary: number;
   jobs: number;
   items: ReportRow[];
+  fines: Fine[];
 };
 
 type ProductAgg = {
