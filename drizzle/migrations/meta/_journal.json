@@ -8,6 +8,13 @@
       "when": 1792816940371,
       "tag": "0000_create_fines_table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792817994714,
+      "tag": "0001_isrolma_fines_manage_policy",
+      "breakpoints": true
     }
   ]
 }
