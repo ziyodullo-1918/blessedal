@@ -52,6 +52,7 @@ import {
   Users,
   Package,
   Pencil,
+  CircleAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmDialog";
