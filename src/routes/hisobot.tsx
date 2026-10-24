@@ -1037,6 +1037,42 @@ function Page() {
                             </tbody>
                           </table>
                         </div>
+                        {w.fines.length > 0 && (
+                          <div className="mt-3 overflow-x-auto rounded-md border border-destructive/30 bg-background">
+                            <table className="w-full text-sm">
+                              <thead className="bg-destructive/10 text-left text-xs uppercase tracking-wider text-destructive">
+                                <tr>
+                                  <th className="px-3 py-2">Jarima sanasi</th>
+                                  <th className="px-3 py-2">Izoh</th>
+                                  <th className="px-3 py-2 text-right">Summa</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {w.fines.map((f) => (
+                                  <tr key={f.id} className="border-b last:border-0">
+                                    <td className="px-3 py-2 font-mono text-xs">
+                                      {fmtDate(f.date)}
+                                    </td>
+                                    <td className="px-3 py-2 text-muted-foreground">
+                                      {f.note || "—"}
+                                    </td>
+                                    <td className="px-3 py-2 text-right font-mono font-semibold text-destructive">
+                                      -{fmtMoney(f.amount)}
+                                    </td>
+                                  </tr>
+                                ))}
+                                <tr className="bg-destructive/5">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
+                                    Qo'lga tegadi
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold text-primary">
+                                    {fmtMoney(w.netSalary)}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
