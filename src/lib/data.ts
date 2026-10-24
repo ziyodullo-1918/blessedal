@@ -499,3 +499,66 @@ export async function updateFounderPin(id: string, pin: string) {
   const { error } = await supabase.from("founders").update({ pin_hash }).eq("id", id);
   if (error) throw error;
 }
+
+// Fines (jarimalar) — deducted from worker salary in reports
+export type Fine = {
+  id: string;
+  worker_id: string;
+  amount: number;
+  date: string;
+  note: string | null;
+  created_at: string;
+  worker?: { full_name: string } | null;
+};
+
+export async function listFines(): Promise<Fine[]> {
+  const { data, error } = await supabase
+    .from("fines")
+    .select("*, worker:workers(full_name)")
+    .order("date", { ascending: false });
+  if (error) throw error;
+  return data as unknown as Fine[];
+}
+
+export async function finesByRange(startISO: string, endISO: string): Promise<Fine[]> {
+  const start = startISO.slice(0, 10);
+  const end = endISO.slice(0, 10);
+  const { data, error } = await supabase
+    .from("fines")
+    .select("*, worker:workers(full_name)")
+    .gte("date", start)
+    .lt("date", end)
+    .order("date", { ascending: true });
+  if (error) throw error;
+  return data as unknown as Fine[];
+}
+
+export async function createFine(f: {
+  worker_id: string;
+  amount: number;
+  date: string;
+  note?: string | null;
+}) {
+  const user_id = await uid();
+  const { error } = await supabase.from("fines").insert({
+    worker_id: f.worker_id,
+    amount: f.amount,
+    date: f.date,
+    note: f.note ?? null,
+    user_id,
+  } as never);
+  if (error) throw error;
+}
+
+export async function updateFine(
+  id: string,
+  patch: Partial<{ worker_id: string; amount: number; date: string; note: string | null }>,
+) {
+  const { error } = await supabase.from("fines").update(patch as never).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteFine(id: string) {
+  const { error } = await supabase.from("fines").delete().eq("id", id);
+  if (error) throw error;
+}
