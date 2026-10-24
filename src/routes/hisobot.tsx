@@ -298,6 +298,10 @@ function Page() {
     () => filteredRows.reduce((s, r) => s + r.quantity * Number(r.unit_price), 0),
     [filteredRows],
   );
+  const grandFines = useMemo(
+    () => filteredFines.reduce((s, f) => s + Number(f.amount), 0),
+    [filteredFines],
+  );
   const totalQty = useMemo(() => filteredRows.reduce((s, r) => s + r.quantity, 0), [filteredRows]);
 
   const openStartDialog = () => {
@@ -921,7 +925,7 @@ function Page() {
       </Card>
 
       {/* Stat cards */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Umumiy summa"
           value={fmtMoney(grand)}
@@ -932,6 +936,12 @@ function Page() {
           value={`${totalQty} dona`}
           tone="primary"
           icon={<Package className="size-5 text-primary/70" />}
+        />
+        <StatCard
+          label="Jami jarimalar"
+          value={fmtMoney(grandFines)}
+          tone="warning"
+          icon={<CircleAlert className="size-5 text-warning/80" />}
         />
         <StatCard
           label="Ishchilar"
