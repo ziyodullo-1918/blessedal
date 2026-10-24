@@ -27,6 +27,7 @@ import {
   CircleAlert,
   Pencil,
   Plus,
+  Search,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -51,6 +52,7 @@ function Page() {
   const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(true);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   // Add-fine dialog
   const [addFor, setAddFor] = useState<Worker | null>(null);
