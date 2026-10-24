@@ -985,8 +985,13 @@ function Page() {
                       <div className="hidden text-right font-mono text-xs text-muted-foreground sm:block">
                         {w.jobs} ta · {w.totalQty} dona
                       </div>
+                      {w.totalFines > 0 && (
+                        <div className="hidden w-28 text-right font-mono text-xs text-destructive sm:block">
+                          -{fmtMoney(w.totalFines)}
+                        </div>
+                      )}
                       <div className="w-32 text-right font-mono font-semibold text-primary">
-                        {fmtMoney(w.totalSalary)}
+                        {fmtMoney(w.netSalary)}
                       </div>
                     </button>
                     {expanded && (
