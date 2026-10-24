@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users manage their own fines" ON public.fines; CREATE POLICY "Authenticated can manage fines" ON public.fines TO authenticated USING (true) WITH CHECK (true);
