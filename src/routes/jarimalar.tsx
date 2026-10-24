@@ -22,8 +22,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  ChevronDown,
-  ChevronRight,
   CircleAlert,
   Pencil,
   Plus,
@@ -51,7 +49,6 @@ function Page() {
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openWorker, setOpenWorker] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
   // Add-fine dialog
@@ -99,9 +96,11 @@ function Page() {
     [fines],
   );
 
+  const hasQuery = query.trim().length > 0;
+
   const shownWorkers = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return workers;
+    if (!q) return [];
     return workers.filter((w) => w.full_name.toLowerCase().includes(q));
   }, [workers, query]);
 
@@ -209,6 +208,7 @@ function Page() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ishchi izlash..."
               className="pl-9"
+              autoFocus
             />
           </div>
         </CardHeader>
@@ -219,6 +219,16 @@ function Page() {
             <div className="m-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-10 text-center text-sm text-muted-foreground">
               Ishchilar yo'q
             </div>
+          ) : !hasQuery ? (
+            <div className="m-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-10 text-center">
+              <Search className="mx-auto mb-3 size-6 text-primary/70" />
+              <div className="text-sm font-medium text-foreground">
+                Ishchini topish uchun qidiring
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                Ismni yozing — ishchi va uning jarimalari shu yerda ko'rinadi
+              </div>
+            </div>
           ) : shownWorkers.length === 0 ? (
             <p className="p-6 text-center text-sm text-muted-foreground">
               "{query}" bo'yicha ishchi topilmadi
@@ -228,85 +238,66 @@ function Page() {
               {shownWorkers.map((w) => {
                 const list = byWorker.get(w.id) ?? [];
                 const total = list.reduce((s, f) => s + Number(f.amount), 0);
-                const expanded = openWorker === w.id;
                 return (
-                  <div key={w.id}>
-                    <div className="flex w-full items-center gap-3 px-4 py-3">
-                      <button
-                        onClick={() => setOpenWorker(expanded ? null : w.id)}
-                        className="flex flex-1 items-center gap-3 text-left transition hover:opacity-80"
-                      >
-                        {expanded ? (
-                          <ChevronDown className="size-4 text-primary" />
-                        ) : (
-                          <ChevronRight className="size-4 text-primary" />
-                        )}
-                        <div className="flex-1 font-medium">{w.full_name}</div>
-                        <div className="hidden font-mono text-xs text-muted-foreground sm:block">
-                          {list.length} ta jarima
-                        </div>
-                        <div className="w-32 text-right font-mono font-semibold text-destructive">
-                          {total > 0 ? `-${fmtMoney(total)}` : "—"}
-                        </div>
-                      </button>
+                  <div key={w.id} className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 font-medium">{w.full_name}</div>
+                      <div className="hidden font-mono text-xs text-muted-foreground sm:block">
+                        {list.length} ta jarima
+                      </div>
+                      <div className="w-32 text-right font-mono font-semibold text-destructive">
+                        {total > 0 ? `-${fmtMoney(total)}` : "—"}
+                      </div>
                       <Button size="sm" onClick={() => openAdd(w)}>
                         <Plus className="size-4" /> Jarima
                       </Button>
                     </div>
-                    {expanded && (
-                      <div className="bg-primary/5 px-4 pb-4">
-                        {list.length === 0 ? (
-                          <p className="rounded-md border border-dashed border-primary/30 bg-background p-4 text-center text-xs text-muted-foreground">
-                            Jarimalar yo'q
-                          </p>
-                        ) : (
-                          <div className="overflow-x-auto rounded-md border border-primary/20 bg-background">
-                            <table className="w-full text-sm">
-                              <thead className="bg-primary/10 text-left text-xs uppercase tracking-wider text-primary">
-                                <tr>
-                                  <th className="px-3 py-2">Sana</th>
-                                  <th className="px-3 py-2">Izoh</th>
-                                  <th className="px-3 py-2 text-right">Summa</th>
-                                  <th className="px-3 py-2 text-right">Amallar</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {list.map((f) => (
-                                  <tr key={f.id} className="border-b last:border-0">
-                                    <td className="px-3 py-2 font-mono text-xs">
-                                      {fmtDate(f.date)}
-                                    </td>
-                                    <td className="px-3 py-2 text-muted-foreground">
-                                      {f.note || "—"}
-                                    </td>
-                                    <td className="px-3 py-2 text-right font-mono font-semibold text-destructive">
-                                      -{fmtMoney(f.amount)}
-                                    </td>
-                                    <td className="px-3 py-2">
-                                      <div className="flex justify-end gap-1">
-                                        <Button
-                                          size="sm"
-                                          variant="ghost"
-                                          onClick={() => openEdit(f)}
-                                        >
-                                          <Pencil className="size-4" />
-                                        </Button>
-                                        <Button
-                                          size="sm"
-                                          variant="ghost"
-                                          onClick={() => handleDelete(f)}
-                                          className="text-destructive hover:text-destructive"
-                                        >
-                                          <Trash2 className="size-4" />
-                                        </Button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
+                    {list.length > 0 && (
+                      <div className="mt-3 overflow-x-auto rounded-md border border-primary/20 bg-background">
+                        <table className="w-full text-sm">
+                          <thead className="bg-primary/10 text-left text-xs uppercase tracking-wider text-primary">
+                            <tr>
+                              <th className="px-3 py-2">Sana</th>
+                              <th className="px-3 py-2">Izoh</th>
+                              <th className="px-3 py-2 text-right">Summa</th>
+                              <th className="px-3 py-2 text-right">Amallar</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {list.map((f) => (
+                              <tr key={f.id} className="border-b last:border-0">
+                                <td className="px-3 py-2 font-mono text-xs">
+                                  {fmtDate(f.date)}
+                                </td>
+                                <td className="px-3 py-2 text-muted-foreground">
+                                  {f.note || "—"}
+                                </td>
+                                <td className="px-3 py-2 text-right font-mono font-semibold text-destructive">
+                                  -{fmtMoney(f.amount)}
+                                </td>
+                                <td className="px-3 py-2">
+                                  <div className="flex justify-end gap-1">
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => openEdit(f)}
+                                    >
+                                      <Pencil className="size-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleDelete(f)}
+                                      className="text-destructive hover:text-destructive"
+                                    >
+                                      <Trash2 className="size-4" />
+                                    </Button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     )}
                   </div>
