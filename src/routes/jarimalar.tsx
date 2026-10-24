@@ -99,6 +99,12 @@ function Page() {
     [fines],
   );
 
+  const shownWorkers = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return workers;
+    return workers.filter((w) => w.full_name.toLowerCase().includes(q));
+  }, [workers, query]);
+
   const openAdd = (w: Worker) => {
     setAddFor(w);
     setAmount("");
@@ -194,8 +200,17 @@ function Page() {
 
       {/* Workers list */}
       <Card className="border-primary/20">
-        <CardHeader>
+        <CardHeader className="flex-row items-center justify-between gap-3 space-y-0">
           <CardTitle className="text-base">Ishchilar</CardTitle>
+          <div className="relative w-full max-w-xs">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Ishchi izlash..."
+              className="pl-9"
+            />
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
@@ -204,9 +219,13 @@ function Page() {
             <div className="m-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-10 text-center text-sm text-muted-foreground">
               Ishchilar yo'q
             </div>
+          ) : shownWorkers.length === 0 ? (
+            <p className="p-6 text-center text-sm text-muted-foreground">
+              "{query}" bo'yicha ishchi topilmadi
+            </p>
           ) : (
             <div className="divide-y">
-              {workers.map((w) => {
+              {shownWorkers.map((w) => {
                 const list = byWorker.get(w.id) ?? [];
                 const total = list.reduce((s, f) => s + Number(f.amount), 0);
                 const expanded = openWorker === w.id;
