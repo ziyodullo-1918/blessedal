@@ -106,6 +106,7 @@ function Page() {
   const [search, setSearch] = useState("");
 
   const [rows, setRows] = useState<ReportRow[]>([]);
+  const [fines, setFines] = useState<Fine[]>([]);
   const [loading, setLoading] = useState(false);
   const [openWorker, setOpenWorker] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -201,6 +202,12 @@ function Page() {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+    // Fines are date-based: load for the visible range (period or custom)
+    finesByRange(range.start, range.end)
+      .then((f) => {
+        if (!cancelled) setFines(f);
+      })
+      .catch(console.error);
     return () => {
       cancelled = true;
     };
