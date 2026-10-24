@@ -498,6 +498,44 @@ export type Database = {
         }
         Relationships: []
       }
+      fines: {
+        Row: {
+          amount: number
+          created_at: string
+          date: string
+          id: string
+          note: string | null
+          user_id: string
+          worker_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          user_id: string
+          worker_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fines_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "workers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finished_inventory: {
         Row: {
           color: string | null
