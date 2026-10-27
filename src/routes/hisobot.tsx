@@ -1092,7 +1092,23 @@ function Page() {
                                     </td>
                                   </tr>
                                 ))}
+                                <tr className="bg-muted/40">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
+                                    Umumiy topgan summa
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold">
+                                    {fmtMoney(w.totalSalary)}
+                                  </td>
+                                </tr>
                                 <tr className="bg-destructive/5">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider text-destructive">
+                                    Jarima
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold text-destructive">
+                                    -{fmtMoney(w.totalFines)}
+                                  </td>
+                                </tr>
+                                <tr className="bg-primary/5">
                                   <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
                                     Qo'lga tegadi
                                   </td>
