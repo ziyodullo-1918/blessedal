@@ -563,6 +563,9 @@ function Page() {
       table.t .r{text-align:right}
       .dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:1px}
       .net{margin-top:1mm;padding:1mm 2px;border-top:1.5px solid #15803d;color:#15803d;font-weight:700;font-size:8.5px;text-align:right}
+      table.settle{margin-top:1mm}
+      table.settle td{font-size:7.5px;padding:1mm 2px}
+      table.settle tr.netrow td{background:#dcfce7;border-top:1.5px solid #15803d;color:#15803d;font-size:8.5px;font-weight:700}
       </style></head>
       <body>
         ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
