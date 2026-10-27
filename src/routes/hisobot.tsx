@@ -499,7 +499,13 @@ function Page() {
             <thead><tr><th>Sana</th><th>Izoh</th><th class="r">Summa</th></tr></thead>
             <tbody>${finesRows}</tbody>
           </table>
-          <div class="net">Qo'lga tegadi: ${fmtMoney(w.netSalary)}</div>`
+          <table class="t settle">
+            <tbody>
+              <tr><td>Umumiy topgan summa</td><td class="r"><b>${fmtMoney(w.totalSalary)}</b></td></tr>
+              <tr><td style="color:#dc2626">Jarima</td><td class="r" style="color:#dc2626"><b>-${fmtMoney(w.totalFines)}</b></td></tr>
+              <tr class="netrow"><td>Qo'lga tegadi</td><td class="r"><b>${fmtMoney(w.netSalary)}</b></td></tr>
+            </tbody>
+          </table>`
             : "";
 
         return `
@@ -557,6 +563,9 @@ function Page() {
       table.t .r{text-align:right}
       .dot{display:inline-block;width:5px;height:5px;border-radius:50%;border:1px solid #cbd5e1;vertical-align:middle;margin-right:1px}
       .net{margin-top:1mm;padding:1mm 2px;border-top:1.5px solid #15803d;color:#15803d;font-weight:700;font-size:8.5px;text-align:right}
+      table.settle{margin-top:1mm}
+      table.settle td{font-size:7.5px;padding:1mm 2px}
+      table.settle tr.netrow td{background:#dcfce7;border-top:1.5px solid #15803d;color:#15803d;font-size:8.5px;font-weight:700}
       </style></head>
       <body>
         ${finalBlocks || '<p class="muted" style="padding:24px">Ma\'lumot yo\'q</p>'}
@@ -1083,7 +1092,23 @@ function Page() {
                                     </td>
                                   </tr>
                                 ))}
+                                <tr className="bg-muted/40">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
+                                    Umumiy topgan summa
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold">
+                                    {fmtMoney(w.totalSalary)}
+                                  </td>
+                                </tr>
                                 <tr className="bg-destructive/5">
+                                  <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider text-destructive">
+                                    Jarima
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono font-bold text-destructive">
+                                    -{fmtMoney(w.totalFines)}
+                                  </td>
+                                </tr>
+                                <tr className="bg-primary/5">
                                   <td colSpan={2} className="px-3 py-2 text-right text-xs font-semibold uppercase tracking-wider">
                                     Qo'lga tegadi
                                   </td>
