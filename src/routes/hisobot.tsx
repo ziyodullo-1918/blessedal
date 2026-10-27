@@ -499,7 +499,13 @@ function Page() {
             <thead><tr><th>Sana</th><th>Izoh</th><th class="r">Summa</th></tr></thead>
             <tbody>${finesRows}</tbody>
           </table>
-          <div class="net">Qo'lga tegadi: ${fmtMoney(w.netSalary)}</div>`
+          <table class="t settle">
+            <tbody>
+              <tr><td>Umumiy topgan summa</td><td class="r"><b>${fmtMoney(w.totalSalary)}</b></td></tr>
+              <tr><td style="color:#dc2626">Jarima</td><td class="r" style="color:#dc2626"><b>-${fmtMoney(w.totalFines)}</b></td></tr>
+              <tr class="netrow"><td>Qo'lga tegadi</td><td class="r"><b>${fmtMoney(w.netSalary)}</b></td></tr>
+            </tbody>
+          </table>`
             : "";
 
         return `
