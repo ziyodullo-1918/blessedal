@@ -16,16 +16,19 @@ export type Database = {
     Tables: {
       app_settings: {
         Row: {
+          account_id: string | null
           key: string
           updated_at: string
           value: Json
         }
         Insert: {
+          account_id?: string | null
           key: string
           updated_at?: string
           value?: Json
         }
         Update: {
+          account_id?: string | null
           key?: string
           updated_at?: string
           value?: Json
@@ -149,6 +152,7 @@ export type Database = {
       }
       factory_department_heads: {
         Row: {
+          account_id: string | null
           created_at: string
           department: Database["public"]["Enums"]["factory_department"]
           email: string | null
@@ -159,6 +163,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           department: Database["public"]["Enums"]["factory_department"]
           email?: string | null
@@ -169,6 +174,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           department?: Database["public"]["Enums"]["factory_department"]
           email?: string | null
@@ -182,6 +188,7 @@ export type Database = {
       }
       factory_orders: {
         Row: {
+          account_id: string | null
           color: string | null
           created_at: string
           created_by: string | null
@@ -198,6 +205,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           color?: string | null
           created_at?: string
           created_by?: string | null
@@ -214,6 +222,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           color?: string | null
           created_at?: string
           created_by?: string | null
@@ -233,6 +242,7 @@ export type Database = {
       }
       factory_payroll_periods: {
         Row: {
+          account_id: string | null
           closed_at: string | null
           created_at: string
           end_date: string
@@ -241,6 +251,7 @@ export type Database = {
           start_date: string
         }
         Insert: {
+          account_id?: string | null
           closed_at?: string | null
           created_at?: string
           end_date: string
@@ -249,6 +260,7 @@ export type Database = {
           start_date: string
         }
         Update: {
+          account_id?: string | null
           closed_at?: string | null
           created_at?: string
           end_date?: string
@@ -260,6 +272,7 @@ export type Database = {
       }
       factory_payroll_snapshots: {
         Row: {
+          account_id: string | null
           created_at: string
           department: Database["public"]["Enums"]["factory_department"]
           id: string
@@ -270,6 +283,7 @@ export type Database = {
           worker_name: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           department: Database["public"]["Enums"]["factory_department"]
           id?: string
@@ -280,6 +294,7 @@ export type Database = {
           worker_name: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           department?: Database["public"]["Enums"]["factory_department"]
           id?: string
@@ -301,6 +316,7 @@ export type Database = {
       }
       factory_products: {
         Row: {
+          account_id: string | null
           active: boolean
           category: string
           colors: string[]
@@ -313,6 +329,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           category?: string
           colors?: string[]
@@ -325,6 +342,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           category?: string
           colors?: string[]
@@ -340,6 +358,7 @@ export type Database = {
       }
       factory_stage_events: {
         Row: {
+          account_id: string | null
           created_at: string
           event_type: string
           id: string
@@ -351,6 +370,7 @@ export type Database = {
           worker_id: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           event_type: string
           id?: string
@@ -362,6 +382,7 @@ export type Database = {
           worker_id?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           event_type?: string
           id?: string
@@ -398,6 +419,7 @@ export type Database = {
       }
       factory_stages: {
         Row: {
+          account_id: string | null
           assigned_worker_id: string | null
           aux_completed: Json
           completed_at: string | null
@@ -415,6 +437,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           assigned_worker_id?: string | null
           aux_completed?: Json
           completed_at?: string | null
@@ -432,6 +455,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           assigned_worker_id?: string | null
           aux_completed?: Json
           completed_at?: string | null
@@ -467,6 +491,7 @@ export type Database = {
       }
       factory_workers: {
         Row: {
+          account_id: string | null
           active: boolean
           created_at: string
           department: Database["public"]["Enums"]["factory_department"]
@@ -477,6 +502,7 @@ export type Database = {
           worker_code: string
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           department: Database["public"]["Enums"]["factory_department"]
@@ -487,6 +513,7 @@ export type Database = {
           worker_code: string
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           department?: Database["public"]["Enums"]["factory_department"]
@@ -538,6 +565,7 @@ export type Database = {
       }
       finished_inventory: {
         Row: {
+          account_id: string | null
           color: string | null
           created_at: string
           damaged_quantity: number
@@ -551,6 +579,7 @@ export type Database = {
           size: string | null
         }
         Insert: {
+          account_id?: string | null
           color?: string | null
           created_at?: string
           damaged_quantity?: number
@@ -564,6 +593,7 @@ export type Database = {
           size?: string | null
         }
         Update: {
+          account_id?: string | null
           color?: string | null
           created_at?: string
           damaged_quantity?: number
@@ -615,6 +645,7 @@ export type Database = {
       }
       inventory_materials: {
         Row: {
+          account_id: string | null
           created_at: string
           id: string
           material_type: string
@@ -626,6 +657,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           id?: string
           material_type?: string
@@ -637,6 +669,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           id?: string
           material_type?: string
@@ -651,6 +684,7 @@ export type Database = {
       }
       inventory_movements: {
         Row: {
+          account_id: string | null
           created_at: string
           delta: number
           id: string
@@ -660,6 +694,7 @@ export type Database = {
           reason: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           delta: number
           id?: string
@@ -669,6 +704,7 @@ export type Database = {
           reason: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           delta?: number
           id?: string
@@ -696,6 +732,7 @@ export type Database = {
       }
       laser_daily_attendance: {
         Row: {
+          account_id: string | null
           created_at: string
           daily_rate: number
           id: string
@@ -704,6 +741,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           daily_rate?: number
           id?: string
@@ -712,6 +750,7 @@ export type Database = {
           worker_id: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           daily_rate?: number
           id?: string
@@ -723,6 +762,7 @@ export type Database = {
       }
       laser_daily_rates: {
         Row: {
+          account_id: string | null
           active: boolean
           created_at: string
           effective_from: string
@@ -731,6 +771,7 @@ export type Database = {
           worker_id: string | null
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           effective_from?: string
@@ -739,6 +780,7 @@ export type Database = {
           worker_id?: string | null
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           effective_from?: string
@@ -750,6 +792,7 @@ export type Database = {
       }
       packaging_box_entries: {
         Row: {
+          account_id: string | null
           boxes: number
           color: string | null
           created_at: string
@@ -765,6 +808,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
+          account_id?: string | null
           boxes: number
           color?: string | null
           created_at?: string
@@ -780,6 +824,7 @@ export type Database = {
           worker_id: string
         }
         Update: {
+          account_id?: string | null
           boxes?: number
           color?: string | null
           created_at?: string
@@ -798,6 +843,7 @@ export type Database = {
       }
       packaging_piece_rates: {
         Row: {
+          account_id: string | null
           active: boolean
           created_at: string
           id: string
@@ -806,6 +852,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           id?: string
@@ -814,6 +861,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           id?: string
@@ -876,6 +924,7 @@ export type Database = {
       }
       product_formulas: {
         Row: {
+          account_id: string | null
           created_at: string
           id: string
           material_id: string
@@ -883,6 +932,7 @@ export type Database = {
           quantity_per_unit: number
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           id?: string
           material_id: string
@@ -890,6 +940,7 @@ export type Database = {
           quantity_per_unit: number
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           id?: string
           material_id?: string
@@ -949,16 +1000,19 @@ export type Database = {
       }
       pullers_app_settings: {
         Row: {
+          account_id: string | null
           key: string
           updated_at: string
           value: string
         }
         Insert: {
+          account_id?: string | null
           key: string
           updated_at?: string
           value: string
         }
         Update: {
+          account_id?: string | null
           key?: string
           updated_at?: string
           value?: string
@@ -967,16 +1021,19 @@ export type Database = {
       }
       pullers_categories: {
         Row: {
+          account_id: string | null
           created_at: string
           id: string
           name: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           id?: string
           name: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           id?: string
           name?: string
@@ -985,6 +1042,7 @@ export type Database = {
       }
       pullers_periods: {
         Row: {
+          account_id: string | null
           closed_at: string | null
           created_at: string
           end_date: string | null
@@ -994,6 +1052,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          account_id?: string | null
           closed_at?: string | null
           created_at?: string
           end_date?: string | null
@@ -1003,6 +1062,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          account_id?: string | null
           closed_at?: string | null
           created_at?: string
           end_date?: string | null
@@ -1015,6 +1075,7 @@ export type Database = {
       }
       pullers_products: {
         Row: {
+          account_id: string | null
           active: boolean
           category_id: string | null
           created_at: string
@@ -1023,6 +1084,7 @@ export type Database = {
           price: number
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           category_id?: string | null
           created_at?: string
@@ -1031,6 +1093,7 @@ export type Database = {
           price: number
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           category_id?: string | null
           created_at?: string
@@ -1050,6 +1113,7 @@ export type Database = {
       }
       pullers_work_entries: {
         Row: {
+          account_id: string | null
           created_at: string
           id: string
           product_id: string
@@ -1060,6 +1124,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           id?: string
           product_id: string
@@ -1070,6 +1135,7 @@ export type Database = {
           worker_id: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           id?: string
           product_id?: string
@@ -1126,6 +1192,7 @@ export type Database = {
       }
       pullers_workers: {
         Row: {
+          account_id: string | null
           active: boolean
           created_at: string
           id: string
@@ -1134,6 +1201,7 @@ export type Database = {
           worker_code: string
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           id?: string
@@ -1142,6 +1210,7 @@ export type Database = {
           worker_code: string
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           id?: string
@@ -1153,6 +1222,7 @@ export type Database = {
       }
       salary_rates: {
         Row: {
+          account_id: string | null
           active: boolean
           created_at: string
           department: Database["public"]["Enums"]["factory_department"]
@@ -1162,6 +1232,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           department: Database["public"]["Enums"]["factory_department"]
@@ -1171,6 +1242,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          account_id?: string | null
           active?: boolean
           created_at?: string
           department?: Database["public"]["Enums"]["factory_department"]
@@ -1268,6 +1340,7 @@ export type Database = {
             }
             Returns: string
           }
+      current_record_account: { Args: never; Returns: string }
       factory_close_payroll_period: {
         Args: { _period_id: string }
         Returns: undefined

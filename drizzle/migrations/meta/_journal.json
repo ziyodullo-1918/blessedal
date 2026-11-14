@@ -22,6 +22,27 @@
       "when": 1794643440321,
       "tag": "0002_isolate_sewing_fines_by_account",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794643793310,
+      "tag": "0003_enforce_account_boundaries",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794643822825,
+      "tag": "0004_scope_worker_token_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794643906418,
+      "tag": "0005_reject_unowned_worker_sessions",
+      "breakpoints": true
     }
   ]
 }

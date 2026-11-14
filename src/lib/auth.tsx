@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { clearWorkerSession } from "@/lib/tortuvchilar/worker-session";
 
 const FOUNDER_KEY = "tikuv.founder.session";
 
@@ -23,6 +25,7 @@ type AuthCtx = {
 const Ctx = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [founder, setFounder] = useState<FounderInfo | null>(() => {
@@ -35,7 +38,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(s);
+      setSession((previous) => {
+        if (previous?.user.id !== s?.user.id) {
+          queryClient.clear();
+          clearWorkerSession();
+          sessionStorage.removeItem("admin_pin_unlocked_v1");
+        }
+        return s;
+      });
       if (!s) setFounder(null);
     });
     supabase.auth.getSession().then(({ data }) => {
@@ -43,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   const value: AuthCtx = {
     session,
@@ -92,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   };
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={value}><div key={session?.user.id ?? "signed-out"} className="contents">{children}</div></Ctx.Provider>;
 }
 
 export function useAuth() {

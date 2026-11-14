@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { workerCatalogClient } from "@/lib/tortuvchilar/catalog";
 import { useRequireWorker } from "@/hooks/use-require-tortuvchilar-worker";
 import { PageHeader, StatCard, EmptyState } from "@/components/tortuvchilar/page-header";
 import { Button } from "@/components/ui/button";
@@ -57,9 +58,11 @@ function WorkerHome() {
   }, [periodId, periods, currentPeriod]);
 
   const { data: products } = useQuery({
-    queryKey: ["products-active"],
+    enabled: !!session,
+    queryKey: ["products-active", session?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!session) return [];
+      const { data, error } = await workerCatalogClient(session.token)
         .from("pullers_products")
         .select("id, name, price, pullers_categories(name)")
         .eq("active", true)

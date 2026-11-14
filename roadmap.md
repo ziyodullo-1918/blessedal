@@ -1,0 +1,4 @@
+- [x] Enforce account ownership across application tables and privileged database actions.
+- [x] Clear account-specific screen state when the signed-in identity changes.
+- [x] Verify account isolation with authenticated reads and rejected cross-account writes.
+- [ ] Assign legacy shared factory records: blocked on confirmation of which account owns the 8 workers and 3 products.

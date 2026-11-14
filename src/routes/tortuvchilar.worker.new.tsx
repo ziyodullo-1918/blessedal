@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { workerCatalogClient } from "@/lib/tortuvchilar/catalog";
 import { useRequireWorker } from "@/hooks/use-require-tortuvchilar-worker";
 import { PageHeader } from "@/components/tortuvchilar/page-header";
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,11 @@ function NewEntry() {
   const today = new Date().toISOString().slice(0, 10);
 
   const { data: currentPeriod } = useQuery({
-    queryKey: ["current-period-open"],
+    enabled: !!session,
+    queryKey: ["current-period-open", session?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!session) return null;
+      const { data, error } = await workerCatalogClient(session.token)
         .from("pullers_periods")
         .select("start_date, end_date, status")
         .eq("status", "open")
@@ -46,9 +49,11 @@ function NewEntry() {
   const maxDate = today;
 
   const { data: products } = useQuery({
-    queryKey: ["products-active"],
+    enabled: !!session,
+    queryKey: ["products-active", session?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!session) return [];
+      const { data, error } = await workerCatalogClient(session.token)
         .from("pullers_products")
         .select("id, name, price, pullers_categories(name)")
         .eq("active", true)

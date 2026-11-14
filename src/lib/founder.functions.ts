@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 async function sha256(s: string) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
@@ -19,6 +18,7 @@ export const founderLogin = createServerFn({ method: "POST" })
     return { login_id: input.login_id.trim(), pin: input.pin };
   })
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const pinHash = await sha256(data.pin);
 
     // Look up founder
