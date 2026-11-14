@@ -15,6 +15,13 @@
       "when": 1792817994714,
       "tag": "0001_isrolma_fines_manage_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794643440321,
+      "tag": "0002_isolate_sewing_fines_by_account",
+      "breakpoints": true
     }
   ]
 }
